@@ -88,9 +88,12 @@ quartus/
   seqgen16.qsf / .sdc            projekt, piny, timing
   build_fpga.ps1                 pełna budowa
 fw/            firmware Nios V (bare-metal C, ~3 KB): main.c, hw.h, crt0.S, link.ld, build.ps1
-pc/            seqgen.py (biblioteka), seqgen_gui.py, seqgen_cli.py, emulator.py, test_seqgen.py
+pc/            seqgen.py (biblioteka), seqgen_gui.py, seqgen_cli.py, patterns.py, emulator.py,
+               fw_sim.py (symulator RV32I firmware), test_seqgen.py, test_firmware.py
 sim/           tb_seq_gen16.vhd + run_sim.do / run_sim.ps1 (Questa) – testbench samosprawdzający
 examples/      demo_16ch.json
+docs/          schemat blokowy (SVG/PNG), zrzuty ekranu aplikacji
+CLAUDE.md      notatki dla asystenta AI (Claude Code) – stan projektu, decyzje, pułapki
 ```
 
 ## Budowanie
