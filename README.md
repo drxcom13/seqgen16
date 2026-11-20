@@ -1,5 +1,26 @@
 # SeqGen16 – 16-kanałowy cyfrowy generator sekwencji (MAX 10 10M08 Eval Kit)
 
+![Aplikacja PC – edycja przebiegów i podgląd wszystkich kanałów](docs/gui_main.png)
+
+## Założenia projektu
+
+1. **16 niezależnych kanałów** wyjściowych; każdy kanał to osobny blok w FPGA.
+2. **Wyjścia cyfrowe 0/1** (3,3 V LVCMOS) – na tym etapie bez wyjść analogowych.
+3. **Sekwencja co najmniej 1024 zmian** na kanał; po końcu: powtórzenie N razy lub pętla.
+4. **Rozdzielczość czasu (krok) od 1 ms do 1 s** – ostatecznie rozszerzona do **1 µs … 1 s**, ustawiana
+   osobno dla każdego kanału.
+5. **Wspólny start** – wybrane kanały ruszają w tym samym takcie zegara.
+6. **Wyjścia synchronizujące:** zegar bazowy **BASE_CLK** zsynchronizowany z wyjściami oraz **SYNC**
+   ze zboczem narastającym w chwili wyzwolenia sekwencji.
+7. **Platforma:** płytka MAX 10 10M08 Evaluation Kit (10M08SAE144C8G).
+8. **Architektura:** aplikacja PC (programator sekwencji) ↔ RS-232 ↔ procesor **Nios** w FPGA ↔ bloki
+   generatorów (1 blok = 1 kanał).
+9. **Źródła FPGA w VHDL.**
+10. **Aplikacja PC po angielsku**, z możliwością **narysowania przebiegu każdego wyjścia** oraz
+    importu i eksportu sekwencji do pliku.
+
+## Architektura
+
 ```
  PC (Python: GUI / CLI)                       FPGA 10M08SAE144C8G @ 50 MHz
  ┌──────────────────┐   RS-232    ┌──────────────────────────────────────────────┐
@@ -118,19 +139,41 @@ bank 3 jest zasilany z VCC_IO (3,3 V). **Złącze J8 jest na płytce niewlutowan
 2×20 (2,54 mm). Przypisanie J8.3–J8.6 odczytane jest jednoznacznie; J8.7 i J8.9 (BASE_CLK, SYNC) potwierdź przed
 podłączeniem omomierzem (pin FPGA 56 / 55 ↔ J8.7 / J8.9) lub z sitodruku.
 
-## Aplikacja PC (interfejs po angielsku)
+## Obsługa aplikacji PC (interfejs po angielsku)
 
 ```powershell
 pip install pyserial
 python pc\seqgen_gui.py                                    # GUI; port "EMU" = emulator bez sprzętu
-python pc\seqgen_cli.py ports
-python pc\seqgen_cli.py -p COM5 upload examples\demo_16ch.json --start
-python pc\seqgen_cli.py -p COM5 status
-python pc\seqgen_cli.py -p COM5 stop all
-python pc\seqgen_cli.py show examples\demo_16ch.json       # podgląd sekwencji jako 0/1
 ```
 
-**Edytor przebiegu** (dla wybranego kanału – kanał wybierasz w tabeli albo klikając jego ścieżkę w podglądzie):
+![Okno główne aplikacji](docs/gui_main.png)
+
+Okno składa się z czterech części:
+
+| Obszar | Co zawiera |
+|---|---|
+| **Pasek górny** | wybór portu (`COMx` lub `EMU`), *Connect / Disconnect*, informacja o urządzeniu; *New / Open / Save / Save As* projektu |
+| **Tabela kanałów (lewo)** | nazwa, włączenie (kliknij **On**), krok, liczba kroków, powtórzenia i stan na żywo (`RUN n` = aktualny krok, `DONE`, `stop`); *Enable all / Disable all*; panel **Sync outputs (J8)** z okresem BASE_CLK i szerokością SYNC |
+| **Edytor kanału (środek)** | ustawienia wybranego kanału i jego przebieg do rysowania myszą, narzędzia edycji i generatory |
+| **Podgląd (dół)** | wszystkie 16 kanałów oraz BASE_CLK i SYNC na wspólnej osi czasu (t = 0 to chwila startu); zielone diody = bieżący stan wyjść; kliknięcie ścieżki wybiera kanał |
+
+### Typowa praca
+
+1. Wybierz port konwertera USB-UART (lub `EMU`, żeby pracować bez płytki) i kliknij **Connect**.
+2. Wybierz kanał w tabeli, ustaw **Step** (z jednostką µs / ms / s), **Length**, **Repeat** i poziom **Idle**.
+3. Narysuj przebieg w edytorze albo wygeneruj go (*Clock*, *Pulse*, *Random*) lub wczytaj (*Import file…*).
+4. Włącz potrzebne kanały (kolumna **On**) i ustaw BASE_CLK / SYNC.
+5. **Upload all enabled** – wysyła ustawienia i sekwencje oraz sprawdza je odczytem z urządzenia.
+6. **▶ Start enabled (synchronous)** – wszystkie włączone kanały ruszają w tym samym takcie; **■ Stop all** zatrzymuje.
+7. **Save** zapisuje cały projekt (JSON), **Export file…** – sekwencję jednego kanału (.txt / .csv).
+
+### Edytor przebiegu
+
+![Edytor przebiegu: zaznaczony zakres i znacznik bieżącego kroku](docs/gui_editor.png)
+
+Niebieski obszar to zaznaczenie (tu kroki 20…35), czerwona linia – krok, który urządzenie właśnie odtwarza.
+Nad wykresem: numery kroków i czas od początku sekwencji; przerywana linia na końcu – koniec sekwencji
+i co dzieje się dalej (`loop`, `x3, then hold` itp.).
 
 | Akcja | Jak |
 |---|---|
@@ -143,20 +186,25 @@ python pc\seqgen_cli.py show examples\demo_16ch.json       # podgląd sekwencji 
 | import / eksport | *Import file…* / *Export file…*: tekst `0101…` (.txt) lub CSV `level,time_ms` (.csv) – eksport wczytuje się z powrotem bez zmian; przy imporcie CSV liczy się pierwsza kolumna (≠ 0 → 1), linie `#` to komentarze; *Paste text*, *Copy as text* |
 | kopiowanie na inne kanały | *Copy to channels…* (opcjonalnie z ustawieniami czasu) |
 
-Tabela kanałów: kliknięcie w komórkę **On** włącza/wyłącza kanał; przyciski *Enable all / Disable all*.
-Panel **Sync outputs (J8)** pod tabelą: okres BASE_CLK i szerokość SYNC (zapisywane w projekcie i wysyłane przy
-uploadzie). Na dole podglądu ścieżki CLK i SYNC pokazują ich przebieg względem chwili wyzwolenia.
-
 Parametry kanału: nazwa, włączony, czas kroku (1 µs … 1 s, rozdzielczość 1 µs; pole z wyborem jednostki
-µs / ms / s – tak samo dla BASE_CLK i SYNC), długość (1…1024 kroki),
-liczba powtórzeń (0 = w pętli), poziom idle, zachowanie po ostatnim powtórzeniu.
-Dolny panel pokazuje wszystkie 16 kanałów na wspólnej osi czasu oraz – po połączeniu – bieżące stany wyjść
-(zielone diody), a w edytorze czerwony znacznik aktualnego kroku.
+µs / ms / s – tak samo dla BASE_CLK i SYNC), długość (1…1024 kroki), liczba powtórzeń (0 = w pętli),
+poziom idle, zachowanie po ostatnim powtórzeniu (*hold last step* / *go to idle level*).
 
 Projekt JSON (wersja 3): `clock_period_ms`, `sync_width_ms` oraz dla każdego kanału `name`, `enabled`, `period_ms`, `loops`, `idle`, `idle_on_done`,
 `steps` (lista 0/1). Upload weryfikuje zawartość pamięci odczytem; pełne 16 × 1024 kroków ≈ 2 s przy 115200 bd.
 
+### Linia poleceń (CLI)
+
+```powershell
+python pc\seqgen_cli.py ports
+python pc\seqgen_cli.py -p COM5 upload examples\demo_16ch.json --start
+python pc\seqgen_cli.py -p COM5 status
+python pc\seqgen_cli.py -p COM5 stop all
+python pc\seqgen_cli.py show examples\demo_16ch.json       # podgląd sekwencji jako 0/1
+```
+
 Testy: `cd pc ; python -m unittest test_seqgen test_firmware -v` (`test_firmware` uruchamia zbudowany `fw/build/fw.bin`).
+
 ## Stan weryfikacji
 
 - ✅ Pełna kompilacja Quartus (synteza, fitter, timing, .sof/.pof) dla VHDL + Nios V/c.
