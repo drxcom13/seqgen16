@@ -1,0 +1,71 @@
+set_global_assignment -name FAMILY "MAX 10"
+set_global_assignment -name DEVICE 10M08SAE144C8G
+set_global_assignment -name TOP_LEVEL_ENTITY seqgen16_top
+set_global_assignment -name PROJECT_OUTPUT_DIRECTORY output_files
+set_global_assignment -name ORIGINAL_QUARTUS_VERSION 25.1
+set_global_assignment -name LAST_QUARTUS_VERSION "25.1std.0 SP0.02std Lite Edition"
+
+set_global_assignment -name VHDL_FILE seqgen16_top.vhd
+set_global_assignment -name QIP_FILE nios_sys/synthesis/nios_sys.qip
+set_global_assignment -name SDC_FILE seqgen16.sdc
+
+# On-chip RAM Nios inicjalizowany z pliku -> wymagany tryb z inicjalizacja pamieci
+set_global_assignment -name INTERNAL_FLASH_UPDATE_MODE "SINGLE IMAGE WITH ERAM"
+set_global_assignment -name ON_CHIP_BITSTREAM_DECOMPRESSION OFF
+set_global_assignment -name ENABLE_OCT_DONE OFF
+set_global_assignment -name RESERVE_ALL_UNUSED_PINS_WEAK_PULLUP "AS INPUT TRI-STATED"
+set_global_assignment -name STRATIX_DEVICE_IO_STANDARD "3.3-V LVCMOS"
+
+# =============================================================================
+# PINY - MAX 10 10M08 Evaluation Kit (EK-10M08E144)
+# Zrodlo: Intel UG-01158 / 812857 (tabele 3-3, 3-5). PIN_27 dla zegara pochodzi
+# z projektu spolecznosci - SPRAWDZ ze schematem plytki przed programowaniem!
+# =============================================================================
+set_location_assignment PIN_27  -to clk_50
+
+# LED D1..D5 (aktywne zerem)
+set_location_assignment PIN_132 -to led_n[0]
+set_location_assignment PIN_134 -to led_n[1]
+set_location_assignment PIN_135 -to led_n[2]
+set_location_assignment PIN_140 -to led_n[3]
+set_location_assignment PIN_141 -to led_n[4]
+
+# UART na zlaczu Arduino D0/D1 (jak w Arduino): podlacz konwerter 3.3 V (MAX3232 / FT232 / CP2102)
+set_location_assignment PIN_74  -to uart_rxd
+set_location_assignment PIN_75  -to uart_txd
+
+# Kanaly 0..11 na zlaczach Arduino J5/J3 (D2..D13)
+set_location_assignment PIN_76  -to ch_out[0]
+set_location_assignment PIN_77  -to ch_out[1]
+set_location_assignment PIN_79  -to ch_out[2]
+set_location_assignment PIN_81  -to ch_out[3]
+set_location_assignment PIN_84  -to ch_out[4]
+set_location_assignment PIN_86  -to ch_out[5]
+set_location_assignment PIN_62  -to ch_out[6]
+set_location_assignment PIN_64  -to ch_out[7]
+set_location_assignment PIN_65  -to ch_out[8]
+set_location_assignment PIN_66  -to ch_out[9]
+set_location_assignment PIN_69  -to ch_out[10]
+set_location_assignment PIN_70  -to ch_out[11]
+
+# Kanaly 12..15 -> zlacze 2x20 J8 (bank 3, VCC_IO = 3.3 V).
+# Zrodlo: Altera_10M08S_E144_eval_schematic_REV_1_0.pdf, arkusz 6 "BANK2, BANK3 BREAKOUT".
+# J8 jest na plytce niewlutowane (DNI) - trzeba dolutowac listwe 2x20 (raster 2.54 mm).
+set_location_assignment PIN_60  -to ch_out[12]
+set_location_assignment PIN_59  -to ch_out[13]
+set_location_assignment PIN_58  -to ch_out[14]
+set_location_assignment PIN_57  -to ch_out[15]
+# J8: pin 3 = DIFFIO_B16P (60), pin 5 = DIFFIO_B16N (59), pin 4 = DIFFIO_B14P (58), pin 6 = DIFFIO_B14N (57)
+
+# Zegar bazowy i SYNC -> J8 pin 7 = DIFFIO_B12P (56), J8 pin 9 = DIFFIO_B12N (55)
+set_location_assignment PIN_56  -to clk_base
+set_location_assignment PIN_55  -to sync_out
+set_instance_assignment -name SLEW_RATE 2 -to clk_base
+set_instance_assignment -name SLEW_RATE 2 -to sync_out
+
+# Ostatni rejestr kazdego wyjscia w komorce I/O -> minimalny rozrzut opoznien miedzy pinami
+set_instance_assignment -name FAST_OUTPUT_REGISTER ON -to ch_out[*]
+set_instance_assignment -name FAST_OUTPUT_REGISTER ON -to clk_base
+set_instance_assignment -name FAST_OUTPUT_REGISTER ON -to sync_out
+
+set_instance_assignment -name SLEW_RATE 2 -to ch_out[*]

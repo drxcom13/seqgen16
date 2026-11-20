@@ -1,0 +1,36 @@
+# --- Quartus / Platform Designer (generowane przez build_fpga.ps1)
+quartus/db/
+quartus/incremental_db/
+quartus/output_files/
+quartus/qdb/
+quartus/nios_sys/
+quartus/*.sopcinfo
+quartus/.qsys_edit/
+quartus/greybox_tmp/
+quartus/*.qws
+quartus/*.log
+quartus/*.rpt
+quartus/*.summary
+quartus/*.smsg
+quartus/*.jdi
+quartus/*.pin
+quartus/*.done
+quartus/c5_pin_model_dump.txt
+
+# --- firmware (generowane przez fw/build.ps1; quartus/onchip_ram.hex zostaje w repo)
+fw/build/
+
+# --- Questa
+sim/work/
+sim/transcript
+sim/*.wlf
+sim/modelsim.ini
+
+# --- Python
+__pycache__/
+*.pyc
+
+# --- system / edytory
+.vscode/
+Thumbs.db
+desktop.ini
