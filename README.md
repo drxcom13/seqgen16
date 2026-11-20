@@ -21,20 +21,16 @@
 
 ## Architektura
 
-```
- PC (Python: GUI / CLI)                       FPGA 10M08SAE144C8G @ 50 MHz
- ┌──────────────────┐   RS-232    ┌──────────────────────────────────────────────┐
- │ seqgen_gui.py    │  115200 8N1 │ Nios V/c ── Avalon-MM ──┬─ on-chip RAM 16 KB  │
- │ seqgen_cli.py    │◄──────────► │   (firmware fw/main.c)  ├─ UART RS-232        │
- │ seqgen.py (lib)  │  USB-UART   │                         └─ seq_gen16 ─┬ kanał 0 ─► ch_out[0]
- └──────────────────┘   3.3 V     │                            (VHDL)     ├ kanał 1 ─► ch_out[1]
-                                  │                                       ┆   …
-                                  │                                       └ kanał 15 ► ch_out[15]
-                                  └──────────────────────────────────────────────┘
-```
+![Schemat blokowy systemu SeqGen16](docs/schemat_blokowy.svg)
 
-Każdy kanał to osobny blok VHDL `seq_channel` z własną pamięcią M9K (1024 kroki × 1 bit),
-licznikiem okresu i rejestrowanym wyjściem cyfrowym 0/1 (3,3 V LVCMOS).
+*Schemat blokowy: [SVG](docs/schemat_blokowy.svg) · [PNG](docs/schemat_blokowy.png)*
+
+- **PC** – aplikacja (GUI / CLI) buduje sekwencje i wysyła je ramkami z CRC16 przez konwerter USB-UART.
+- **Nios V/c** w FPGA odbiera ramki przez UART, zapisuje konfigurację i kroki do generatora przez magistralę Avalon-MM.
+- **seq_gen16** – 16 identycznych bloków `seq_channel` (każdy z własną pamięcią M9K 1024 kroki × 1 bit,
+  sekwencerem i rejestrem wyjściowym), wspólna podstawa czasu 1 µs oraz generator BASE_CLK / SYNC.
+- **Wyjścia** – cyfrowe 0/1 (3,3 V LVCMOS) na złączach Arduino (CH0–CH11) i J8 (CH12–CH15, BASE_CLK, SYNC).
+- **USB-Blaster** (JTAG) służy tylko do wgrania obrazu FPGA (.sof / .pof).
 
 ## Spełnienie wymagań
 
