@@ -92,6 +92,7 @@ pc/            seqgen.py (biblioteka), seqgen_gui.py, seqgen_cli.py, patterns.py
                fw_sim.py (symulator RV32I firmware), test_seqgen.py, test_firmware.py
 sim/           tb_seq_gen16.vhd + run_sim.do / run_sim.ps1 (Questa) – testbench samosprawdzający
 examples/      demo_16ch.json
+pcb/seqgen16/  projekt KiCad własnej płytki (w toku): arkusze FPGA, USB, Power, Outputs
 docs/          schemat blokowy (SVG/PNG), zrzuty ekranu aplikacji
 CLAUDE.md      notatki dla asystenta AI (Claude Code) – stan projektu, decyzje, pułapki
 ```

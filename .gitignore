@@ -26,6 +26,16 @@ sim/transcript
 sim/*.wlf
 sim/modelsim.ini
 
+# --- KiCad (pcb/): kopie zapasowe, blokady (zawieraja nazwe komputera), ustawienia lokalne
+pcb/**/*-backups/
+pcb/**/*.lck
+pcb/**/~*.lck
+pcb/**/*.kicad_prl
+pcb/**/fp-info-cache
+pcb/**/_autosave-*
+pcb/**/*.bak
+pcb/**/production/
+
 # --- Python
 __pycache__/
 *.pyc

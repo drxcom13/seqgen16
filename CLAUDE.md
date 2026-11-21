@@ -35,6 +35,12 @@ Szczegóły techniczne użytkowe są w `README.md`, protokół w `PROTOCOL.md`.
 ## Środowisko (ten komputer użytkownika)
 
 - Quartus Prime Lite **25.1std**: `C:\altera_lite\25.1std` (Questa FSE w `questa_fse`).
+  Stan na 2026-11-21: tej instalacji już nie ma, jest **24.1std w `C:\intelFPGA_lite\24.1std`** →
+  `build_fpga.ps1 -Quartus C:\intelFPGA_lite\24.1std` (nie sprawdzone, czy 24.1 buduje projekt).
+- KiCad 10 – projekt własnej płytki `pcb/seqgen16` (arkusze FPGA/USB/Power/Outputs, w toku), U1 = **10M08SCE144**
+  (wariant bez ADC). Projekt Quartusa celowo zostaje na SA (płytka ewaluacyjna) – zmiana na
+  `10M08SCE144C8G` dopiero po zaprojektowaniu PCB (decyzja użytkownika). W `.gitignore`: backupy, `.lck`
+  (zawiera nazwę komputera), `.kicad_prl`.
 - Toolchain RISC-V (RiscFree): `C:\altera_lite\25.1std\riscfree\toolchain\riscv32-unknown-elf\bin` – `fw/build.ps1` go znajduje.
 - Licencja Questa: plik `*License*.dat` w `C:\altera_lite` (`sim/run_sim.ps1` szuka go sam, sprawdza że plik
   zawiera linie INCREMENT/FEATURE). Zmienna użytkownika `SALT_LICENSE_SERVER` mogła wskazywać stary pusty plik.
