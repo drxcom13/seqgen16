@@ -29,7 +29,7 @@
 - **Nios V/c** w FPGA odbiera ramki przez UART, zapisuje konfigurację i kroki do generatora przez magistralę Avalon-MM.
 - **seq_gen16** – 16 identycznych bloków `seq_channel` (każdy z własną pamięcią M9K 1024 kroki × 1 bit,
   sekwencerem i rejestrem wyjściowym), wspólna podstawa czasu 1 µs oraz generator BASE_CLK / SYNC.
-- **Wyjścia** – cyfrowe 0/1 (3,3 V LVCMOS) na złączach Arduino (CH0–CH11) i J8 (CH12–CH15, BASE_CLK, SYNC).
+- **Wyjścia** – cyfrowe 0/1 (3,3 V LVCMOS): CH0–CH15, BASE_CLK, SYNC (piny w sekcji *Podłączenie*).
 - **USB-Blaster** (JTAG) służy tylko do wgrania obrazu FPGA (.sof / .pof).
 
 ## Spełnienie wymagań
@@ -47,7 +47,7 @@
 kanał przyjmuje zadany poziom spoczynkowy (idle 0/1); po ostatnim powtórzeniu może trzymać ostatni
 krok albo wrócić do poziomu idle.
 
-**Wyjścia synchronizujące (J8):**
+**Wyjścia synchronizujące:**
 - **BASE_CLK** – zegar bazowy o wypełnieniu 50 %, okres ustawiany z PC (2 µs … 2,1 s, domyślnie 1 ms).
   Nadaje tylko wtedy, gdy pracuje dowolny kanał (w spoczynku = 0). Każdy START go restartuje i zaczyna od zbocza
   narastającego, więc jego zbocza wypadają na granicach kroków. Przy ponownym starcie w trakcie pracy BASE_CLK
@@ -67,9 +67,12 @@ channel*) nie są ze sobą zsynchronizowane; START przesuwa też jednorazowo (< 
 
 | Zasób | Użycie |
 |---|---|
-| Logic elements | 4 555 / 8 064 (56 %) |
+| Logic elements | 4 547 / 8 064 (56 %) |
 | Pamięć | 165 888 / 387 072 bit (43 %) – 16 × M9K na sekwencje + 16 KB RAM Nios |
-| Timing @ 50 MHz | setup slack +6,2 ns, hold +0,3 ns (Slow 85 °C) |
+| Timing @ 50 MHz | setup slack +7,7 ns, hold +0,29 ns (Slow 85 °C) |
+
+Wyniki dla pinów własnej płytki (10M08SAE144C8G, 2026-11-22). Wszystkie 18 wyjść (CH0–15, BASE_CLK, SYNC) ma
+ostatni rejestr w komórce I/O (`FAST_OUTPUT_REGISTER`).
 
 Wariant z Nios V/m (debuger JTAG, `build_fpga.ps1 -Cpu niosv_m`) też jest dostępny – zajmuje ok. 1,5–2 tys. LE więcej.
 
@@ -121,23 +124,25 @@ CLAUDE.md      notatki dla asystenta AI (Claude Code) – stan projektu, decyzje
 | Sygnał | Pin FPGA | Złącze |
 |---|---|---|
 | clk_50 | 27 | oscylator 50 MHz (**sprawdź ze schematem**) |
-| uart_rxd (← PC TX) | 74 | Arduino D0 |
-| uart_txd (→ PC RX) | 75 | Arduino D1 |
-| ch_out[0..5] | 76, 77, 79, 81, 84, 86 | Arduino D2…D7 |
-| ch_out[6..11] | 62, 64, 65, 66, 69, 70 | Arduino D8…D13 |
-| ch_out[12], ch_out[13] | 60, 59 | J8 pin 3, 5 (DIFFIO_B16P/N) |
-| ch_out[14], ch_out[15] | 58, 57 | J8 pin 4, 6 (DIFFIO_B14P/N) |
-| clk_base (BASE_CLK) | 56 | J8 pin 7 (DIFFIO_B12P) |
-| sync_out (SYNC) | 55 | J8 pin 9 (DIFFIO_B12N) |
-| led_n[0..4] | 132, 134, 135, 140, 141 | D1 heartbeat, D2 dowolny kanał pracuje, D3–D5 = kanał 0–2 |
+Przypisanie pinów dla **własnej płytki** (`pcb/seqgen16`). Nazwy w kolumnie „Sieć” to etykiety globalne na
+schemacie (`fpga.kicad_sch`); przy zmianie pinów aktualizuj schemat i `quartus/seqgen16.qsf` razem.
 
-Płytka nie ma transceivera RS-232 – użyj konwertera USB-UART 3,3 V (FT232/CP2102) albo MAX3232 do
-prawdziwego portu COM.
+| Sygnał | Pin FPGA | Sieć (KiCad) |
+|---|---|---|
+| clk_50 | 27 (CLK0p) | oscylator 50 MHz |
+| uart_txd (→ RX mostka USB) | 70 | TXD |
+| uart_rxd (← TX mostka USB) | 69 | RXD |
+| ch_out[0..7] | 41, 38, 43, 39, 46, 44, 47, 45 | CH0…CH7 |
+| ch_out[8..15] | 55, 50, 56, 52, 59, 57, 60, 58 | CH8…CH15 |
+| sync_out (SYNC) | 28 (CLK1n) | SYNC |
+| clk_base (BASE_CLK) | 29 (CLK1p) | BASE_CLK |
+| led_n[0..4] | 132, 134, 135, 140, 141 | jeszcze nie na schemacie; D1 heartbeat, D2 dowolny kanał pracuje, D3–D5 = kanał 0–2 |
 
-Piny J8 pochodzą ze schematu `Altera_10M08S_E144_eval_schematic_REV_1_0.pdf` (arkusz 6, BANK2/BANK3 BREAKOUT);
-bank 3 jest zasilany z VCC_IO (3,3 V). **Złącze J8 jest na płytce niewlutowane (DNI)** – trzeba dolutować listwę
-2×20 (2,54 mm). Przypisanie J8.3–J8.6 odczytane jest jednoznacznie; J8.7 i J8.9 (BASE_CLK, SYNC) potwierdź przed
-podłączeniem omomierzem (pin FPGA 56 / 55 ↔ J8.7 / J8.9) lub z sitodruku.
+Kanały są w banku 3, UART w banku 4, SYNC/BASE_CLK w banku 2 (wszystkie VCCIO = 3,3 V).
+
+**Płytka MAX 10 10M08 Evaluation Kit:** poprzednie przypisanie (UART na Arduino D0/D1, CH0–11 na Arduino D2–D13,
+CH12–15 / BASE_CLK / SYNC na J8) jest w historii git – `git show 22c6dcf:quartus/seqgen16.qsf` i
+`git show 22c6dcf:README.md`.
 
 ## Obsługa aplikacji PC (interfejs po angielsku)
 

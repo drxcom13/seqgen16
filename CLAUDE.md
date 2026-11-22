@@ -35,11 +35,15 @@ Szczegóły techniczne użytkowe są w `README.md`, protokół w `PROTOCOL.md`.
 ## Środowisko (ten komputer użytkownika)
 
 - Quartus Prime Lite **25.1std**: `C:\altera_lite\25.1std` (Questa FSE w `questa_fse`).
-  Stan na 2026-11-21: tej instalacji już nie ma, jest **24.1std w `C:\intelFPGA_lite\24.1std`** →
-  `build_fpga.ps1 -Quartus C:\intelFPGA_lite\24.1std` (nie sprawdzone, czy 24.1 buduje projekt).
-- KiCad 10 – projekt własnej płytki `pcb/seqgen16` (arkusze FPGA/USB/Power/Outputs, w toku), U1 = **10M08SCE144**
-  (wariant bez ADC). Projekt Quartusa celowo zostaje na SA (płytka ewaluacyjna) – zmiana na
-  `10M08SCE144C8G` dopiero po zaprojektowaniu PCB (decyzja użytkownika). W `.gitignore`: backupy, `.lck`
+  (2026-11-21/22 instalacje się zmieniały: chwilowo był tylko 24.1std w `C:\intelFPGA_lite`, potem odinstalowany.
+  Zanim zbudujesz, sprawdź, czy `quartus_sh.exe` istnieje; inną instalację podaj przez `-Quartus`.)
+- KiCad 10 (`C:\Program Files\KiCad\10.0\bin\kicad-cli.exe` – eksport netlisty do weryfikacji). Projekt własnej
+  płytki `pcb/seqgen16` (arkusze FPGA/USB/Power/Outputs, w toku; USB = FT2232HPQ). U1 = **10M08SCE144**.
+  **Piny `.qsf` = etykiety globalne na U1 w `fpga.kicad_sch`** (TXD 70, RXD 69, CH0..15, SYNC 28, BASE_CLK 29) –
+  zmieniaj oba miejsca razem. Przypisanie dla płytki ewaluacyjnej: `git show 22c6dcf:quartus/seqgen16.qsf`.
+  `DEVICE` w Quartusie celowo zostaje SA – **uwaga: SC (Compact) prawdopodobnie nie ma trybu inicjalizacji RAM
+  z flash** (`SINGLE IMAGE WITH ERAM`), więc z `.pof` firmware by nie wystartował; zalecane SF lub SA
+  (przedyskutowane z użytkownikiem, decyzja po zaprojektowaniu PCB). W `.gitignore`: backupy, `.lck`
   (zawiera nazwę komputera), `.kicad_prl`.
 - Toolchain RISC-V (RiscFree): `C:\altera_lite\25.1std\riscfree\toolchain\riscv32-unknown-elf\bin` – `fw/build.ps1` go znajduje.
 - Licencja Questa: plik `*License*.dat` w `C:\altera_lite` (`sim/run_sim.ps1` szuka go sam, sprawdza że plik
@@ -57,6 +61,10 @@ Szczegóły techniczne użytkowe są w `README.md`, protokół w `PROTOCOL.md`.
 
 - **Quartus: limit 260 znaków ścieżki** – generowane pliki `nios_sys/synthesis/submodules/...` są długie.
   Projekt trzymaj w krótkiej ścieżce. Nie generuj w katalogach typu AppData/Temp z długimi nazwami.
+- **Quartus w folderze OneDrive** (`...\OneDrive\Projekty pc\seqgen16`): `quartus_sh --flow compile` kończy się
+  `Error (297009): Can't open project -- you do not have permission to write ... database directory`, choć
+  qsys-generate działa. Obejście (2026-11-22): skopiuj `quartus/` (z wygenerowanym `nios_sys/`) do krótkiej ścieżki
+  poza OneDrive, np. `C:\PROJ\sg16_build\quartus`, tam `quartus_sh --flow compile seqgen16`, potem usuń kopię.
 - **PowerShell 5.1**: `$ErrorActionPreference = "Stop"` + narzędzia Quartusa piszące info na stderr = fałszywy błąd.
   Skrypty używają `Continue` i sprawdzają `$LASTEXITCODE`.
 - PowerShell: przecinek w argumencie (`-Wl,--gc-sections`) dzieli go na tablicę – trzeba cytować.
@@ -96,9 +104,8 @@ TEST PASSED, czysty klon z GitHuba buduje się i przechodzi testy, README ze sch
    Brakowało konwertera USB-UART (na PC tylko porty Bluetooth COM7/COM8). Kolejność: wgrać aktualny `.sof`,
    podłączyć USB-UART (TX→D0, RX→D1, GND), `seqgen_cli.py ports`, `ping`, upload `examples/demo_16ch.json`,
    start, sprawdzić oscyloskopem; potem ewentualnie `.pof` do flash (trwałe – zapytaj użytkownika).
-2. **J8 pin 7 / pin 9 (BASE_CLK = FPGA 56, SYNC = FPGA 55)** – mapowanie odczytane z tekstu schematu z
-   niepewnością co do kolejności; J8.3–6 (CH12–15 = 60, 59, 58, 57) pewne. Użytkownik ma sprawdzić omomierzem.
-   Złącze J8 jest niewlutowane (DNI).
+2. ~~J8 pin 7 / 9~~ – nieaktualne: piny przeniesione pod własną płytkę (2026-11-22). Test na płytce ewaluacyjnej
+   wymaga przywrócenia starego przypisania z commita 22c6dcf.
 3. Pin zegara 27 i LED-y 132–141 – z user guide / projektu społeczności; potwierdzi pierwsze uruchomienie (D1 miga).
 4. Możliwe rozszerzenia omawiane z użytkownikiem: krok poniżej 1 µs (licznik w taktach 50 MHz, 26-bit, ewentualnie
    PLL) – nie zrobione; opis repozytorium na GitHubie ma literówki („sequance”, „base on”) – ustawia go użytkownik.
