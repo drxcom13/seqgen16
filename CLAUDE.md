@@ -100,7 +100,13 @@ Zrobione i zweryfikowane: kompilacja FPGA (56 % LE, timing +6,2 ns), firmware 2.
 TEST PASSED, czysty klon z GitHuba buduje się i przechodzi testy, README ze schematem blokowym i zrzutami.
 
 **Otwarte / do zrobienia:**
-1. **Test na sprzęcie nie był wykonany.** Płytka była raz zaprogramowana (.sof, przed poprawką BASE_CLK).
+0. **2026-11-22: do flash płytki ewaluacyjnej wgrany `.pof` z pinoutem WŁASNEJ płytki** (commit 20b6f6f) –
+   UART na Arduino D12/D13 (piny 69/70, który jest który – sprawdzić), CH0–15/SYNC/BASE_CLK na J8. Programowanie
+   i weryfikacja OK. **`ping` przez COM12 (konwerter CH343) działa** – fw 2.1, 16 kanałów, start z flash OK.
+   Upload `examples/demo_16ch.json` OK. **Użytkownik potwierdził: aplikacja działa z płytką.**
+   pyserial doinstalowany (Python 3.13 ze Sklepu MS).
+1. ~~Test na sprzęcie~~ – zrobiony 2026-11-22 (pkt 0). Poniżej pierwotny opis, dla historii.
+   Płytka była raz zaprogramowana (.sof, przed poprawką BASE_CLK).
    Brakowało konwertera USB-UART (na PC tylko porty Bluetooth COM7/COM8). Kolejność: wgrać aktualny `.sof`,
    podłączyć USB-UART (TX→D0, RX→D1, GND), `seqgen_cli.py ports`, `ping`, upload `examples/demo_16ch.json`,
    start, sprawdzić oscyloskopem; potem ewentualnie `.pof` do flash (trwałe – zapytaj użytkownika).
