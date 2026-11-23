@@ -44,3 +44,4 @@ __pycache__/
 .vscode/
 Thumbs.db
 desktop.ini
+pcb/**/.history/

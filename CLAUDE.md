@@ -54,6 +54,13 @@ Szczegóły techniczne użytkowe są w `README.md`, protokół w `PROTOCOL.md`.
   Arkusze były generowane skryptami Pythona (poza repo) – same etykiety na końcach pinów, bez przewodów.
   **Styl schematów (wymóg użytkownika 2026-11-23): bliskie elementy łączyć przewodami, etykiet używać oszczędnie**
   (etykieta globalna tam, gdzie sieć schodzi na inny arkusz; lokalna tylko do odległego bloku na tym samym arkuszu).
+  **Wzorzec układu = arkusz Config (poprawiony ręcznie przez użytkownika):** format A4, notatki u góry, bloki
+  funkcjonalne w rzędach, elementy 2-pinowe pionowo, +3V3 symbolem u góry, GND symbolem na dole (osobny symbol przy
+  każdym elemencie), krótkie przewody, opisy Ref/Value po prawej. FPGA i Config układał użytkownik – nie ruszać.
+  USB, Power, Outputs są rysowane od nowa skryptami `pcb/tools/layouts/layout_*.py` (biblioteka `pcb/tools/sch_build.py`:
+  przesuwa części, kasuje wszystkie przewody/etykiety/symbole +3V3/GND i rysuje je według skryptu; dzieli przewody
+  w punktach połączeń i dodaje kropki). Uwaga: KiCad odwraca justify pól dla części obróconych o 90/270 – sch_build
+  to uwzględnia. `sch_dump.py` wypisuje piny części z sieciami. Skrypty uruchamiać na kopii, potem net_compare.
   Narzędzia w `pcb/tools/`: `sch_labels_to_wires.py` (bliskie punkty tej samej sieci → przewody, router A* po siatce
   1,27 mm, zostawia jedną etykietę/symbol zasilania na grupę, obraca etykiety leżące na przewodach),
   `relayout_outputs.py` (arkusz Outputs: kanał w rzędzie bufor → R → węzeł z etykietą → TVS → szyna GND),
