@@ -38,13 +38,16 @@ Szczegóły techniczne użytkowe są w `README.md`, protokół w `PROTOCOL.md`.
   (2026-11-21/22 instalacje się zmieniały: chwilowo był tylko 24.1std w `C:\intelFPGA_lite`, potem odinstalowany.
   Zanim zbudujesz, sprawdź, czy `quartus_sh.exe` istnieje; inną instalację podaj przez `-Quartus`.)
 - KiCad 10 (`C:\Program Files\KiCad\10.0\bin\kicad-cli.exe` – eksport netlisty do weryfikacji). Projekt własnej
-  płytki `pcb/seqgen16` (arkusze FPGA/USB/Power/Outputs, w toku; USB = FT2232HPQ). U1 = **10M08SCE144**.
+  płytki `pcb/seqgen16`: arkusze FPGA, USB (FT232RNL, USB-C), Power (EP5388QI jak na płytce ewaluacyjnej),
+  Outputs (TXU0104/TXU0102 na 5 V, 33R + TSD05C, złącza J3 2x16, J4/J5 2x2), Config (oscylator 50 MHz, LED 132/134,
+  RESET_N 121, zworki nCONFIG/BOOT_SEL, JTAG 2x5). U1 = **10M08SAE144** (decyzja użytkownika 2026-11-23; zgodne z
+  `DEVICE` w `.qsf`). KiCad nie ma symbolu SA – jest w bibliotece projektu `seqgen16.kicad_sym` (kopia SC, piny
+  3/4/5 = ANAIN1/REFGND/ADC_VREF; ADC nieużywany: ANAIN1, REFGND → GND, ADC_VREF NC).
   **Piny `.qsf` = etykiety globalne na U1 w `fpga.kicad_sch`** (TXD 70, RXD 69, CH0..15, SYNC 28, BASE_CLK 29) –
   zmieniaj oba miejsca razem. Przypisanie dla płytki ewaluacyjnej: `git show 22c6dcf:quartus/seqgen16.qsf`.
-  `DEVICE` w Quartusie celowo zostaje SA – **uwaga: SC (Compact) prawdopodobnie nie ma trybu inicjalizacji RAM
-  z flash** (`SINGLE IMAGE WITH ERAM`), więc z `.pof` firmware by nie wystartował; zalecane SF lub SA
-  (przedyskutowane z użytkownikiem, decyzja po zaprojektowaniu PCB). W `.gitignore`: backupy, `.lck`
-  (zawiera nazwę komputera), `.kicad_prl`.
+  Arkusze generowane skryptami Pythona (poza repo) – etykiety na końcach pinów, bez przewodów; ERC: tylko
+  nieużywane I/O U1. **RESET_N (pin 121) nie jest jeszcze obsłużony w projekcie FPGA.** SC (Compact) odrzucony:
+  prawdopodobnie bez inicjalizacji RAM z flash. W `.gitignore`: backupy, `.lck` (zawiera nazwę komputera), `.kicad_prl`.
 - Toolchain RISC-V (RiscFree): `C:\altera_lite\25.1std\riscfree\toolchain\riscv32-unknown-elf\bin` – `fw/build.ps1` go znajduje.
 - Licencja Questa: plik `*License*.dat` w `C:\altera_lite` (`sim/run_sim.ps1` szuka go sam, sprawdza że plik
   zawiera linie INCREMENT/FEATURE). Zmienna użytkownika `SALT_LICENSE_SERVER` mogła wskazywać stary pusty plik.

@@ -259,7 +259,7 @@
 				)
 				(embedded_fonts no)
 			)
-		(symbol "FPGA_Altera_MAX10:10M08SCE144"
+		(symbol "seqgen16:10M08SAE144"
 			(exclude_from_sim no)
 			(in_bom yes)
 			(on_board yes)
@@ -275,7 +275,7 @@
 					)
 				)
 			)
-			(property "Value" "10M08SCE144"
+			(property "Value" "10M08SAE144"
 				(at 22.352 34.29 0)
 				(show_name no)
 				(do_not_autoplace no)
@@ -307,7 +307,7 @@
 					)
 				)
 			)
-			(property "Description" "Intel/Altera MAX 10 FPGA, single supply / compact features, 8000LE, LQFP-144 (Intel EQFP-144)"
+			(property "Description" "MAX 10 10M08SA, 144-pin EQFP, single supply 3.3 V, with ADC"
 				(at 0 0 0)
 				(show_name no)
 				(do_not_autoplace no)
@@ -361,7 +361,7 @@
 					)
 				)
 			)
-			(symbol "10M08SCE144_1_1"
+			(symbol "10M08SAE144_1_1"
 				(rectangle
 					(start -21.59 6.35)
 					(end 21.59 -7.62)
@@ -526,7 +526,7 @@
 					)
 				)
 			)
-			(symbol "10M08SCE144_2_1"
+			(symbol "10M08SAE144_2_1"
 				(rectangle
 					(start -21.59 8.89)
 					(end 21.59 -7.62)
@@ -727,7 +727,7 @@
 					)
 				)
 			)
-			(symbol "10M08SCE144_3_1"
+			(symbol "10M08SAE144_3_1"
 				(rectangle
 					(start -21.59 6.35)
 					(end 21.59 -7.62)
@@ -874,7 +874,7 @@
 					)
 				)
 			)
-			(symbol "10M08SCE144_4_1"
+			(symbol "10M08SAE144_4_1"
 				(rectangle
 					(start -21.59 13.97)
 					(end 21.59 -12.7)
@@ -1219,7 +1219,7 @@
 					)
 				)
 			)
-			(symbol "10M08SCE144_5_1"
+			(symbol "10M08SAE144_5_1"
 				(rectangle
 					(start -21.59 6.35)
 					(end 21.59 -7.62)
@@ -1366,7 +1366,7 @@
 					)
 				)
 			)
-			(symbol "10M08SCE144_6_1"
+			(symbol "10M08SAE144_6_1"
 				(rectangle
 					(start -21.59 8.89)
 					(end 21.59 -10.16)
@@ -1603,7 +1603,7 @@
 					)
 				)
 			)
-			(symbol "10M08SCE144_7_1"
+			(symbol "10M08SAE144_7_1"
 				(rectangle
 					(start -21.59 11.43)
 					(end 21.59 -12.7)
@@ -1894,7 +1894,7 @@
 					)
 				)
 			)
-			(symbol "10M08SCE144_8_1"
+			(symbol "10M08SAE144_8_1"
 				(rectangle
 					(start -21.59 6.35)
 					(end 21.59 -7.62)
@@ -2041,7 +2041,7 @@
 					)
 				)
 			)
-			(symbol "10M08SCE144_9_1"
+			(symbol "10M08SAE144_9_1"
 				(rectangle
 					(start -21.59 13.97)
 					(end 21.59 -12.7)
@@ -2368,7 +2368,7 @@
 					)
 				)
 			)
-			(symbol "10M08SCE144_10_1"
+			(symbol "10M08SAE144_10_1"
 				(rectangle
 					(start -21.59 31.75)
 					(end 21.59 -31.75)
@@ -2424,10 +2424,10 @@
 						)
 					)
 				)
-				(pin power_in line
+				(pin input line
 					(at 15.24 -35.56 90)
 					(length 3.81)
-					(name "GND"
+					(name "ANAIN1"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -2445,7 +2445,7 @@
 				(pin power_in line
 					(at 12.7 -35.56 90)
 					(length 3.81)
-					(name "GND"
+					(name "REFGND"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -2460,10 +2460,10 @@
 						)
 					)
 				)
-				(pin power_in line
+				(pin input line
 					(at 25.4 5.08 180)
 					(length 3.81)
-					(name "VCCA3"
+					(name "ADC_VREF"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -3185,7 +3185,7 @@
 		)
 	)
 	(symbol
-		(lib_id "FPGA_Altera_MAX10:10M08SCE144")
+		(lib_id "seqgen16:10M08SAE144")
 		(at 133.35 138.43 0)
 		(unit 8)
 		(body_style 1)
@@ -3206,7 +3206,7 @@
 				)
 			)
 		)
-		(property "Value" "10M08SCE144"
+		(property "Value" "10M08SAE144"
 			(at 133.35 129.54 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -3705,7 +3705,7 @@
 		)
 	)
 	(symbol
-		(lib_id "FPGA_Altera_MAX10:10M08SCE144")
+		(lib_id "seqgen16:10M08SAE144")
 		(at 137.16 73.66 0)
 		(unit 4)
 		(body_style 1)
@@ -3726,7 +3726,7 @@
 				)
 			)
 		)
-		(property "Value" "10M08SCE144"
+		(property "Value" "10M08SAE144"
 			(at 137.16 57.15 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -4225,7 +4225,7 @@
 		)
 	)
 	(symbol
-		(lib_id "FPGA_Altera_MAX10:10M08SCE144")
+		(lib_id "seqgen16:10M08SAE144")
 		(at 135.89 113.03 0)
 		(unit 6)
 		(body_style 1)
@@ -4246,7 +4246,7 @@
 				)
 			)
 		)
-		(property "Value" "10M08SCE144"
+		(property "Value" "10M08SAE144"
 			(at 135.89 101.6 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -4745,7 +4745,7 @@
 		)
 	)
 	(symbol
-		(lib_id "FPGA_Altera_MAX10:10M08SCE144")
+		(lib_id "seqgen16:10M08SAE144")
 		(at 64.77 72.39 0)
 		(unit 3)
 		(body_style 1)
@@ -4766,7 +4766,7 @@
 				)
 			)
 		)
-		(property "Value" "10M08SCE144"
+		(property "Value" "10M08SAE144"
 			(at 64.77 63.5 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -5265,7 +5265,7 @@
 		)
 	)
 	(symbol
-		(lib_id "FPGA_Altera_MAX10:10M08SCE144")
+		(lib_id "seqgen16:10M08SAE144")
 		(at 220.98 44.45 0)
 		(unit 9)
 		(body_style 1)
@@ -5286,7 +5286,7 @@
 				)
 			)
 		)
-		(property "Value" "10M08SCE144"
+		(property "Value" "10M08SAE144"
 			(at 220.98 27.94 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -5785,7 +5785,7 @@
 		)
 	)
 	(symbol
-		(lib_id "FPGA_Altera_MAX10:10M08SCE144")
+		(lib_id "seqgen16:10M08SAE144")
 		(at 133.35 41.91 0)
 		(unit 2)
 		(body_style 1)
@@ -5806,7 +5806,7 @@
 				)
 			)
 		)
-		(property "Value" "10M08SCE144"
+		(property "Value" "10M08SAE144"
 			(at 133.35 30.48 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -6305,7 +6305,7 @@
 		)
 	)
 	(symbol
-		(lib_id "FPGA_Altera_MAX10:10M08SCE144")
+		(lib_id "seqgen16:10M08SAE144")
 		(at 222.25 101.6 0)
 		(unit 10)
 		(body_style 1)
@@ -6326,7 +6326,7 @@
 				)
 			)
 		)
-		(property "Value" "10M08SCE144"
+		(property "Value" "10M08SAE144"
 			(at 252.73 82.4798 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -6825,7 +6825,7 @@
 		)
 	)
 	(symbol
-		(lib_id "FPGA_Altera_MAX10:10M08SCE144")
+		(lib_id "seqgen16:10M08SAE144")
 		(at 71.12 149.86 0)
 		(unit 7)
 		(body_style 1)
@@ -6846,7 +6846,7 @@
 				)
 			)
 		)
-		(property "Value" "10M08SCE144"
+		(property "Value" "10M08SAE144"
 			(at 71.12 135.89 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -7345,7 +7345,7 @@
 		)
 	)
 	(symbol
-		(lib_id "FPGA_Altera_MAX10:10M08SCE144")
+		(lib_id "seqgen16:10M08SAE144")
 		(at 64.77 39.37 0)
 		(unit 1)
 		(body_style 1)
@@ -7366,7 +7366,7 @@
 				)
 			)
 		)
-		(property "Value" "10M08SCE144"
+		(property "Value" "10M08SAE144"
 			(at 64.77 30.48 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -7865,7 +7865,7 @@
 		)
 	)
 	(symbol
-		(lib_id "FPGA_Altera_MAX10:10M08SCE144")
+		(lib_id "seqgen16:10M08SAE144")
 		(at 71.12 110.49 0)
 		(unit 5)
 		(body_style 1)
@@ -7886,7 +7886,7 @@
 				)
 			)
 		)
-		(property "Value" "10M08SCE144"
+		(property "Value" "10M08SAE144"
 			(at 71.12 101.6 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -9022,27 +9022,9 @@
 			)
 		)
 	)
-	(global_label "VCCA_3V3"
-		(shape passive)
-		(at 247.65 96.52 0)
-		(fields_autoplaced yes)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		(uuid "57995129-2055-4449-9817-04e3a4c8d26d")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 247.65 96.52 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-				(hide yes)
-			)
-		)
+	(no_connect
+		(at 247.65 96.52)
+		(uuid "e9b6261d-44b7-46c4-b4aa-3f605e34d007")
 	)
 	(symbol
 		(lib_id "power:+3V3")

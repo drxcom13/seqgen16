@@ -9272,7 +9272,7 @@
 		)
 		(uuid "a935de94-d92e-43bd-ae71-222888832fa7")
 	)
-	(text "VCCIO1A..8 = +3V3 bezposrednio; VCCA1..6 = +3V3 przez ferryt FB2; VCC_ONE = +3V3 przez ferryt FB3 (uklad SC/SA: jedno napiecie 3,3 V)."
+	(text "VCCIO1A..8 = +3V3 bezposrednio; VCCA1..6 = +3V3 przez ferryt FB2; VCC_ONE = +3V3 przez ferryt FB3 (uklad SA: jedno napiecie 3,3 V)."
 		(exclude_from_sim no)
 		(at 25.4 27.94 0)
 		(effects
@@ -9305,7 +9305,7 @@
 		)
 		(uuid "3acc0872-f54e-48cb-9bde-9bc7ad71665d")
 	)
-	(text "Pominieto obwody ADC z plytki ewaluacyjnej (VREF 2,5 V MCP1525, ANAIN) - U1 = 10M08SC bez ADC."
+	(text "U1 = 10M08SAE144, ADC nieuzywany: ANAIN1 i REFGND do GND, ADC_VREF NC (wytyczne MAX 10). Bez MCP1525."
 		(exclude_from_sim no)
 		(at 25.4 39.37 0)
 		(effects
