@@ -75,8 +75,8 @@
   <text x="560" y="584" text-anchor="middle" class="t">Oscylator 50 MHz (pin 27)</text>
   <text x="560" y="602" text-anchor="middle" class="s">+ power-on reset → cały system</text>
   <rect x="455" y="640" width="210" height="60" rx="6" fill="#eeeeee" stroke="#777"/>
-  <text x="560" y="664" text-anchor="middle" class="t">LED D1–D5</text>
-  <text x="560" y="682" text-anchor="middle" class="s">heartbeat, RUN, kanały 0–2</text>
+  <text x="560" y="664" text-anchor="middle" class="t">LED1, LED2</text>
+  <text x="560" y="682" text-anchor="middle" class="s">heartbeat (132), kanał pracuje (134)</text>
 
   <!-- Avalon bus -->
   <rect x="690" y="90" width="36" height="430" rx="4" fill="#dfe6ee" stroke="#5a6b7d"/>

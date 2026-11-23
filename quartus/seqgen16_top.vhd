@@ -72,10 +72,11 @@ begin
             uart_txd          => uart_txd
         );
 
-    led_n(0) <= not hb(24);                                       -- heartbeat ~1.5 Hz
-    led_n(1) <= '0' when running /= x"0000" else '1';             -- dowolny kanal pracuje
-    led_n(2) <= not running(0);
-    led_n(3) <= not running(1);
-    led_n(4) <= not running(2);
+    -- Na plytce pcb/seqgen16 sa tylko LED1 (pin 132) i LED2 (pin 134), aktywne zerem.
+    led_n(0) <= not hb(24);                                       -- LED1: heartbeat ~1.5 Hz
+    led_n(1) <= '0' when running /= x"0000" else '1';             -- LED2: dowolny kanal pracuje
+    -- led_n(2..4) (piny 135/140/141): na plytce niepodlaczone - na stale wylaczone
+    -- (stan '1' gasi tez diody D3..D5 na plytce ewaluacyjnej).
+    led_n(4 downto 2) <= (others => '1');
 
 end architecture;

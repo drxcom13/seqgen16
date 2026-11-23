@@ -31,7 +31,8 @@ set_location_assignment PIN_121 -to reset_n
 set_instance_assignment -name WEAK_PULL_UP_RESISTOR ON -to reset_n
 set_global_assignment -name ENABLE_DEVICE_WIDE_RESET OFF
 
-# LED (aktywne zerem) - jak na plytce ewaluacyjnej, na wlasnej plytce jeszcze nie zaprojektowane
+# LED (aktywne zerem). Na wlasnej plytce: LED1 = led_n[0] (pin 132, siec LED1_N), LED2 = led_n[1]
+# (pin 134, LED2_N) - arkusz Config. led_n[2..4] (135/140/141) na plytce niepodlaczone, w FPGA na stale = 1 (wylaczone).
 set_location_assignment PIN_132 -to led_n[0]
 set_location_assignment PIN_134 -to led_n[1]
 set_location_assignment PIN_135 -to led_n[2]

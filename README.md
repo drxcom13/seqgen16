@@ -134,7 +134,9 @@ schemacie (`fpga.kicad_sch`); przy zmianie pinów aktualizuj schemat i `quartus/
 | ch_out[8..15] | 55, 50, 56, 52, 59, 57, 60, 58 | CH8…CH15 |
 | sync_out (SYNC) | 28 (CLK1n) | SYNC |
 | clk_base (BASE_CLK) | 29 (CLK1p) | BASE_CLK |
-| led_n[0..4] | 132, 134, 135, 140, 141 | jeszcze nie na schemacie; D1 heartbeat, D2 dowolny kanał pracuje, D3–D5 = kanał 0–2 |
+| led_n[0] | 132 | LED1_N – LED1: heartbeat (~1,5 Hz) |
+| led_n[1] | 134 | LED2_N – LED2: pracuje dowolny kanał |
+| led_n[2..4] | 135, 140, 141 | na płytce niepodłączone – w FPGA na stałe wyłączone (stan 1) |
 
 Kanały są w banku 3, UART w banku 4, SYNC/BASE_CLK w banku 2 (wszystkie VCCIO = 3,3 V).
 
