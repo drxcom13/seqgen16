@@ -45,8 +45,17 @@ Szczegóły techniczne użytkowe są w `README.md`, protokół w `PROTOCOL.md`.
   3/4/5 = ANAIN1/REFGND/ADC_VREF; ADC nieużywany: ANAIN1, REFGND → GND, ADC_VREF NC).
   **Piny `.qsf` = etykiety globalne na U1 w `fpga.kicad_sch`** (TXD 70, RXD 69, CH0..15, SYNC 28, BASE_CLK 29) –
   zmieniaj oba miejsca razem. Przypisanie dla płytki ewaluacyjnej: `git show 22c6dcf:quartus/seqgen16.qsf`.
-  Arkusze generowane skryptami Pythona (poza repo) – etykiety na końcach pinów, bez przewodów; ERC: tylko
-  nieużywane I/O U1. **RESET_N (pin 121) nie jest jeszcze obsłużony w projekcie FPGA.** SC (Compact) odrzucony:
+  Arkusze były generowane skryptami Pythona (poza repo) – same etykiety na końcach pinów, bez przewodów.
+  **Styl schematów (wymóg użytkownika 2026-11-23): bliskie elementy łączyć przewodami, etykiet używać oszczędnie**
+  (etykieta globalna tam, gdzie sieć schodzi na inny arkusz; lokalna tylko do odległego bloku na tym samym arkuszu).
+  Narzędzia w `pcb/tools/`: `sch_labels_to_wires.py` (bliskie punkty tej samej sieci → przewody, router A* po siatce
+  1,27 mm, zostawia jedną etykietę/symbol zasilania na grupę, obraca etykiety leżące na przewodach),
+  `relayout_outputs.py` (arkusz Outputs: kanał w rzędzie bufor → R → węzeł z etykietą → TVS → szyna GND),
+  `net_compare.py` (porównanie netlist po zbiorach pinów). Procedura: netlista przed (`kicad-cli sch export netlist
+  --format kicadsexpr`), narzędzie, netlista po, `net_compare.py` musi dać 0 różnic, ERC bez nowych błędów.
+  Pozostałe niedoskonałości z generatora: nachodzące teksty pól (np. GND przy JP1/JP2, +3V3 przy OE buforów),
+  rozstrzelone rozmieszczenie na Power (sieć EN). ERC: 69 × pin_not_connected (nieużywane I/O U1) – oczekiwane.
+  RESET_N (pin 121) obsłużony w FPGA od 2026-11-23 (`reset_ctrl.vhd`). SC (Compact) odrzucony:
   prawdopodobnie bez inicjalizacji RAM z flash. W `.gitignore`: backupy, `.lck` (zawiera nazwę komputera), `.kicad_prl`.
 - Toolchain RISC-V (RiscFree): `C:\altera_lite\25.1std\riscfree\toolchain\riscv32-unknown-elf\bin` – `fw/build.ps1` go znajduje.
 - Licencja Questa: plik `*License*.dat` w `C:\altera_lite` (`sim/run_sim.ps1` szuka go sam, sprawdza że plik
