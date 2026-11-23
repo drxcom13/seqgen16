@@ -43,8 +43,9 @@ Szczegóły techniczne użytkowe są w `README.md`, protokół w `PROTOCOL.md`.
   karta SLVSGM1D; piny 1 VIN, 2 GND, 3 MODE, 4 FB, 5 VOS, 6 VOUT, 7 PG, 8 SW, 9 EN; VFB 0,5 V; dzielnik
   R35 1,43M / R36 255k → 3,304 V (wartości policzone, nie z karty; R36 musi być 200k–600k); MODE = GND (auto
   PSM/PWM); EN z VBUS przez R23/C17; PG i SW niepodłączone; CIN C16 4,7u, COUT C18 47u ≥ 12 µF efektywnie.
-  **Brak footprintu** – w bibliotekach KiCad nie ma RDS0009A, trzeba narysować wg rysunku TI lub pobrać model CAD
-  z ti.com. Symbol w `seqgen16.kicad_sym`.),
+  Footprint `seqgen16:TI_RDS0009A_QFN-FCMOD-9_3x3mm` (biblioteka projektu `seqgen16.pretty` + `fp-lib-table`,
+  2026-11-23): współrzędne padów wyciągnięte z wektorów rysunku TI 4228326/D (str. 38 karty, skala 25X), pady 6/8
+  wg otworu maski (SMD), pozostałe NSMD z maską +0,05 mm, pasta 6/8 −12 %. Symbol w `seqgen16.kicad_sym`.),
   Outputs (TXU0104/TXU0102 na 5 V, 33R + TSD05C, złącza J3 2x16, J4/J5 2x2), Config (oscylator 50 MHz, LED 132/134,
   RESET_N 121, zworki nCONFIG/BOOT_SEL, JTAG 2x5). U1 = **10M08SAE144** (decyzja użytkownika 2026-11-23; zgodne z
   `DEVICE` w `.qsf`). KiCad nie ma symbolu SA – jest w bibliotece projektu `seqgen16.kicad_sym` (kopia SC, piny

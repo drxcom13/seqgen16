@@ -1,0 +1,4 @@
+(fp_lib_table
+	(version 7)
+	(lib (name "seqgen16")(type "KiCad")(uri "${KIPRJMOD}/seqgen16.pretty")(options "")(descr "SeqGen16 project footprints"))
+)

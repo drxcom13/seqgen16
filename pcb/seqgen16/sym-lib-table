@@ -5,6 +5,6 @@
 		(type "KiCad")
 		(uri "${KIPRJMOD}/seqgen16.kicad_sym")
 		(options "")
-		(descr "SeqGen16 - wlasne symbole (TXU0104, TXU0102, EP5388QI)")
+		(descr "SeqGen16 - wlasne symbole (TXU0104, TXU0102, TPSM828302, 10M08SAE144)")
 	)
 )
