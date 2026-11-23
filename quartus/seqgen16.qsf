@@ -5,6 +5,7 @@ set_global_assignment -name PROJECT_OUTPUT_DIRECTORY output_files
 set_global_assignment -name ORIGINAL_QUARTUS_VERSION 25.1
 set_global_assignment -name LAST_QUARTUS_VERSION "25.1std.0 SP0.02std Lite Edition"
 
+set_global_assignment -name VHDL_FILE reset_ctrl.vhd
 set_global_assignment -name VHDL_FILE seqgen16_top.vhd
 set_global_assignment -name QIP_FILE nios_sys/synthesis/nios_sys.qip
 set_global_assignment -name SDC_FILE seqgen16.sdc
@@ -22,6 +23,13 @@ set_global_assignment -name STRATIX_DEVICE_IO_STANDARD "3.3-V LVCMOS"
 # Poprzednie przypisanie dla MAX 10 10M08 Evaluation Kit: historia git (commit 22c6dcf).
 # =============================================================================
 set_location_assignment PIN_27  -to clk_50
+
+# Przycisk RESET (SW1 na arkuszu Config, pull-up R29 1k), aktywny stanem niskim.
+# Pin 121 = DEV_CLRn uzyty jako zwykle wejscie: device-wide reset musi byc wylaczony.
+# Wewnetrzny pull-up - na plytce ewaluacyjnej pin moze byc niepodlaczony.
+set_location_assignment PIN_121 -to reset_n
+set_instance_assignment -name WEAK_PULL_UP_RESISTOR ON -to reset_n
+set_global_assignment -name ENABLE_DEVICE_WIDE_RESET OFF
 
 # LED (aktywne zerem) - jak na plytce ewaluacyjnej, na wlasnej plytce jeszcze nie zaprojektowane
 set_location_assignment PIN_132 -to led_n[0]

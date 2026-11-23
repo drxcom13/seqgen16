@@ -121,15 +121,13 @@ CLAUDE.md      notatki dla asystenta AI (Claude Code) – stan projektu, decyzje
 
 ## Podłączenie
 
-| Sygnał | Pin FPGA | Złącze |
-|---|---|---|
-| clk_50 | 27 | oscylator 50 MHz (**sprawdź ze schematem**) |
 Przypisanie pinów dla **własnej płytki** (`pcb/seqgen16`). Nazwy w kolumnie „Sieć” to etykiety globalne na
 schemacie (`fpga.kicad_sch`); przy zmianie pinów aktualizuj schemat i `quartus/seqgen16.qsf` razem.
 
 | Sygnał | Pin FPGA | Sieć (KiCad) |
 |---|---|---|
 | clk_50 | 27 (CLK0p) | oscylator 50 MHz |
+| reset_n (przycisk RESET, aktywny 0) | 121 (DEV_CLRn jako zwykłe wejście) | RESET_N |
 | uart_txd (→ RX mostka USB) | 70 | TXD |
 | uart_rxd (← TX mostka USB) | 69 | RXD |
 | ch_out[0..7] | 41, 38, 43, 39, 46, 44, 47, 45 | CH0…CH7 |
@@ -139,6 +137,12 @@ schemacie (`fpga.kicad_sch`); przy zmianie pinów aktualizuj schemat i `quartus/
 | led_n[0..4] | 132, 134, 135, 140, 141 | jeszcze nie na schemacie; D1 heartbeat, D2 dowolny kanał pracuje, D3–D5 = kanał 0–2 |
 
 Kanały są w banku 3, UART w banku 4, SYNC/BASE_CLK w banku 2 (wszystkie VCCIO = 3,3 V).
+
+**Reset:** wciśnięcie przycisku RESET (stan niski na `reset_n`) resetuje cały system – Nios (firmware startuje
+od początku), UART i generator (kanały zatrzymane, wyjścia 0, konfiguracja domyślna, BASE_CLK/SYNC = 0).
+Wejście jest synchronizowane, a reset trwa jeszcze 2,6 ms po zwolnieniu przycisku (odbicia styku są
+filtrowane). Pin ma włączony wewnętrzny pull-up, więc niepodłączony nie blokuje pracy (np. na płytce
+ewaluacyjnej). Logika: `quartus/reset_ctrl.vhd`, test: `sim/tb_reset_ctrl.vhd`.
 
 **Płytka MAX 10 10M08 Evaluation Kit:** poprzednie przypisanie (UART na Arduino D0/D1, CH0–11 na Arduino D2–D13,
 CH12–15 / BASE_CLK / SYNC na J8) jest w historii git – `git show 22c6dcf:quartus/seqgen16.qsf` i
