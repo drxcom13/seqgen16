@@ -168,6 +168,7 @@ class Sheet:
         self.noconn = []
         self.wires = []
         self.pin_lines = []      # (connection point, inner end)
+        self.junctions = set()   # existing junction points
         self.texts = []          # boxes of visible symbol field texts
         self._read_instances()
 
@@ -223,6 +224,9 @@ class Sheet:
             elif t == "no_connect":
                 at = node.find("at")
                 self.noconn.append((num(at[1]), num(at[2])))
+            elif t == "junction":
+                at = node.find("at")
+                self.junctions.add(key((num(at[1]), num(at[2]))))
             elif t == "wire":
                 p = node.find("pts").findall("xy")
                 self.wires.append(((num(p[0][1]), num(p[0][2])), (num(p[1][1]), num(p[1][2]))))
@@ -637,7 +641,7 @@ def process(text, dist):
     for p in pinset:
         if p in deg:
             deg[p] += 1
-    junctions = [p for p, d in deg.items() if d >= 3]
+    junctions = [p for p, d in deg.items() if d >= 3 and p not in sh.junctions]
     # split wires whose interior is touched by another wire's end (explicit T connections)
     allw = new_wires
     changed = True
@@ -648,7 +652,7 @@ def process(text, dist):
             for p in ends:
                 if seg_contains(a, b, p, interior_only=True):
                     allw[idx:idx + 1] = [(a, p), (p, b)]
-                    if p not in junctions:
+                    if p not in junctions and p not in sh.junctions:
                         junctions.append(p)
                     changed = True
                     break

@@ -38,7 +38,13 @@ Szczegóły techniczne użytkowe są w `README.md`, protokół w `PROTOCOL.md`.
   (2026-11-21/22 instalacje się zmieniały: chwilowo był tylko 24.1std w `C:\intelFPGA_lite`, potem odinstalowany.
   Zanim zbudujesz, sprawdź, czy `quartus_sh.exe` istnieje; inną instalację podaj przez `-Quartus`.)
 - KiCad 10 (`C:\Program Files\KiCad\10.0\bin\kicad-cli.exe` – eksport netlisty do weryfikacji). Projekt własnej
-  płytki `pcb/seqgen16`: arkusze FPGA, USB (FT232RNL, USB-C), Power (EP5388QI jak na płytce ewaluacyjnej),
+  płytki `pcb/seqgen16`: arkusze FPGA, USB (FT232RNL, USB-C), Power (**U9 = TI TPSM828302** od 2026-11-23, zamiast
+  EP5388QI: moduł buck 2 A z cewką, wariant TPSM828302ARDSR = QFN-FCMOD-9 3×3 mm RDS0009A – jedyny aktywny;
+  karta SLVSGM1D; piny 1 VIN, 2 GND, 3 MODE, 4 FB, 5 VOS, 6 VOUT, 7 PG, 8 SW, 9 EN; VFB 0,5 V; dzielnik
+  R35 1,43M / R36 255k → 3,304 V (wartości policzone, nie z karty; R36 musi być 200k–600k); MODE = GND (auto
+  PSM/PWM); EN z VBUS przez R23/C17; PG i SW niepodłączone; CIN C16 4,7u, COUT C18 47u ≥ 12 µF efektywnie.
+  **Brak footprintu** – w bibliotekach KiCad nie ma RDS0009A, trzeba narysować wg rysunku TI lub pobrać model CAD
+  z ti.com. Symbol w `seqgen16.kicad_sym`.),
   Outputs (TXU0104/TXU0102 na 5 V, 33R + TSD05C, złącza J3 2x16, J4/J5 2x2), Config (oscylator 50 MHz, LED 132/134,
   RESET_N 121, zworki nCONFIG/BOOT_SEL, JTAG 2x5). U1 = **10M08SAE144** (decyzja użytkownika 2026-11-23; zgodne z
   `DEVICE` w `.qsf`). KiCad nie ma symbolu SA – jest w bibliotece projektu `seqgen16.kicad_sym` (kopia SC, piny
