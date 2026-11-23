@@ -54,6 +54,9 @@ Szczegóły techniczne użytkowe są w `README.md`, protokół w `PROTOCOL.md`.
   Arkusze były generowane skryptami Pythona (poza repo) – same etykiety na końcach pinów, bez przewodów.
   **Styl schematów (wymóg użytkownika 2026-11-23): bliskie elementy łączyć przewodami, etykiet używać oszczędnie**
   (etykieta globalna tam, gdzie sieć schodzi na inny arkusz; lokalna tylko do odległego bloku na tym samym arkuszu).
+  **Wszystkie opisy na schematach i PCB (notatki, tytuły arkuszy, teksty na płytce) po angielsku** (wymóg 2026-11-23).
+  PCB: `pcb/tools/make_board.py` (80x80 mm, 4 warstwy, 4x M3, wyśrodkowana na A4; wyjścia J3/J4/J5 prawa krawędź,
+  USB-C lewa; strefy rozmieszczenia na Dwgs.User). Działa tylko na płytce bez innych footprintów.
   **Wzorzec układu = arkusz Config (poprawiony ręcznie przez użytkownika):** format A4, notatki u góry, bloki
   funkcjonalne w rzędach, elementy 2-pinowe pionowo, +3V3 symbolem u góry, GND symbolem na dole (osobny symbol przy
   każdym elemencie), krótkie przewody, opisy Ref/Value po prawej. FPGA i Config układał użytkownik – nie ruszać.

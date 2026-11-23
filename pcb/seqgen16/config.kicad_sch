@@ -5,7 +5,7 @@
 	(uuid "c8e4a2b6-71d3-4f0e-8b5a-6d2e9c1f3a47")
 	(paper "A4")
 	(title_block
-		(title "SeqGen16 - zegar, konfiguracja, JTAG")
+		(title "SeqGen16 - clock, configuration, JTAG")
 	)
 	(lib_symbols
 		(symbol "Connector_Generic:Conn_02x05_Odd_Even"
@@ -1667,7 +1667,7 @@
 			(embedded_fonts no)
 		)
 	)
-	(text "Zegar, konfiguracja i JTAG - wg MAX 10 10M08 Evaluation Kit."
+	(text "Clock, configuration and JTAG - based on the MAX 10 10M08 Evaluation Kit."
 		(exclude_from_sim no)
 		(at 25.4 22.86 0)
 		(effects
@@ -1678,7 +1678,7 @@
 		)
 		(uuid "4733280e-6a2b-499f-913e-e9c99499d38b")
 	)
-	(text "nCONFIG / nSTATUS / CONF_DONE: pull-up 10k. JP1 zalozona = FPGA w resecie, zdjeta = konfiguracja z CFM."
+	(text "nCONFIG / nSTATUS / CONF_DONE: 10k pull-up. JP1 fitted = FPGA held in reset, open = configuration from CFM."
 		(exclude_from_sim no)
 		(at 25.4 73.66 0)
 		(effects
@@ -1689,7 +1689,7 @@
 		)
 		(uuid "7dacbbdc-718d-4004-9710-c957dffa4942")
 	)
-	(text "X1 CB3LV-3C-50M0000 -> CLK_50M (pin 27, CLK0p). Footprint 7x5 mm - sprawdzic z land pattern CTS."
+	(text "X1 CB3LV-3C-50M0000 -> CLK_50M (pin 27, CLK0p). Footprint 7x5 mm - check against the CTS land pattern."
 		(exclude_from_sim no)
 		(at 25.4 27.94 0)
 		(effects
@@ -1700,7 +1700,7 @@
 		)
 		(uuid "b924d492-f5e9-4190-b6c1-24a3f6977fe3")
 	)
-	(text "LED1 = pin 132, LED2 = pin 134 (aktywne zerem, jak led_n[0..1]). LED zasilania - D21 na arkuszu Power."
+	(text "LED1 = pin 132, LED2 = pin 134 (active low, led_n[0..1]). Power LED - D21 on the Power sheet."
 		(exclude_from_sim no)
 		(at 170.18 73.66 0)
 		(effects
@@ -1711,7 +1711,7 @@
 		)
 		(uuid "cd7b7426-c4f4-479a-adb6-ce8b35c9b101")
 	)
-	(text "JTAG: TCK 1k do GND, TMS/TDI 10k do +3V3 (wytyczne MAX 10). Pin 4 = VCCIO 3,3 V."
+	(text "JTAG: TCK 1k to GND, TMS/TDI 10k to +3V3 (MAX 10 guidelines). Pin 4 = VCCIO 3.3 V."
 		(exclude_from_sim no)
 		(at 25.4 137.16 0)
 		(effects
@@ -1722,7 +1722,7 @@
 		)
 		(uuid "e397a1ab-3eb2-40be-af1e-e52850efc736")
 	)
-	(text "BOOT_SEL = pin 126 (CONFIG_SEL). RESET_N = pin 121 (DEV_CLRn) - wymaga wejscia w projekcie FPGA."
+	(text "BOOT_SEL = pin 126 (CONFIG_SEL). RESET_N = pin 121 (DEV_CLRn) - reset_n input of the FPGA design."
 		(exclude_from_sim no)
 		(at 25.4 77.47 0)
 		(effects

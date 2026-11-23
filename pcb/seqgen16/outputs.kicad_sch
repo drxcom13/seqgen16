@@ -5,7 +5,7 @@
 	(uuid "4f76cd24-c827-4bac-8f4f-e754cd2133d4")
 	(paper "A4")
 	(title_block
-		(title "SeqGen16 - bufory wyjsciowe")
+		(title "SeqGen16 - output buffers")
 	)
 	(lib_symbols
 		(symbol "Connector_Generic:Conn_02x02_Odd_Even"
@@ -2522,7 +2522,7 @@
 			(embedded_fonts no)
 		)
 	)
-	(text "Bufory wyjsciowe: TXU0104 (CH0..CH15), TXU0102 (BASE_CLK, SYNC). Kierunek staly A->B."
+	(text "Output buffers: TXU0104 (CH0..CH15), TXU0102 (BASE_CLK, SYNC). Fixed direction A->B."
 		(exclude_from_sim no)
 		(at 25.4 22.86 0)
 		(effects
@@ -2533,7 +2533,7 @@
 		)
 		(uuid "0fa389ff-5bf1-4b6d-90cb-44d6393628d6")
 	)
-	(text "Sieci OUT_CH0..15 -> J3 (2x16), OUT_CLK -> J4 (2x2), OUT_SYNC -> J5 (2x2); co drugi pin = GND."
+	(text "Nets OUT_CH0..15 -> J3 (2x16), OUT_CLK -> J4 (2x2), OUT_SYNC -> J5 (2x2); every second pin = GND."
 		(exclude_from_sim no)
 		(at 25.4 39.37 0)
 		(effects
@@ -2544,7 +2544,7 @@
 		)
 		(uuid "544275d5-dd70-408a-aa65-c5c1c85b8a9f")
 	)
-	(text "VCCA = +3V3 (poziomy FPGA), VCCB = VBUS (5 V) -> wyjscia 5 V CMOS. OE na stale = 1 (+3V3)."
+	(text "VCCA = +3V3 (FPGA levels), VCCB = VBUS (5 V) -> 5 V CMOS outputs. OE tied high (+3V3)."
 		(exclude_from_sim no)
 		(at 25.4 27.94 0)
 		(effects
@@ -2555,7 +2555,7 @@
 		)
 		(uuid "8bfe2200-2da5-4248-bb03-ad0238882c7b")
 	)
-	(text "J3: nieparzyste = OUT_CH0..15, parzyste = GND. J4/J5: 1,3 = sygnal, 2,4 = GND (zlacza katowe 2,54 mm)."
+	(text "J3: odd pins = OUT_CH0..15, even pins = GND. J4/J5: 1,3 = signal, 2,4 = GND (right-angle headers, 2.54 mm)."
 		(exclude_from_sim no)
 		(at 25.4 43.18 0)
 		(effects
@@ -2566,7 +2566,7 @@
 		)
 		(uuid "abfacec4-7f23-4a87-8593-23d65fce1d0f")
 	)
-	(text "Kazde wyjscie: 33R szeregowo + TVS TSD05C (dwukierunkowa, VRWM 5,5 V, SOD-323) do GND przy zlaczu."
+	(text "Each output: 33R series + TVS TSD05C (bidirectional, VRWM 5.5 V, SOD-323) to GND at the connector."
 		(exclude_from_sim no)
 		(at 25.4 31.75 0)
 		(effects
@@ -2577,7 +2577,7 @@
 		)
 		(uuid "e32d9bfb-73f7-4f05-bf0e-d328aec16b16")
 	)
-	(text "Wejscia i OE TXU maja wewnetrzne pull-down 5M -> podczas konfiguracji FPGA wyjscia ida w stan zgodny z pinami FPGA."
+	(text "TXU inputs and OE have internal 5M pull-downs -> during FPGA configuration the outputs follow the FPGA pins."
 		(exclude_from_sim no)
 		(at 25.4 35.56 0)
 		(effects

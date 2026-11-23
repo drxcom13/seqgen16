@@ -95,7 +95,7 @@ def build(path):
           dict(vcca="3", vccb="7", oe="6", gnd="2", nc=()), loop_dx=30.48)
 
     # --- connectors
-    b.move_text("J3: nieparzyste", 25.4, 43.18)
+    b.move_text("J3: odd pins", 25.4, 43.18)
     P = b.pin
     b.place("J3", 233.68, 132.08)
     for k in range(16):

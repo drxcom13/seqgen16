@@ -5,7 +5,7 @@
 	(uuid "632aede4-e3f7-45cb-9884-4c6bea2fef8a")
 	(paper "A4")
 	(title_block
-		(title "SeqGen16 - zasilanie")
+		(title "SeqGen16 - power supply")
 	)
 	(lib_symbols
 		(symbol "Device:C"
@@ -1658,7 +1658,7 @@
 			(embedded_fonts no)
 		)
 	)
-	(text "U1 = 10M08SAE144, ADC nieuzywany: ANAIN1 i REFGND do GND, ADC_VREF NC (wytyczne MAX 10). Bez MCP1525."
+	(text "U1 = 10M08SAE144, ADC not used: ANAIN1 and REFGND to GND, ADC_VREF NC (MAX 10 guidelines). No MCP1525."
 		(exclude_from_sim no)
 		(at 25.4 39.37 0)
 		(effects
@@ -1669,7 +1669,7 @@
 		)
 		(uuid "12f9778a-7144-4404-8805-e39b99cae7bd")
 	)
-	(text "TPSM828302 (SLVSGM1D): CIN >= 4,7u X7R przy VIN (C16), COUT >= 12u efektywnie (C18 47u). R36 200k..600k (1%). MODE = GND (auto PSM/PWM). EN z VBUS przez R23/C17. PG, SW niepodlaczone."
+	(text "TPSM828302 (SLVSGM1D): CIN >= 4.7u X7R at VIN (C16), COUT >= 12u effective (C18 47u). R36 200k..600k (1%). MODE = GND (auto PSM/PWM). EN from VBUS via R23/C17. PG, SW not connected."
 		(exclude_from_sim no)
 		(at 25.4 31.75 0)
 		(effects
@@ -1680,7 +1680,7 @@
 		)
 		(uuid "1e927eae-8d6c-409e-bfed-f1fde38388ef")
 	)
-	(text "Footprint TPSM828302ARDSR (QFN-FCMOD-9 3x3 mm, RDS0009A) - do narysowania wg land pattern TI (pady 6 VOUT i 8 SW duze), SW tylko maly pad."
+	(text "Footprint TPSM828302ARDSR (QFN-FCMOD-9 3x3 mm, RDS0009A) - to be drawn from the TI land pattern (large pads 6 VOUT and 8 SW), SW small pad only."
 		(exclude_from_sim no)
 		(at 25.4 35.56 0)
 		(effects
@@ -1691,7 +1691,7 @@
 		)
 		(uuid "3acc0872-f54e-48cb-9bde-9bc7ad71665d")
 	)
-	(text "VCCIO1A..8 = +3V3 bezposrednio; VCCA1..6 = +3V3 przez ferryt FB2; VCC_ONE = +3V3 przez ferryt FB3 (uklad SA: jedno napiecie 3,3 V)."
+	(text "VCCIO1A..8 = +3V3 directly; VCCA1..6 = +3V3 via ferrite FB2; VCC_ONE = +3V3 via ferrite FB3 (SA device: single 3.3 V supply)."
 		(exclude_from_sim no)
 		(at 25.4 27.94 0)
 		(effects
@@ -1702,7 +1702,7 @@
 		)
 		(uuid "63ba7d39-fadc-47c5-a933-0f2e88ef2ba7")
 	)
-	(text "VCCA / VCC_ONE / VCCIO - kondensatory umiescic przy pinach FPGA."
+	(text "VCCA / VCC_ONE / VCCIO - place the capacitors close to the FPGA pins."
 		(exclude_from_sim no)
 		(at 25.4 96.52 0)
 		(effects
@@ -1713,7 +1713,7 @@
 		)
 		(uuid "65acc24a-ce6e-4cf3-b1d4-e3f9fa4fd06d")
 	)
-	(text "Zasilanie: VBUS 5 V -> TI TPSM828302 (modul buck 2 A z cewka, 2 MHz) -> +3V3. VOUT = 0,5 V x (1 + R35/R36) = 3,30 V."
+	(text "Power: VBUS 5 V -> TI TPSM828302 (2 A buck module with inductor, 2 MHz) -> +3V3. VOUT = 0.5 V x (1 + R35/R36) = 3.30 V."
 		(exclude_from_sim no)
 		(at 25.4 22.86 0)
 		(effects

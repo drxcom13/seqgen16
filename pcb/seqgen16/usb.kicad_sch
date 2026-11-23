@@ -2783,7 +2783,7 @@
 			(embedded_fonts no)
 		)
 	)
-	(text "USB-C jako urzadzenie: CC1/CC2 przez 5,1k do GND. ESD USBLC6-2SC6 blisko zlacza."
+	(text "USB-C as device: CC1/CC2 via 5.1k to GND. ESD USBLC6-2SC6 close to the connector."
 		(exclude_from_sim no)
 		(at 25.4 34.29 0)
 		(effects
@@ -2794,7 +2794,7 @@
 		)
 		(uuid "8cc50d1b-be9d-4072-8aca-2fd32d35fd30")
 	)
-	(text "CBUS0/CBUS1 domyslnie TXLED#/RXLED# (EEPROM FT232). RESET#, OSCI/OSCO wolne - wewnetrzny oscylator."
+	(text "CBUS0/CBUS1 default TXLED#/RXLED# (FT232 EEPROM). RESET#, OSCI/OSCO unused - internal oscillator."
 		(exclude_from_sim no)
 		(at 25.4 38.1 0)
 		(effects
@@ -2805,7 +2805,7 @@
 		)
 		(uuid "945c0ff8-f00e-4581-b475-f12de0ede4f7")
 	)
-	(text "TXD/RXD - nazwy od strony FPGA: RXD = wyjscie TXD FT232 -> FPGA pin 69, TXD = FPGA pin 70 -> wejscie RXD FT232."
+	(text "TXD/RXD - named from the FPGA side: RXD = FT232 TXD output -> FPGA pin 69, TXD = FPGA pin 70 -> FT232 RXD input."
 		(exclude_from_sim no)
 		(at 25.4 30.48 0)
 		(effects
@@ -2816,7 +2816,7 @@
 		)
 		(uuid "c54b347c-8214-4836-a31f-fa0aa3054ac9")
 	)
-	(text "USB-UART: FT232RNL (symbol FT232RL, ten sam pinout SSOP-28). VCCIO = 3,3 V -> poziomy zgodne z FPGA."
+	(text "USB-UART: FT232RNL (FT232RL symbol, same SSOP-28 pinout). VCCIO = 3.3 V -> FPGA-compatible levels."
 		(exclude_from_sim no)
 		(at 25.4 25.4 0)
 		(effects
