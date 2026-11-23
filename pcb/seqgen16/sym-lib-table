@@ -1,0 +1,10 @@
+(sym_lib_table
+	(version 7)
+	(lib
+		(name "seqgen16")
+		(type "KiCad")
+		(uri "${KIPRJMOD}/seqgen16.kicad_sym")
+		(options "")
+		(descr "SeqGen16 - wlasne symbole (TXU0104, TXU0102, EP5388QI)")
+	)
+)
