@@ -5,7 +5,7 @@ import sys
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
 from sch_build import Builder  # noqa: E402
 
-RAIL = 73.66            # VBUS -> FB1 -> FT_VCC
+RAIL = 73.66            # VBUS_USB -> FB1 -> VBUS
 
 
 def build(path):
@@ -44,22 +44,35 @@ def build(path):
         b.label("USB_DP", (x, 109.22))
         b.label("USB_DM", (x, 111.76))
 
-    # --- VBUS -> FB1 -> FT_VCC
-    b.wire(P("J1", "A4"), (58.42, 86.36), (58.42, RAIL), (97.79, RAIL))
-    b.glabel("VBUS", (58.42, RAIL), "left")
+    # --- VBUS_USB (connector side) -> FB1 -> VBUS (whole board: FT232, buck, TXU VCCB)
+    b.wire(P("J1", "A4"), (58.42, 86.36), (58.42, RAIL), (76.2, RAIL), (97.79, RAIL))
+    b.label("VBUS_USB", (66.04, RAIL))
+    b.place("D24", 76.2, RAIL + 3.81, 270, {"Reference": (78.74, 76.2, "left"),    # TVS SMF5.0A, cathode up
+                                             "Value": (78.74, 78.74, "left")})
+    b.power("GND", P("D24", "2"))
     b.wire(P("U3", "5"), (88.9, RAIL))
     b.place("#FLG004", 91.44, RAIL, 0, {"Value": (91.44, RAIL - 5.08, None)})
-    b.place("FB1", 101.6, RAIL, 90)
+    b.place("FB1", 101.6, RAIL, 90)                                          # TDK MPZ2012S601AT000 (0805, 2 A)
     b.place("C1", 116.84, RAIL + 3.81)
     b.place("C2", 127.0, RAIL + 3.81)
     b.place("#FLG012", 137.16, RAIL, 0, {"Value": (137.16, RAIL - 5.08, None)})
-    b.wire(P("FB1", "2"), (144.78, RAIL))
+    # --- U10 TPS22917 load switch: VBUS_FT (FT232) -> soft-started VBUS (whole board); ON = VIN, C45 CT -> VIN
+    b.place("U10", 167.64, 60.96, fields={"Reference": (167.64, 52.07, None), "Value": (167.64, 54.61, None)})
+    b.place("C45", 153.67, 60.96, 90, {"Reference": (153.67, 53.34, None), "Value": (153.67, 55.88, None)})
+    b.wire(P("FB1", "2"), (144.78, RAIL), (149.86, RAIL), (149.86, 63.5), (149.86, 60.96), (149.86, 58.42),
+           P("U10", "1"))
+    b.wire((149.86, 63.5), P("U10", "3"))
+    b.label("VBUS_FT", (149.86, 71.12), "up")
+    b.power("GND", P("U10", "2"))
+    b.nc(P("U10", "5"))                                                     # QOD unused
+    b.wire(P("U10", "6"), (187.96, 58.42))
+    b.glabel("VBUS", (187.96, 58.42), "right")
     b.power("GND", P("C1", "2"))
     b.power("GND", P("C2", "2"))
 
     # --- FT232RNL
     b.place("U2", 142.24, 119.38)
-    b.wire((144.78, RAIL), P("U2", "20"))                                   # VCC = FT_VCC
+    b.wire((144.78, RAIL), P("U2", "20"))                                   # VCC = VBUS
     b.wire(P("U2", "4"), (139.7, 81.28), (132.08, 81.28))                   # VCCIO = +3V3
     b.power("+3V3", (139.7, 81.28))
     b.place("C3", 132.08, 85.09)

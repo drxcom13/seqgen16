@@ -38,7 +38,11 @@ Szczegóły techniczne użytkowe są w `README.md`, protokół w `PROTOCOL.md`.
   (2026-11-21/22 instalacje się zmieniały: chwilowo był tylko 24.1std w `C:\intelFPGA_lite`, potem odinstalowany.
   Zanim zbudujesz, sprawdź, czy `quartus_sh.exe` istnieje; inną instalację podaj przez `-Quartus`.)
 - KiCad 10 (`C:\Program Files\KiCad\10.0\bin\kicad-cli.exe` – eksport netlisty do weryfikacji). Projekt własnej
-  płytki `pcb/seqgen16`: arkusze FPGA, USB (FT232RNL, USB-C), Power (**U9 = TI TPSM828302** od 2026-11-23, zamiast
+  płytki `pcb/seqgen16`: arkusze FPGA, USB (FT232RNL, USB-C; od 2026-11-24 cała płytka za FB1 = TDK MPZ2012S601AT000
+  0805 2 A: strona złącza = sieć `VBUS_USB` (TVS D24 SMF5.0A, symbol Diode:SM6T6V8A, pin 1 = katoda, D_SMF),
+  za koralikiem `VBUS_FT` (FT232 C1/C2, ~4,8 µF – limit USB 10 µF),
+  dalej klucz U10 TPS22917DBV (ON = VIN, CT C45 2,2n do VIN → narastanie ~5 ms, inrush ~55 mA, QOD NC) → `VBUS`
+  dla reszty płytki (~52 µF: C15 47u, C16, VCCB TXU)), Power (**U9 = TI TPSM828302** od 2026-11-23, zamiast
   EP5388QI: moduł buck 2 A z cewką, wariant TPSM828302ARDSR = QFN-FCMOD-9 3×3 mm RDS0009A – jedyny aktywny;
   karta SLVSGM1D; piny 1 VIN, 2 GND, 3 MODE, 4 FB, 5 VOS, 6 VOUT, 7 PG, 8 SW, 9 EN; VFB 0,5 V; dzielnik
   R35 1,43M / R36 255k → 3,304 V (wartości policzone, nie z karty; R36 musi być 200k–600k); MODE = GND (auto
