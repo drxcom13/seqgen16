@@ -54,7 +54,8 @@ Szczegóły techniczne użytkowe są w `README.md`, protokół w `PROTOCOL.md`.
   (U6, U7, U8), z VBUS; VOUT = 0,55 V × (1 + Rtop/Rbot), Rtop 20k, Rbot 8,87k (1,8 V); dodatkowe rezystory do GND
   przez piny FPGA open-drain (stan niski = aktywny): `VSEL_2V5_N` 15,4k (2,5 V, pin 62), `VSEL_3V3_N` 7,32k (3,3 V,
   pin 64), oba → 4,0 V, `VSEL_5V_N` 2,94k (pin 65, nastawa 5,53 V → dropout ≈ VBUS − 40 mV). EN obu LDO = `VCCB_EN`
-  (R48 100k do +3V3), Q1 2N7002 zwiera EN do GND, gdy `VCCB_OFF` (pin 61) wysoki – słabe pull-upy FPGA podczas
+  (R48 100k do +3V3), Q1 2N7002 zwiera EN do GND, gdy `VCCB_OFF` (pin 61) wysoki (R49 100k do +3V3 na bramce – stan wyłączony też
+  przy niesterowanym pinie FPGA) – słabe pull-upy FPGA podczas
   konfiguracji → LDO wyłączone, wyjścia TXU w Hi-Z (Ioff). Bez klucza 5 V równolegle: TLV758P ma rozładowanie
   wyjścia 95 Ω przy EN = 0. Moc w LDO przy 1,8 V i 20 mA/wyjście: ~0,5–0,65 W na układ (RθJA 80 °C/W, WSON).
   Sterowanie (2026-11-24): rejestr VCCB (0x0009) w `seq_gen16` – każdy zapis wyłącza LDO na 2,5 ms (rozładowanie),
