@@ -2104,7 +2104,7 @@
 			)
 			(embedded_fonts no)
 		)
-		(symbol "Power_Management:TPS22917DBV"
+	(symbol "Power_Management:TPS22917DBV"
 			(exclude_from_sim no)
 			(in_bom yes)
 			(on_board yes)
@@ -2272,7 +2272,7 @@
 					)
 				)
 				(pin open_collector line
-					(at 10.16 -2.54 180)
+					(at 10.16 0 180)
 					(length 2.54)
 					(name "QOD"
 						(effects
@@ -3293,7 +3293,7 @@
 		(uuid "057f3b92-ff59-43aa-86b1-b5307b28f62a")
 	)
 	(no_connect
-		(at 177.8 63.5)
+		(at 177.8 60.96)
 		(uuid "0ff42fb3-0aea-40e4-88ef-aadd00a903d2")
 	)
 	(no_connect
