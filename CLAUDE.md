@@ -77,6 +77,14 @@ Szczegóły techniczne użytkowe są w `README.md`, protokół w `PROTOCOL.md`.
   **Wszystkie opisy na schematach i PCB (notatki, tytuły arkuszy, teksty na płytce) po angielsku** (wymóg 2026-11-23).
   PCB: `pcb/tools/make_board.py` (80x80 mm, 4 warstwy, 4x M3, wyśrodkowana na A4; wyjścia J3/J4/J5 prawa krawędź,
   USB-C lewa; strefy rozmieszczenia na Dwgs.User). Działa tylko na płytce bez innych footprintów.
+  `pcb/tools/place_parts.py` (2026-11-24, Python KiCada): footprinty z netlisty (kicadsexpr) na płytkę z sieciami,
+  ścieżką symbolu (pod „Update PCB from Schematic”) i polami; rozmieszczenie w tabeli `PLACE` (mm od lewego górnego
+  rogu płytki). Nowe UUID przez `Duplicate(False)` (kopia FOOTPRINT() powiela UUID biblioteki → DRC myli elementy).
+  U1 obrócony o 90° (piny 37–72 do buforów). Od 2026-11-24 CH0..15 = piny 60, 59, 58, 57, 56, 55, 52, 50, 47, 46,
+  45, 44, 43, 41, 39, 38 (malejąco = CH0 u góry, jak na J3) – w `.qsf`, etykietach U1 i README; obraz FPGA
+  (.sof/.pof) przebudowany 2026-11-24 (we flash płytki ewaluacyjnej jest jeszcze .pof ze starymi pinami). Odsprzęganie U1 na spodzie.
+  Reguły: klasa Default ścieżka 0,3 mm, przelotka 0,6/0,4 mm, odstęp 0,2 mm; U8 (VSSOP 0,5 mm) lokalny odstęp
+  0,15 mm na footprincie – `kicad-cli pcb drc` nie wczytuje `.kicad_dru`.
   **Wzorzec układu = arkusz Config (poprawiony ręcznie przez użytkownika):** format A4, notatki u góry, bloki
   funkcjonalne w rzędach, elementy 2-pinowe pionowo, +3V3 symbolem u góry, GND symbolem na dole (osobny symbol przy
   każdym elemencie), krótkie przewody, opisy Ref/Value po prawej. FPGA i Config układał użytkownik – nie ruszać.
@@ -144,7 +152,7 @@ cd pc ; python -m unittest test_seqgen test_firmware -v   # 40 testów; test_fir
 
 ## Stan na koniec ostatniej sesji
 
-Zrobione i zweryfikowane: kompilacja FPGA (57 % LE, timing +8,2 ns, 2026-11-24), firmware 2.2, 40 testów, symulacja VHDL
+Zrobione i zweryfikowane: kompilacja FPGA (57 % LE, timing +6,4 ns, nowe piny CH, 2026-11-24), firmware 2.2, 40 testów, symulacja VHDL
 TEST PASSED, czysty klon z GitHuba buduje się i przechodzi testy, README ze schematem blokowym i zrzutami.
 
 **Otwarte / do zrobienia:**

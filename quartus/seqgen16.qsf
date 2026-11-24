@@ -43,23 +43,23 @@ set_location_assignment PIN_141 -to led_n[4]
 set_location_assignment PIN_70  -to uart_txd
 set_location_assignment PIN_69  -to uart_rxd
 
-# Kanaly 0..15 (bank 3)
-set_location_assignment PIN_41  -to ch_out[0]
-set_location_assignment PIN_38  -to ch_out[1]
-set_location_assignment PIN_43  -to ch_out[2]
-set_location_assignment PIN_39  -to ch_out[3]
-set_location_assignment PIN_46  -to ch_out[4]
-set_location_assignment PIN_44  -to ch_out[5]
-set_location_assignment PIN_47  -to ch_out[6]
-set_location_assignment PIN_45  -to ch_out[7]
-set_location_assignment PIN_55  -to ch_out[8]
-set_location_assignment PIN_50  -to ch_out[9]
-set_location_assignment PIN_56  -to ch_out[10]
-set_location_assignment PIN_52  -to ch_out[11]
-set_location_assignment PIN_59  -to ch_out[12]
-set_location_assignment PIN_57  -to ch_out[13]
-set_location_assignment PIN_60  -to ch_out[14]
-set_location_assignment PIN_58  -to ch_out[15]
+# Kanaly 0..15 (bank 3), kolejnosc pinow malejaca = CH0 u gory J3 na plytce seqgen16
+set_location_assignment PIN_60  -to ch_out[0]
+set_location_assignment PIN_59  -to ch_out[1]
+set_location_assignment PIN_58  -to ch_out[2]
+set_location_assignment PIN_57  -to ch_out[3]
+set_location_assignment PIN_56  -to ch_out[4]
+set_location_assignment PIN_55  -to ch_out[5]
+set_location_assignment PIN_52  -to ch_out[6]
+set_location_assignment PIN_50  -to ch_out[7]
+set_location_assignment PIN_47  -to ch_out[8]
+set_location_assignment PIN_46  -to ch_out[9]
+set_location_assignment PIN_45  -to ch_out[10]
+set_location_assignment PIN_44  -to ch_out[11]
+set_location_assignment PIN_43  -to ch_out[12]
+set_location_assignment PIN_41  -to ch_out[13]
+set_location_assignment PIN_39  -to ch_out[14]
+set_location_assignment PIN_38  -to ch_out[15]
 
 # Poziom wyjsc VCCB (arkusz Power: LDO U11/U12, Q1). vccb_off = 1 wylacza LDO.
 # vsel_*_n open-drain do dzielnika FB LDO - bez pull-upow (prad pull-upu zmienilby napiecie).
