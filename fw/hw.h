@@ -30,6 +30,7 @@
 #define SG_PARAMS           SG_WORD(0x0006)
 #define SG_BCLK_HALF        SG_WORD(0x0007)        /* polowa okresu zegara bazowego [us] - 1 */
 #define SG_SYNC_W           SG_WORD(0x0008)        /* szerokosc SYNC [us], 0 = dopoki pracuje kanal */
+#define SG_VCCB             SG_WORD(0x0009)        /* [0]=en [1]=2V5 [2]=3V3 [3]=5V (zmiana: 2,5 ms przerwy) */
 #define SG_PERIOD(ch)       SG_WORD(0x0040 + (ch) * 4 + 0)
 #define SG_LAST(ch)         SG_WORD(0x0040 + (ch) * 4 + 1)
 #define SG_CFG(ch)          SG_WORD(0x0040 + (ch) * 4 + 2)

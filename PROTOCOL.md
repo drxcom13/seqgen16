@@ -26,6 +26,8 @@ Przerwa > ~0,3 s w środku ramki resetuje parser.
 | 0x11 | GET_CFG   | `ch u8` | jak SET_CFG (11 B) + `status u32` (`[9:0]` krok, `[16]` run, `[17]` done, `[24]` stan wyjścia) |
 | 0x12 | SET_AUX   | `clk_period_us u32` (parzysty, 2 … 2 097 152), `sync_width_us u32` (0 … 1 048 575; 0 = SYNC wysoki dopóki pracuje dowolny kanał) | – |
 | 0x13 | GET_AUX   | – | `clk_period_us u32`, `sync_width_us u32` |
+| 0x14 | SET_VOUT  | `level u8`: 0 = wyłączone (wyjścia Hi-Z), 1 = 1,8 V, 2 = 2,5 V, 3 = 3,3 V, 4 = 4,0 V, 5 = 5 V (≈ VBUS) | – |
+| 0x15 | GET_VOUT  | – | `level u8` |
 | 0x20 | WRITE     | `ch u8`, `offset u16`, `count u16`, `data[count]` (1 bajt na krok, ≠0 → 1) | – |
 | 0x21 | READ      | `ch u8`, `offset u16`, `count u16` | `data[count]` (0/1) |
 | 0x30 | START     | `mask u16` | – (wszystkie kanały z maski startują w tym samym takcie zegara) |
@@ -33,7 +35,12 @@ Przerwa > ~0,3 s w środku ramki resetuje parser.
 | 0x32 | STATUS    | – | `running u16`, `done u16`, `outputs u16` (aktualne stany wyjść), `index[16] u16` |
 
 `period_us`: 1 … 1 048 576 µs (wymaganie 1 ms … 1 s mieści się z zapasem; aplikacja PC pilnuje zakresu 1–1000 ms).
-Krok: 1 bit – 0 = 0 V, 1 = VCCIO (3,3 V LVCMOS). Wersja firmware: 2.1.
+Krok: 1 bit – 0 = 0 V, 1 = poziom wyjść VCCB ustawiony komendą SET_VOUT. Wersja firmware: 2.2.
+
+SET_VOUT steruje stabilizatorami LDO zasilającymi bufory wyjściowe (VCCB, wszystkie wyjścia jednakowo:
+CH0..15, BASE_CLK, SYNC). Po włączeniu zasilania i po resecie poziom = 0 (wyjścia w Hi-Z) – PC musi go
+ustawić. Każda zmiana poziomu wyłącza LDO na 2,5 ms (rozładowanie wyjścia), dopiero potem włącza nowe
+napięcie; ten sam poziom wysłany ponownie niczego nie zmienia.
 
 START (dowolna maska) restartuje wspólną podstawę czasu 1 µs, zegar BASE_CLK (zaczyna od zbocza
 narastającego) i impuls SYNC, więc ich zbocza wypadają w tym samym takcie co zmiany wyjść kanałów.

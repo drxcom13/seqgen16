@@ -9,7 +9,7 @@ import time
 
 from seqgen import (FrameParser, build_frame, NCH, MAXLEN,
                     CMD_PING, CMD_SET_CFG, CMD_GET_CFG, CMD_SET_AUX, CMD_GET_AUX, CMD_WRITE, CMD_READ,
-                    CMD_START, CMD_STOP, CMD_STATUS)
+                    CMD_START, CMD_STOP, CMD_STATUS, CMD_SET_VOUT, CMD_GET_VOUT)
 
 CLK_HZ = 50_000_000
 PERIOD_MAX = (1 << 20) - 1      # PERIOD register: microseconds - 1
@@ -49,6 +49,7 @@ class Emulator:
         self.out = bytearray()
         self.clock_period_us = 1000
         self.sync_width_us = 1000
+        self.vout_level = 0            # 0 = off, 1..5 = 1.8 / 2.5 / 3.3 / 4.0 / 5 V
 
     # --- transport interface (like serial.Serial)
     def write(self, data: bytes):
@@ -76,7 +77,7 @@ class Emulator:
         if cmd == CMD_PING:
             if p:
                 return self._reply(cmd, 2)
-            return self._reply(cmd, 0, struct.pack("<IBBBHII", ID, 2, 1, NCH, MAXLEN, CLK_HZ, PERIOD_MAX))
+            return self._reply(cmd, 0, struct.pack("<IBBBHII", ID, 2, 2, NCH, MAXLEN, CLK_HZ, PERIOD_MAX))
         if cmd == CMD_SET_CFG:
             if len(p) != 11:
                 return self._reply(cmd, 2)
@@ -99,6 +100,17 @@ class Emulator:
             if p:
                 return self._reply(cmd, 2)
             return self._reply(cmd, 0, struct.pack("<II", self.clock_period_us, self.sync_width_us))
+        if cmd == CMD_SET_VOUT:
+            if len(p) != 1:
+                return self._reply(cmd, 2)
+            if p[0] > 5:
+                return self._reply(cmd, 3)
+            self.vout_level = p[0]
+            return self._reply(cmd, 0)
+        if cmd == CMD_GET_VOUT:
+            if p:
+                return self._reply(cmd, 2)
+            return self._reply(cmd, 0, bytes([self.vout_level]))
         if cmd == CMD_GET_CFG:
             if len(p) != 1:
                 return self._reply(cmd, 2)

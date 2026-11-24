@@ -15,6 +15,10 @@
 --   0x0007          BCLK_HALF W   polowa okresu zegara bazowego w us - 1 (1 ms -> 499)
 --   0x0008          SYNC_W    W   szerokosc impulsu SYNC w us (0 = SYNC wysoki dopoki
 --                                 pracuje dowolny kanal)
+--   0x0009          VCCB      W   poziom wyjsc (LDO VCCB na plytce): [0]=wlaczone [1]=sel 2V5
+--                                 [2]=sel 3V3 [3]=sel 5V. Kazdy zapis: LDO wylaczone (rozladowanie
+--                                 wyjscia 95 R), nowe sel, po VOFF_US us (2,5 ms) en = [0].
+--                                 Po resecie = 0 (wyjscia buforow w Hi-Z).
 --
 -- START (dowolna maska) zeruje tez podstawe czasu 1 us, zegar bazowy i wyzwala SYNC,
 -- wiec pierwszy krok trwa dokladnie okres, a zbocza BASE_CLK/SYNC wypadaja w tym samym
@@ -50,7 +54,8 @@ entity seq_gen16 is
         ch_out        : out std_logic_vector(NCH-1 downto 0);
         ch_running    : out std_logic_vector(NCH-1 downto 0);
         clk_base      : out std_logic;     -- zegar bazowy zsynchronizowany z wyjsciami
-        sync_out      : out std_logic      -- zbocze narastajace w chwili wyzwolenia sekwencji
+        sync_out      : out std_logic;     -- zbocze narastajace w chwili wyzwolenia sekwencji
+        vccb_ctrl     : out std_logic_vector(3 downto 0)   -- [0]=en [1]=2V5 [2]=3V3 [3]=5V
     );
 end entity;
 
@@ -94,6 +99,13 @@ architecture rtl of seq_gen16 is
     -- 2 rejestry opoznienia = to samo opoznienie co idx -> q -> dout w kanale
     signal bc_d         : std_logic_vector(1 downto 0) := (others => '0');
     signal sy_d         : std_logic_vector(1 downto 0) := (others => '0');
+
+    -- VCCB: przerwa przy zmianie poziomu (LDO wylaczone -> wyjscie rozladowane)
+    constant VOFF_CYC   : positive := CLK_HZ / 400;          -- 2,5 ms
+    signal vccb_req     : std_logic := '0';
+    signal vccb_sel     : std_logic_vector(2 downto 0) := (others => '0');
+    signal vccb_en      : std_logic := '0';
+    signal vccb_cnt     : integer range 0 to VOFF_CYC := 0;
 
     signal is_mem       : std_logic;
     signal is_chr       : std_logic;
@@ -176,6 +188,31 @@ begin
             end if;
         end if;
     end process;
+
+    -- ---------------------------------------------------- poziom wyjsc VCCB
+    p_vccb : process (clk)
+    begin
+        if rising_edge(clk) then
+            if reset = '1' then
+                vccb_req <= '0';
+                vccb_sel <= (others => '0');
+                vccb_en  <= '0';
+                vccb_cnt <= 0;
+            elsif avs_write = '1' and unsigned(avs_address) = 9 then
+                vccb_req <= avs_writedata(0);
+                vccb_sel <= avs_writedata(3 downto 1);
+                vccb_en  <= '0';
+                vccb_cnt <= VOFF_CYC;
+            elsif vccb_cnt /= 0 then
+                vccb_cnt <= vccb_cnt - 1;
+                if vccb_cnt = 1 then
+                    vccb_en <= vccb_req;
+                end if;
+            end if;
+        end if;
+    end process;
+
+    vccb_ctrl <= vccb_sel & vccb_en;
 
     -- ---------------------------------------------------- kanaly (1 blok = 1 kanal)
     g_ch : for c in 0 to NCH-1 generate

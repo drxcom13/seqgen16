@@ -30,7 +30,7 @@ Szczegóły techniczne użytkowe są w `README.md`, protokół w `PROTOCOL.md`.
 | BASE_CLK nadaje **tylko gdy pracuje kanał**; przy START wyjścia BASE_CLK/SYNC schodzą na 1 takt do 0 | Błąd wykryty symulacją: gdy BASE_CLK był w stanie 1 w chwili START, nie było zbocza narastającego. |
 | Rejestry PERIOD/LAST/CFG **tylko do zapisu**, firmware trzyma kopie (`shadow`) | Oszczędność ~200+ LE na multiplekserze odczytu. |
 | `FAST_OUTPUT_REGISTER` na wszystkich wyjściach kanałów/BASE_CLK/SYNC | Minimalny rozrzut zboczy między pinami; każde wyjście musi pochodzić wprost z rejestru (nie psuj tego). |
-| Protokół binarny `A5 5A | CMD | LEN | payload | CRC16-CCITT-FALSE` | Odporny na śmieci na linii; opis w `PROTOCOL.md`. Wersja firmware 2.1. |
+| Protokół binarny `A5 5A | CMD | LEN | payload | CRC16-CCITT-FALSE` | Odporny na śmieci na linii; opis w `PROTOCOL.md`. Wersja firmware 2.2. |
 
 ## Środowisko (ten komputer użytkownika)
 
@@ -57,7 +57,11 @@ Szczegóły techniczne użytkowe są w `README.md`, protokół w `PROTOCOL.md`.
   (R48 100k do +3V3), Q1 2N7002 zwiera EN do GND, gdy `VCCB_OFF` (pin 61) wysoki – słabe pull-upy FPGA podczas
   konfiguracji → LDO wyłączone, wyjścia TXU w Hi-Z (Ioff). Bez klucza 5 V równolegle: TLV758P ma rozładowanie
   wyjścia 95 Ω przy EN = 0. Moc w LDO przy 1,8 V i 20 mA/wyjście: ~0,5–0,65 W na układ (RθJA 80 °C/W, WSON).
-  Wymaga logiki w FPGA (wyjścia open-drain, domyślnie VCCB_OFF = 1) i komendy w protokole – jeszcze nie zrobione.
+  Sterowanie (2026-11-24): rejestr VCCB (0x0009) w `seq_gen16` – każdy zapis wyłącza LDO na 2,5 ms (rozładowanie),
+  potem włącza nowy poziom; top: `vccb_off` = not en, `vsel_*_n` = '0' albo 'Z' (open-drain, bez pull-upów w .qsf).
+  Firmware 2.2: SET_VOUT 0x14 / GET_VOUT 0x15 (level 0 = off … 5 = 5 V), po starcie 0, zapis tylko przy zmianie.
+  PC: `SeqGen.set_output_voltage()`, `Project.output_voltage` (domyślnie 3,3 V, wysyłane w `upload_project`),
+  GUI panel „Output level”, CLI `vout`. Na sprzęcie jeszcze nie sprawdzone (płytka nie istnieje).
   `layout_power.py` nie zawiera bloku VCCB (dodany skryptem jednorazowym) – ponowne uruchomienie usunie jego
   połączenia.),
   Outputs (TXU0104/TXU0102, VCCB = VCCB_A/VCCB_B 1,8–5 V, 33R + TSD05C, złącza J3 2x16, J4/J5 2x2), Config (oscylator 50 MHz, LED 132/134,
@@ -124,7 +128,7 @@ Szczegóły techniczne użytkowe są w `README.md`, protokół w `PROTOCOL.md`.
 ## Weryfikacja – jak uruchomić
 
 ```powershell
-cd pc ; python -m unittest test_seqgen test_firmware -v   # 37 testów; test_firmware wymaga fw/build/fw.bin
+cd pc ; python -m unittest test_seqgen test_firmware -v   # 40 testów; test_firmware wymaga fw/build/fw.bin
 .\sim\run_sim.ps1                                          # Questa, oczekiwane "TEST PASSED"
 .\fw\build.ps1 [-UpdateSof]                                # firmware -> quartus\onchip_ram.hex (+ obraz FPGA)
 .\quartus\build_fpga.ps1                                   # Platform Designer + pełna kompilacja (~3 min)
@@ -139,7 +143,7 @@ cd pc ; python -m unittest test_seqgen test_firmware -v   # 37 testów; test_fir
 
 ## Stan na koniec ostatniej sesji
 
-Zrobione i zweryfikowane: kompilacja FPGA (56 % LE, timing +6,2 ns), firmware 2.1, 37 testów, symulacja VHDL
+Zrobione i zweryfikowane: kompilacja FPGA (57 % LE, timing +8,2 ns, 2026-11-24), firmware 2.2, 40 testów, symulacja VHDL
 TEST PASSED, czysty klon z GitHuba buduje się i przechodzi testy, README ze schematem blokowym i zrzutami.
 
 **Otwarte / do zrobienia:**

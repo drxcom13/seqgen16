@@ -15,6 +15,7 @@ SYNC = b"\xA5\x5A"
 
 CMD_PING, CMD_SET_CFG, CMD_GET_CFG = 0x01, 0x10, 0x11
 CMD_SET_AUX, CMD_GET_AUX = 0x12, 0x13
+CMD_SET_VOUT, CMD_GET_VOUT = 0x14, 0x15
 CMD_WRITE, CMD_READ = 0x20, 0x21
 CMD_START, CMD_STOP, CMD_STATUS = 0x30, 0x31, 0x32
 
@@ -25,9 +26,23 @@ MAXLEN = 1024
 PERIOD_MIN_MS = 0.001      # 1 us - hardware time base (step = N x 1 us)
 PERIOD_MAX_MS = 1000.0
 CHUNK = 256                # steps per WRITE frame
-PROJECT_VERSION = 3
+PROJECT_VERSION = 4
 CLK_PERIOD_MAX_US = 1 << 21      # BASE_CLK: half period register is 20 bit
 SYNC_WIDTH_MAX_US = (1 << 20) - 1
+# Output level (VCCB of the output buffers, all outputs together); index = SET_VOUT level code.
+# 0.0 = off: LDOs disabled, outputs high impedance (state after power-up / reset).
+VOUT_LEVELS = (0.0, 1.8, 2.5, 3.3, 4.0, 5.0)
+
+
+def vout_code(volts: float) -> int:
+    for code, v in enumerate(VOUT_LEVELS):
+        if abs(volts - v) < 1e-6:
+            return code
+    raise ValueError(f"output level {volts} V not supported (allowed: off, 1.8, 2.5, 3.3, 4.0, 5.0 V)")
+
+
+def vout_text(volts: float) -> str:
+    return "off" if volts == 0 else f"{volts:.1f} V"
 
 
 def fmt_time(ms: float) -> str:
@@ -149,6 +164,7 @@ class Project:
     channels: List[ChannelConfig] = field(default_factory=lambda: [ChannelConfig(ch=i) for i in range(NCH)])
     clock_period_ms: float = 1.0       # BASE_CLK output period (50 % duty), restarted by every START
     sync_width_ms: float = 1.0         # SYNC pulse width; 0 = high while any channel runs
+    output_voltage: float = 3.3        # output level of all outputs (VOUT_LEVELS), 0 = off
 
     def validate_aux(self):
         per = round(self.clock_period_ms * 1000)
@@ -159,17 +175,21 @@ class Project:
             raise ValueError("sync width must be 0 .. 1048.575 ms in 1 us steps")
         return per, sw
 
+    def validate_vout(self) -> int:
+        return vout_code(self.output_voltage)
+
     def save(self, path: str):
         with open(path, "w", encoding="utf-8") as f:
             json.dump({"version": PROJECT_VERSION, "clock_period_ms": self.clock_period_ms,
-                       "sync_width_ms": self.sync_width_ms,
+                       "sync_width_ms": self.sync_width_ms, "output_voltage": self.output_voltage,
                        "channels": [asdict(c) for c in self.channels]}, f, indent=1)
 
     @classmethod
     def load(cls, path: str) -> "Project":
         with open(path, encoding="utf-8") as f:
             d = json.load(f)
-        p = cls(clock_period_ms=d.get("clock_period_ms", 1.0), sync_width_ms=d.get("sync_width_ms", 1.0))
+        p = cls(clock_period_ms=d.get("clock_period_ms", 1.0), sync_width_ms=d.get("sync_width_ms", 1.0),
+                output_voltage=d.get("output_voltage", 3.3))
         known = set(ChannelConfig.__dataclass_fields__)
         for cd in d.get("channels", []):
             c = ChannelConfig(**{k: v for k, v in cd.items() if k in known})
@@ -273,6 +293,15 @@ class SeqGen:
         per, sw = struct.unpack("<II", self.transact(CMD_GET_AUX))
         return dict(clock_period_us=per, sync_width_us=sw)
 
+    def set_output_voltage(self, volts: float):
+        """Output level of all outputs: 0 (off, high impedance), 1.8, 2.5, 3.3, 4.0 or 5.0 V.
+        A change switches the outputs off for 2.5 ms before the new level is applied."""
+        self.transact(CMD_SET_VOUT, bytes([vout_code(volts)]))
+
+    def get_output_voltage(self) -> float:
+        (code,) = self.transact(CMD_GET_VOUT)
+        return VOUT_LEVELS[code]
+
     def write_steps(self, ch: int, steps: List[int], offset: int = 0):
         for i in range(0, len(steps), CHUNK):
             part = bytes(1 if s else 0 for s in steps[i:i + CHUNK])
@@ -306,8 +335,11 @@ class SeqGen:
             raise DeviceError(f"channel {c.ch}: memory verification failed")
 
     def upload_project(self, prj: Project, verify: bool = True, progress=None) -> int:
-        """Upload BASE_CLK/SYNC settings and all enabled channels; returns the mask of uploaded channels."""
+        """Upload BASE_CLK/SYNC settings, the output level and all enabled channels;
+        returns the mask of uploaded channels."""
         self.set_aux(*prj.validate_aux())
+        prj.validate_vout()
+        self.set_output_voltage(prj.output_voltage)
         mask = 0
         enabled = [c for c in prj.channels if c.enabled]
         for k, c in enumerate(enabled):

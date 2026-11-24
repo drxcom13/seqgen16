@@ -10,14 +10,14 @@
 #include "hw.h"
 
 #define FW_MAJOR 2
-#define FW_MINOR 1
+#define FW_MINOR 2
 
 #define SYNC0 0xA5
 #define SYNC1 0x5A
 #define MAX_PAYLOAD (5 + SG_MAXLEN)       /* WRITE: ch, off, cnt + 1024 probek */
 
 enum { CMD_PING = 0x01, CMD_SET_CFG = 0x10, CMD_GET_CFG = 0x11,
-       CMD_SET_AUX = 0x12, CMD_GET_AUX = 0x13,
+       CMD_SET_AUX = 0x12, CMD_GET_AUX = 0x13, CMD_SET_VOUT = 0x14, CMD_GET_VOUT = 0x15,
        CMD_WRITE = 0x20, CMD_READ = 0x21,
        CMD_START = 0x30, CMD_STOP = 0x31, CMD_STATUS = 0x32,
        CMD_ERROR = 0x7F };
@@ -31,6 +31,10 @@ static uint8_t  tx[MAX_PAYLOAD + 1];
 static struct { uint32_t period, last, cfg; } shadow[SG_NCH];
 static uint32_t aux_clk_period_us = 1000u;    /* zegar bazowy: okres [us] */
 static uint32_t aux_sync_width_us = 1000u;    /* SYNC: szerokosc [us], 0 = dopoki pracuje kanal */
+
+/* poziom wyjsc: 0 = wylaczone (Hi-Z), 1..5 = 1,8 / 2,5 / 3,3 / 4,0 / 5 V -> bity rejestru VCCB */
+static const uint8_t vout_bits[6] = { 0x0, 0x1, 0x3, 0x5, 0x7, 0x9 };
+static uint8_t vout_level = 0;
 
 static void aux_apply(void)
 {
@@ -167,6 +171,22 @@ static void handle(uint8_t cmd, const uint8_t *p, uint16_t len)
         reply(cmd, ST_OK, 8);
         return;
 
+    case CMD_SET_VOUT:    /* level u8: 0 = off, 1..5 = 1.8 / 2.5 / 3.3 / 4.0 / 5 V */
+        if (len != 1) break;
+        if (p[0] > 5u) { reply(cmd, ST_BAD_ARG, 0); return; }
+        if (p[0] != vout_level) {                /* kazdy zapis = 2,5 ms przerwy, wiec tylko przy zmianie */
+            vout_level = p[0];
+            SG_VCCB = vout_bits[vout_level];
+        }
+        reply(cmd, ST_OK, 0);
+        return;
+
+    case CMD_GET_VOUT:
+        if (len != 0) break;
+        d[0] = vout_level;
+        reply(cmd, ST_OK, 1);
+        return;
+
     case CMD_WRITE: {     /* ch u8, offset u16, count u16, data[count] */
         if (len < 5) break;
         uint8_t  ch  = p[0];
@@ -250,6 +270,7 @@ int main(void)
         SG_CFG(ch)    = 0;
     }
     SG_STOP = 0xFFFFu;
+    SG_VCCB = 0;                                  /* wyjscia wylaczone do komendy SET_VOUT */
     aux_apply();
     UART_STATUS = 0;
 

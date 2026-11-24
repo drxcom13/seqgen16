@@ -7,6 +7,7 @@ Examples:
   python seqgen_cli.py -p COM5 start 0,1,5        (or: all, 0-3, 0x00FF)
   python seqgen_cli.py -p COM5 stop all
   python seqgen_cli.py -p COM5 status
+  python seqgen_cli.py -p COM5 vout 3.3           (output level: off, 1.8, 2.5, 3.3, 4.0, 5.0; no value = read)
   python seqgen_cli.py -p EMU  ping               (emulator, no hardware)
   python seqgen_cli.py example project.json       (create an example project)
   python seqgen_cli.py show project.json          (print sequences as text)
@@ -14,7 +15,7 @@ Examples:
 import argparse
 import sys
 
-from seqgen import SeqGen, Project, NCH, fmt_time
+from seqgen import SeqGen, Project, NCH, fmt_time, vout_text
 import patterns
 
 
@@ -74,6 +75,8 @@ def main(argv=None):
     s = sub.add_parser("stop", help="stop channels")
     s.add_argument("mask", nargs="?", default="all")
     sub.add_parser("status", help="channel status")
+    v = sub.add_parser("vout", help="set / read the output level (all outputs)")
+    v.add_argument("level", nargs="?", help="off, 1.8, 2.5, 3.3, 4.0 or 5.0 (volts)")
     r = sub.add_parser("config", help="read channel configuration")
     r.add_argument("ch", type=int)
     e = sub.add_parser("example", help="create an example project")
@@ -108,7 +111,7 @@ def main(argv=None):
             dev.ping()
             mask = dev.upload_project(prj, verify=not a.no_verify,
                                       progress=lambda k, n, ch: print(f"  [{k}/{n}] channel {ch} OK"))
-            print(f"uploaded channels: mask 0x{mask:04X}")
+            print(f"uploaded channels: mask 0x{mask:04X}, output level {vout_text(prj.output_voltage)}")
             if a.start:
                 dev.start(mask)
                 print("started")
@@ -121,6 +124,14 @@ def main(argv=None):
             for ch in range(NCH):
                 state = "RUN " if st["running"] >> ch & 1 else ("DONE" if st["done"] >> ch & 1 else "stop")
                 print(f"  ch{ch:2}: {state}  out={st['outputs'] >> ch & 1}  step {st['index'][ch]}")
+        elif a.cmd == "vout":
+            if a.level is not None:
+                try:
+                    dev.set_output_voltage(0.0 if a.level.lower() == "off" else float(a.level))
+                except ValueError as e:
+                    print(f"error: {e}", file=sys.stderr)
+                    return 2
+            print(f"output level: {vout_text(dev.get_output_voltage())}")
         elif a.cmd == "config":
             print(dev.get_config(a.ch))
     finally:

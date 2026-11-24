@@ -16,7 +16,8 @@ from tkinter import ttk, filedialog, messagebox
 
 import patterns
 from seqgen import (SeqGen, Project, NCH, MAXLEN, PERIOD_MIN_MS, PERIOD_MAX_MS,
-                    DeviceError, parse_levels, format_levels, fmt_time, split_time, TIME_UNITS)
+                    DeviceError, parse_levels, format_levels, fmt_time, split_time, TIME_UNITS,
+                    VOUT_LEVELS, vout_text)
 
 HIGH_FILL = "#c8ecc8"
 LINE = "#1a7f37"
@@ -441,6 +442,18 @@ class App(tk.Tk):
         ttk.Label(aux, text="SYNC 0 = high while any channel runs.\nBASE_CLK runs only while channels run.\n"
                             "Both restart on every START; their edges\ncoincide with the channel output edges.",
                   foreground="#888", justify="left").grid(row=2, column=0, columnspan=3, sticky="w", pady=(4, 0))
+
+        lvl = ttk.LabelFrame(left, text="Output level", padding=6)
+        lvl.pack(fill="x", pady=(10, 0))
+        ttk.Label(lvl, text="All outputs").grid(row=0, column=0, sticky="w")
+        self.v_vout = tk.StringVar()
+        cb = ttk.Combobox(lvl, textvariable=self.v_vout, state="readonly", width=8,
+                          values=[vout_text(v) for v in VOUT_LEVELS])
+        cb.grid(row=0, column=1, padx=4)
+        cb.bind("<<ComboboxSelected>>", self._apply_vout)
+        ttk.Label(lvl, text="CH0..15, BASE_CLK and SYNC. Off = high impedance\n(state after power-up). "
+                            "A change switches the\noutputs off for 2.5 ms. Sent on upload / here.",
+                  foreground="#888", justify="left").grid(row=1, column=0, columnspan=3, sticky="w", pady=(4, 0))
         body.add(left, weight=0)
 
         # --- right: settings, editor, tools, overview
@@ -694,6 +707,13 @@ class App(tk.Tk):
     def _load_aux(self):
         self.f_clk.set_ms(self.prj.clock_period_ms)
         self.f_syncw.set_ms(self.prj.sync_width_ms)
+        self.v_vout.set(vout_text(self.prj.output_voltage))
+
+    def _apply_vout(self, _event=None):
+        volts = VOUT_LEVELS[[vout_text(v) for v in VOUT_LEVELS].index(self.v_vout.get())]
+        self.prj.output_voltage = volts
+        if self.dev:
+            self._run_bg(lambda: self.dev.set_output_voltage(volts), f"Output level: {vout_text(volts)}")
 
     def _apply_aux(self):
         old = (self.prj.clock_period_ms, self.prj.sync_width_ms)
@@ -993,7 +1013,9 @@ class App(tk.Tk):
         if only_current:
             c = self.chan
             aux = self.prj.validate_aux()
-            self._run_bg(lambda: (self.dev.set_aux(*aux), self.dev.upload_channel(c)), f"CH{c.ch} uploaded")
+            volts = self.prj.output_voltage
+            self._run_bg(lambda: (self.dev.set_aux(*aux), self.dev.set_output_voltage(volts), self.dev.upload_channel(c)),
+                         f"CH{c.ch} uploaded")
         else:
             self._run_bg(lambda: self.dev.upload_project(self.prj, progress=self._progress), "Project uploaded")
 

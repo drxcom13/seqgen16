@@ -7,7 +7,7 @@ import unittest
 import patterns
 from emulator import Emulator
 from seqgen import (SeqGen, Project, ChannelConfig, DeviceError, FrameParser, fmt_time, split_time, format_levels,
-                    build_frame, crc16, parse_levels, CMD_SET_CFG)
+                    build_frame, crc16, parse_levels, CMD_SET_CFG, CMD_SET_VOUT)
 
 
 class FakeClock:
@@ -62,7 +62,7 @@ class TestDevice(unittest.TestCase):
     def test_ping(self):
         info = self.dev.ping()
         self.assertEqual(info["id"], 0x53513136)
-        self.assertEqual((info["nch"], info["maxlen"], info["fw"]), (16, 1024, "2.1"))
+        self.assertEqual((info["nch"], info["maxlen"], info["fw"]), (16, 1024, "2.2"))
         self.assertGreaterEqual(info["period_max_us"], 1_000_000)
 
     def test_write_read_1024(self):
@@ -92,6 +92,18 @@ class TestDevice(unittest.TestCase):
         for per, sw in ((3, 10), (0, 10), (2_097_154, 10), (1000, 1_048_576)):                # odd / 0 / too big
             with self.assertRaises(DeviceError):
                 self.dev.set_aux(per, sw)
+
+    def test_output_voltage(self):
+        self.assertEqual(self.dev.get_output_voltage(), 0.0)          # off after reset
+        for v in (1.8, 2.5, 3.3, 4.0, 5.0, 0.0):
+            self.dev.set_output_voltage(v)
+            self.assertEqual(self.dev.get_output_voltage(), v)
+        with self.assertRaises(ValueError):
+            self.dev.set_output_voltage(3.0)
+        with self.assertRaises(DeviceError):
+            self.dev.transact(CMD_SET_VOUT, b"")                   # level out of range
+        with self.assertRaises(DeviceError):
+            self.dev.transact(CMD_SET_VOUT, b"")                       # bad length
 
     def test_1us_step(self):
         c = ChannelConfig(ch=4, enabled=True, period_ms=0.001, loops=1, steps=[1, 0] * 5)
@@ -141,9 +153,11 @@ class TestDevice(unittest.TestCase):
             prj.save(path)
             prj2 = Project.load(path)
         self.assertEqual(prj2.channels[7].name, "SIG7")
-        prj2.clock_period_ms, prj2.sync_width_ms = 0.5, 0
+        self.assertEqual(prj2.output_voltage, 3.3)                     # default
+        prj2.clock_period_ms, prj2.sync_width_ms, prj2.output_voltage = 0.5, 0, 2.5
         mask = self.dev.upload_project(prj2)
         self.assertEqual(self.dev.get_aux(), dict(clock_period_us=500, sync_width_us=0))
+        self.assertEqual(self.dev.get_output_voltage(), 2.5)
         self.assertEqual(mask, (1 << 0) | (1 << 7) | (1 << 15))
         self.assertEqual(self.dev.get_config(7)["period_us"], 37_000)
         self.assertEqual(self.dev.read_steps(15, 1024), prj.channels[15].steps)

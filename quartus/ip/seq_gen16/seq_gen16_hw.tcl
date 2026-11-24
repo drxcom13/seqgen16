@@ -55,3 +55,4 @@ add_interface_port out ch_out     ch_out     Output 16
 add_interface_port out ch_running ch_running Output 16
 add_interface_port out clk_base   clk_base   Output 1
 add_interface_port out sync_out   sync_out   Output 1
+add_interface_port out vccb_ctrl  vccb_ctrl  Output 4

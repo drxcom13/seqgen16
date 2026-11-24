@@ -27,6 +27,7 @@ architecture sim of tb_seq_gen16 is
     signal ch_run    : std_logic_vector(15 downto 0);
     signal clk_base  : std_logic;
     signal sync_out  : std_logic;
+    signal vccb      : std_logic_vector(3 downto 0);
     -- czas ostatniego zbocza (porownanie czasu symulacji, niezalezne od delt)
     signal t_ch5, t_bclk, t_sync : time := 0 ns;
 
@@ -55,7 +56,7 @@ begin
             avs_address => address, avs_read => read, avs_write => write,
             avs_writedata => writedata, avs_readdata => readdata,
             ch_out => ch_out, ch_running => ch_run,
-            clk_base => clk_base, sync_out => sync_out
+            clk_base => clk_base, sync_out => sync_out, vccb_ctrl => vccb
         );
 
     p_t_ch5  : process (ch_out(5)) begin t_ch5  <= now; end process;
@@ -258,6 +259,23 @@ begin
         check("krok 1 us [ns]", (now - t0) / 1 ns, 1000);
         wait until rising_edge(ch_out(6)) for 5 us;
         check("okres 2 krokow po 1 us [ns]", (now - t0) / 1 ns, 2000);
+
+        -- ------------------------------------------------ 10. VCCB: przerwa 2,5 ms przy zmianie poziomu
+        check("VCCB po resecie", to_integer(unsigned(vccb)), 0);
+        wr(9, 16#5#);                                       -- 3,3 V: en + sel 3V3
+        wait for 1 us;
+        check("VCCB: sel od razu, en = 0", to_integer(unsigned(vccb)), 4);
+        t0 := now;
+        wait until vccb(0) = '1' for 3 ms;
+        check("VCCB: en po 2,5 ms [us]", (now - t0 + 1500 ns) / 1 us, 2500);   -- t0 = zapis + 1 us
+        wr(9, 16#9#);                                       -- 5 V: najpierw wylaczenie
+        wait for 1 us;
+        check("VCCB: zmiana -> en = 0, sel 5V", to_integer(unsigned(vccb)), 8);
+        wait for 2600 us;
+        check("VCCB: 5 V wlaczone", to_integer(unsigned(vccb)), 9);
+        wr(9, 0);                                           -- wylaczenie
+        wait for 2600 us;
+        check("VCCB: wylaczone", to_integer(unsigned(vccb)), 0);
 
         -- ------------------------------------------------
         wait for 1 us;

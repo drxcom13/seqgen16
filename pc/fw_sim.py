@@ -43,6 +43,7 @@ class FirmwareSim:
         self.cfg_writes = []           # (ch, reg, value) log for tests
         self.bclk_half = 499           # registers 7 / 8 (reset values as in VHDL)
         self.sync_w = 1000
+        self.vccb_writes = []          # register 9 (VCCB) write log
         self.run(200_000)              # boot: crt0 + init loop until first idle poll
 
     # ------------------------------------------------------------------ transport
@@ -127,6 +128,9 @@ class FirmwareSim:
                 return
             if w == 8:
                 self.sync_w = v & 0xFFFFF
+                return
+            if w == 9:
+                self.vccb_writes.append(v & 0xF)
                 return
             if w in (1, 2):
                 for i in range(NCH):

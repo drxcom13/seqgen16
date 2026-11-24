@@ -9,7 +9,13 @@
 --   w resecie, dopoki reset_n = 0, oraz jeszcze ~2,6 ms po jego zwolnieniu.
 --   Kazde odbicie styku w tym czasie zaczyna odliczanie od nowa (debouncing).
 --   Reset obejmuje Nios (firmware startuje od poczatku), UART i generator:
---   kanaly zatrzymane, wyjscia = 0, konfiguracja domyslna, BASE_CLK / SYNC = 0.
+--   kanaly zatrzymane, wyjscia = 0, konfiguracja domyslna, BASE_CLK / SYNC = 0,
+--   VCCB wylaczone (wyjscia buforow TXU w Hi-Z).
+--
+-- Poziom wyjsc (VCCB buforow, LDO U11/U12 na arkuszu Power):
+--   vccb_off  (pin 61) = 1 -> LDO wylaczone (tez podczas konfiguracji - slabe pull-upy),
+--   vsel_*_n  (piny 62/64/65) open-drain: '0' dolacza rezystor dzielnika FB, 'Z' = odlaczony.
+--   brak sel -> 1,8 V, 2V5 -> 2,5 V, 3V3 -> 3,3 V, 2V5+3V3 -> 4,0 V, 5V -> ~VBUS.
 -- =============================================================================
 library ieee;
 use ieee.std_logic_1164.all;
@@ -24,6 +30,10 @@ entity seqgen16_top is
         ch_out   : out std_logic_vector(15 downto 0);  -- wyjscia kanalow
         clk_base : out std_logic;                      -- zegar bazowy zsynchronizowany z wyjsciami
         sync_out : out std_logic;                      -- zbocze narastajace przy wyzwoleniu sekwencji
+        vccb_off   : out std_logic;                    -- 1 = LDO VCCB wylaczone (Q1 -> EN = 0)
+        vsel_2v5_n : out std_logic;                    -- open-drain: '0' = 2,5 V
+        vsel_3v3_n : out std_logic;                    -- open-drain: '0' = 3,3 V
+        vsel_5v_n  : out std_logic;                    -- open-drain: '0' = ~5 V (LDO w dropout)
         led_n    : out std_logic_vector(4 downto 0)    -- LED-y (aktywne zerem)
     );
 end entity;
@@ -38,6 +48,7 @@ architecture rtl of seqgen16_top is
             seqgen_ch_running : out std_logic_vector(15 downto 0);
             seqgen_clk_base   : out std_logic;
             seqgen_sync_out   : out std_logic;
+            seqgen_vccb_ctrl  : out std_logic_vector(3 downto 0);
             uart_rxd          : in  std_logic;
             uart_txd          : out std_logic
         );
@@ -46,6 +57,7 @@ architecture rtl of seqgen16_top is
     signal rst_n    : std_logic;
     signal running  : std_logic_vector(15 downto 0);
     signal hb       : unsigned(24 downto 0) := (others => '0');
+    signal vccb     : std_logic_vector(3 downto 0);
 
 begin
 
@@ -68,9 +80,15 @@ begin
             seqgen_ch_running => running,
             seqgen_clk_base   => clk_base,
             seqgen_sync_out   => sync_out,
+            seqgen_vccb_ctrl  => vccb,
             uart_rxd          => uart_rxd,
             uart_txd          => uart_txd
         );
+
+    vccb_off   <= not vccb(0);
+    vsel_2v5_n <= '0' when vccb(1) = '1' else 'Z';
+    vsel_3v3_n <= '0' when vccb(2) = '1' else 'Z';
+    vsel_5v_n  <= '0' when vccb(3) = '1' else 'Z';
 
     -- Na plytce pcb/seqgen16 sa tylko LED1 (pin 132) i LED2 (pin 134), aktywne zerem.
     led_n(0) <= not hb(24);                                       -- LED1: heartbeat ~1.5 Hz

@@ -5,7 +5,8 @@
 ## Założenia projektu
 
 1. **16 niezależnych kanałów** wyjściowych; każdy kanał to osobny blok w FPGA.
-2. **Wyjścia cyfrowe 0/1** (3,3 V LVCMOS) – na tym etapie bez wyjść analogowych.
+2. **Wyjścia cyfrowe 0/1** – na tym etapie bez wyjść analogowych. Na własnej płytce poziom wyjść (VCCB buforów TXU)
+   ustawiany z PC: 1,8 / 2,5 / 3,3 / 4,0 / 5 V albo wyłączone (Hi-Z, stan po włączeniu zasilania).
 3. **Sekwencja co najmniej 1024 zmian** na kanał; po końcu: powtórzenie N razy lub pętla.
 4. **Rozdzielczość czasu (krok) od 1 ms do 1 s** – ostatecznie rozszerzona do **1 µs … 1 s**, ustawiana
    osobno dla każdego kanału.
@@ -29,7 +30,8 @@
 - **Nios V/c** w FPGA odbiera ramki przez UART, zapisuje konfigurację i kroki do generatora przez magistralę Avalon-MM.
 - **seq_gen16** – 16 identycznych bloków `seq_channel` (każdy z własną pamięcią M9K 1024 kroki × 1 bit,
   sekwencerem i rejestrem wyjściowym), wspólna podstawa czasu 1 µs oraz generator BASE_CLK / SYNC.
-- **Wyjścia** – cyfrowe 0/1 (3,3 V LVCMOS): CH0–CH15, BASE_CLK, SYNC (piny w sekcji *Podłączenie*).
+- **Wyjścia** – cyfrowe 0/1: CH0–CH15, BASE_CLK, SYNC (piny w sekcji *Podłączenie*). FPGA pracuje w 3,3 V LVCMOS;
+  na własnej płytce bufory TXU0104/TXU0102 przenoszą to na poziom VCCB (komenda SET_VOUT, wszystkie wyjścia razem).
 - **USB-Blaster** (JTAG) służy tylko do wgrania obrazu FPGA (.sof / .pof).
 
 ## Spełnienie wymagań
@@ -164,7 +166,7 @@ Okno składa się z czterech części:
 | Obszar | Co zawiera |
 |---|---|
 | **Pasek górny** | wybór portu (`COMx` lub `EMU`), *Connect / Disconnect*, informacja o urządzeniu; *New / Open / Save / Save As* projektu |
-| **Tabela kanałów (lewo)** | nazwa, włączenie (kliknij **On**), krok, liczba kroków, powtórzenia i stan na żywo (`RUN n` = aktualny krok, `DONE`, `stop`); *Enable all / Disable all*; panel **Sync outputs (J8)** z okresem BASE_CLK i szerokością SYNC |
+| **Tabela kanałów (lewo)** | nazwa, włączenie (kliknij **On**), krok, liczba kroków, powtórzenia i stan na żywo (`RUN n` = aktualny krok, `DONE`, `stop`); *Enable all / Disable all*; panel **Sync outputs (J8)** z okresem BASE_CLK i szerokością SYNC; panel **Output level** (off / 1,8 … 5 V – wysyłany przy uploadzie i od razu po zmianie, gdy połączono) |
 | **Edytor kanału (środek)** | ustawienia wybranego kanału i jego przebieg do rysowania myszą, narzędzia edycji i generatory |
 | **Podgląd (dół)** | wszystkie 16 kanałów oraz BASE_CLK i SYNC na wspólnej osi czasu (t = 0 to chwila startu); zielone diody = bieżący stan wyjść; kliknięcie ścieżki wybiera kanał |
 
@@ -211,6 +213,7 @@ python pc\seqgen_cli.py ports
 python pc\seqgen_cli.py -p COM5 upload examples\demo_16ch.json --start
 python pc\seqgen_cli.py -p COM5 status
 python pc\seqgen_cli.py -p COM5 stop all
+python pc\seqgen_cli.py -p COM5 vout 3.3                  # poziom wyjść: off, 1.8, 2.5, 3.3, 4.0, 5.0 (bez wartości = odczyt)
 python pc\seqgen_cli.py show examples\demo_16ch.json       # podgląd sekwencji jako 0/1
 ```
 
@@ -219,9 +222,9 @@ Testy: `cd pc ; python -m unittest test_seqgen test_firmware -v` (`test_firmware
 ## Stan weryfikacji
 
 - ✅ Pełna kompilacja Quartus (synteza, fitter, timing, .sof/.pof) dla VHDL + Nios V/c.
-- ✅ Firmware 2.1: zbudowany toolchainem RiscFree (GCC 13.2, RV32I) – 2,6 KB kodu + 2,3 KB danych w 16 KB RAM, wpisany do `seqgen16.sof/.pof`.
-- ✅ Firmware wykonany w symulatorze zestawu instrukcji RV32I (`pc/fw_sim.py`) z modelami UART i rejestrów generatora: 15 testów (`pc/test_firmware.py`) przez prawdziwą bibliotekę PC – protokół, konfiguracja rejestrów, zapis/odczyt 1024 kroków, pętle, błędne CRC, śmieci na linii, nieznane komendy. Obsługa jednego odebranego bajtu to ~115 instrukcji, czyli kilkukrotny zapas względem 86,8 µs na bajt przy 115200 bd.
-- ✅ Aplikacja PC: 37 testów (biblioteka na emulatorze + te same scenariusze na firmware, m.in. krok 1 µs, eksport/import)
+- ✅ Firmware 2.2: zbudowany toolchainem RiscFree (GCC 13.2, RV32I) – 2,7 KB kodu + 2,3 KB danych w 16 KB RAM, wpisany do `seqgen16.sof/.pof`.
+- ✅ Firmware wykonany w symulatorze zestawu instrukcji RV32I (`pc/fw_sim.py`) z modelami UART i rejestrów generatora: 18 testów (`pc/test_firmware.py`) przez prawdziwą bibliotekę PC – protokół, konfiguracja rejestrów, zapis/odczyt 1024 kroków, pętle, błędne CRC, śmieci na linii, nieznane komendy. Obsługa jednego odebranego bajtu to ~115 instrukcji, czyli kilkukrotny zapas względem 86,8 µs na bajt przy 115200 bd.
+- ✅ Aplikacja PC: 40 testów (biblioteka na emulatorze + te same scenariusze na firmware, m.in. krok 1 µs, eksport/import)
   + automatyczny test GUI (rysowanie, zaznaczanie, generator, undo, włączanie kanałów w tabeli, pola czasu µs/ms/s,
   BASE_CLK/SYNC, eksport/import pliku, upload, start) i CLI na emulatorze.
 - ✅ Symulacja RTL w Questa: `sim/run_sim.ps1` → **TEST PASSED** (zapis/odczyt 1024 kroków, stany i czasy kroków,

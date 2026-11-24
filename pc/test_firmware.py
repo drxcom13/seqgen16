@@ -42,6 +42,16 @@ class TestFirmwareRobustness(unittest.TestCase):
         self.dev.set_aux(200, 0)
         self.assertEqual((self.sim.bclk_half, self.sim.sync_w), (99, 0))
 
+    def test_vccb_register_written(self):
+        self.dev.ping()
+        self.assertEqual(self.sim.vccb_writes, [0])                  # boot: outputs off
+        for v, bits in ((3.3, 0x5), (1.8, 0x1), (2.5, 0x3), (4.0, 0x7), (5.0, 0x9), (0.0, 0x0)):
+            self.dev.set_output_voltage(v)
+            self.assertEqual(self.sim.vccb_writes[-1], bits)
+        n = len(self.sim.vccb_writes)
+        self.dev.set_output_voltage(0.0)                             # same level -> no write (no 2.5 ms gap)
+        self.assertEqual(len(self.sim.vccb_writes), n)
+
     def test_bad_crc_reply(self):
         f = bytearray(build_frame(0x01))
         f[-1] ^= 0x55
@@ -62,7 +72,7 @@ class TestFirmwareRobustness(unittest.TestCase):
     def test_oversize_length(self):
         frames = self.raw(b"\xA5\x5A\x20" + struct.pack("<H", 5000))
         self.assertEqual(frames[0][1][0], 2)               # BAD_LEN, parser resynchronised
-        self.assertEqual(self.dev.ping()["fw"], "2.1")
+        self.assertEqual(self.dev.ping()["fw"], "2.2")
 
     def test_full_upload_speed(self):
         self.dev.write_steps(0, [i & 1 for i in range(1024)])

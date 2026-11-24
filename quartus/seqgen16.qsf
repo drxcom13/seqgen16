@@ -61,6 +61,16 @@ set_location_assignment PIN_57  -to ch_out[13]
 set_location_assignment PIN_60  -to ch_out[14]
 set_location_assignment PIN_58  -to ch_out[15]
 
+# Poziom wyjsc VCCB (arkusz Power: LDO U11/U12, Q1). vccb_off = 1 wylacza LDO.
+# vsel_*_n open-drain do dzielnika FB LDO - bez pull-upow (prad pull-upu zmienilby napiecie).
+set_location_assignment PIN_61  -to vccb_off
+set_location_assignment PIN_62  -to vsel_2v5_n
+set_location_assignment PIN_64  -to vsel_3v3_n
+set_location_assignment PIN_65  -to vsel_5v_n
+set_instance_assignment -name WEAK_PULL_UP_RESISTOR OFF -to vsel_2v5_n
+set_instance_assignment -name WEAK_PULL_UP_RESISTOR OFF -to vsel_3v3_n
+set_instance_assignment -name WEAK_PULL_UP_RESISTOR OFF -to vsel_5v_n
+
 # SYNC i zegar bazowy na dwufunkcyjnych pinach zegarowych CLK1n/CLK1p (bank 2), uzyte jako wyjscia
 set_location_assignment PIN_28  -to sync_out
 set_location_assignment PIN_29  -to clk_base
