@@ -9,11 +9,11 @@ from sch_build import Builder  # noqa: E402
 ROW = 7.62
 G = 2.54
 
-# buffer, inputs (pin, global label), outputs (pin, R, TVS, net), VCCA, VCCB, OE, GND, NC, caps (+3V3, VBUS)
+# buffer, inputs (pin, global label), outputs (pin, R, TVS, net), VCCA, VCCB, OE, GND, NC, caps (+3V3, VCCB)
 TXU4 = dict(vcca="1", vccb="14", oe="8", gnd="7", nc=("6", "9"))
 
 
-def block(b, u, ux, uy, inputs, outputs, caps, pins, loop_dx=22.86):
+def block(b, u, ux, uy, inputs, outputs, caps, pins, loop_dx=22.86, vccb="VCCB_A"):
     P = b.pin
     b.placed[u] = (ux, uy, 0, None)           # pin positions before the fields are set
     bot = P(u, pins["gnd"])[1]
@@ -28,11 +28,11 @@ def block(b, u, ux, uy, inputs, outputs, caps, pins, loop_dx=22.86):
     b.power("+3V3", (xa, rail))
     b.place(caps[0], ux - 12.7, rail + 3.81)
     b.power("GND", P(caps[0], "2"))
-    # VCCB (VBUS) rail with decoupling
+    # VCCB rail (VCCB_A / VCCB_B from the LDOs on the Power sheet) with decoupling
     b.wire(P(u, pins["vccb"]), (xb, rail), (ux + 17.78, rail))
     b.place(caps[1], ux + 12.7, rail + 3.81)
     b.power("GND", P(caps[1], "2"))
-    b.glabel("VBUS", (ux + 17.78, rail), "right")
+    b.glabel(vccb, (ux + 17.78, rail), "right")
     b.power("GND", P(u, pins["gnd"]))
     for p in pins["nc"]:
         b.nc(P(u, p))
@@ -86,13 +86,13 @@ def build(path):
                             ("U6", 220.98, 73.66, ("C9", "C10")), ("U7", 38.1, 142.24, ("C11", "C12"))):
         inputs = [(p, f"CH{ch + i}") for i, p in enumerate(("2", "3", "4", "5"))]
         outputs = [(p, f"R{rr + i}", f"D{dd + i}", f"OUT_CH{ch + i}") for i, p in enumerate(("13", "12", "11", "10"))]
-        block(b, u, ux, uy, inputs, outputs, caps, TXU4)
+        block(b, u, ux, uy, inputs, outputs, caps, TXU4, vccb="VCCB_A" if u in ("U4", "U5") else "VCCB_B")
         ch += 4
         rr += 4
         dd += 4
     block(b, "U8", 137.16, 142.24, [("5", "BASE_CLK"), ("4", "SYNC")],
           [("8", "R21", "D19", "OUT_CLK"), ("1", "R22", "D20", "OUT_SYNC")], ("C13", "C14"),
-          dict(vcca="3", vccb="7", oe="6", gnd="2", nc=()), loop_dx=30.48)
+          dict(vcca="3", vccb="7", oe="6", gnd="2", nc=()), loop_dx=30.48, vccb="VCCB_B")
 
     # --- connectors
     b.move_text("J3: odd pins", 25.4, 43.18)

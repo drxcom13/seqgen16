@@ -4288,7 +4288,7 @@
 	)
 	(wire
 		(pts
-			(xy 260.35 110.49) (xy 260.35 105.41)
+			(xy 260.35 100.33) (xy 260.35 110.49)
 		)
 		(stroke
 			(width 0)
@@ -4605,16 +4605,6 @@
 			(type default)
 		)
 		(uuid "fdaa05ec-7da1-4fdc-a870-7d861987b980")
-	)
-	(wire
-		(pts
-			(xy 260.35 105.41) (xy 260.35 100.33)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "fec7bf6d-2b0d-4972-9f03-3f8e5a898ae2")
 	)
 	(global_label "CH4"
 		(shape output)
@@ -10806,6 +10796,142 @@
 					(reference "U1")
 					(unit 5)
 				)
+			)
+		)
+	)
+	(wire
+		(pts
+			(xy 45.72 107.95) (xy 43.18 107.95)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "09d83313-0a7a-4287-9536-62ef17a571df")
+	)
+	(global_label "VCCB_OFF"
+		(shape output)
+		(at 43.18 107.95 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "034cfaa4-1779-4bc7-86e9-15c39349ae49")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 43.18 107.95 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+	)
+	(wire
+		(pts
+			(xy 45.72 110.49) (xy 43.18 110.49)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "1556a33a-6d41-4702-bdb3-10ea798634a7")
+	)
+	(global_label "VSEL_2V5_N"
+		(shape output)
+		(at 43.18 110.49 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "bb2f823a-91d7-4646-9b8a-ec4d1fe52585")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 43.18 110.49 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+	)
+	(wire
+		(pts
+			(xy 45.72 113.03) (xy 43.18 113.03)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "8cd6d5e6-c8cf-4344-813d-103d23cf1556")
+	)
+	(global_label "VSEL_3V3_N"
+		(shape output)
+		(at 43.18 113.03 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "7926dfe1-359b-4445-b20e-23785775f716")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 43.18 113.03 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+	)
+	(wire
+		(pts
+			(xy 45.72 115.57) (xy 43.18 115.57)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "9a5458f2-d0ce-4bb0-848f-c7a7998b8b43")
+	)
+	(global_label "VSEL_5V_N"
+		(shape output)
+		(at 43.18 115.57 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "1019c5d9-889a-430c-aed5-63ab67a870fd")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 43.18 115.57 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
 			)
 		)
 	)

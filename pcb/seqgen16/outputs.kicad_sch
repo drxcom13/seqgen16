@@ -3537,7 +3537,7 @@
 		)
 		(uuid "544275d5-dd70-408a-aa65-c5c1c85b8a9f")
 	)
-	(text "VCCA = +3V3 (FPGA levels), VCCB = VBUS (5 V) -> 5 V CMOS outputs. OE tied high (+3V3)."
+	(text "VCCA = +3V3 (FPGA levels), VCCB = VCCB_A (U4, U5) / VCCB_B (U6..U8) from LDOs U11/U12 on the Power sheet: 1.8 / 2.5 / 3.3 / 4.0 / ~5 V set by the FPGA, 0 V (Hi-Z) when off. OE tied high (+3V3)."
 		(exclude_from_sim no)
 		(at 25.4 27.94 0)
 		(effects
@@ -6591,7 +6591,7 @@
 			)
 		)
 	)
-	(global_label "VBUS"
+	(global_label "VCCB_A"
 		(shape input)
 		(at 149.86 55.88 0)
 		(fields_autoplaced yes)
@@ -6735,7 +6735,7 @@
 			)
 		)
 	)
-	(global_label "VBUS"
+	(global_label "VCCB_B"
 		(shape input)
 		(at 161.29 120.65 0)
 		(fields_autoplaced yes)
@@ -6807,7 +6807,7 @@
 			)
 		)
 	)
-	(global_label "VBUS"
+	(global_label "VCCB_B"
 		(shape input)
 		(at 238.76 49.53 0)
 		(fields_autoplaced yes)
@@ -6951,7 +6951,7 @@
 			)
 		)
 	)
-	(global_label "VBUS"
+	(global_label "VCCB_B"
 		(shape input)
 		(at 67.31 121.92 0)
 		(fields_autoplaced yes)
@@ -7023,7 +7023,7 @@
 			)
 		)
 	)
-	(global_label "VBUS"
+	(global_label "VCCB_A"
 		(shape input)
 		(at 63.5 55.88 0)
 		(fields_autoplaced yes)

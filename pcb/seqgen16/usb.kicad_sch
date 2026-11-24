@@ -8,366 +8,6 @@
 		(title "SeqGen16 - USB-UART")
 	)
 	(lib_symbols
-		(symbol "Diode:SM6T6V8A"
-			(pin_numbers
-				(hide yes)
-			)
-			(pin_names
-				(offset 1.016)
-				(hide yes)
-			)
-			(exclude_from_sim no)
-			(in_bom yes)
-			(on_board yes)
-			(in_pos_files yes)
-			(duplicate_pin_numbers_are_jumpers no)
-			(property "Reference" "D"
-				(at 0 2.54 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Value" "SM6T6V8A"
-				(at 0 -2.54 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Footprint" "Diode_SMD:D_SMB"
-				(at 0 -5.08 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Datasheet" "https://www.st.com/resource/en/datasheet/sm6t.pdf"
-				(at -1.27 0 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Description" "600W unidirectional Transil Transient Voltage Suppressor, 6.8Vrwm, DO-214AA"
-				(at 0 0 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "ki_keywords" "diode TVS voltage suppressor"
-				(at 0 0 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "ki_fp_filters" "D*SMB*"
-				(at 0 0 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(symbol "SM6T6V8A_0_1"
-				(polyline
-					(pts
-						(xy -0.762 1.27) (xy -1.27 1.27) (xy -1.27 -1.27)
-					)
-					(stroke
-						(width 0.254)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(polyline
-					(pts
-						(xy 1.27 1.27) (xy 1.27 -1.27) (xy -1.27 0) (xy 1.27 1.27)
-					)
-					(stroke
-						(width 0.254)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-			)
-			(symbol "SM6T6V8A_1_1"
-				(pin passive line
-					(at -3.81 0 0)
-					(length 2.54)
-					(name "A1"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "1"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin passive line
-					(at 3.81 0 180)
-					(length 2.54)
-					(name "A2"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "2"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-			)
-			(embedded_fonts no)
-		)
-		(symbol "Power_Management:TPS22917DBV"
-			(exclude_from_sim no)
-			(in_bom yes)
-			(on_board yes)
-			(in_pos_files yes)
-			(duplicate_pin_numbers_are_jumpers no)
-			(property "Reference" "U"
-				(at -6.35 6.35 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Value" "TPS22917DBV"
-				(at 2.54 6.35 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Footprint" "Package_TO_SOT_SMD:SOT-23-6"
-				(at 0 12.7 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Datasheet" "http://www.ti.com/lit/ds/symlink/tps22917.pdf"
-				(at 1.27 -17.78 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Description" "1V to 5.5V, 2A, 80mΩ Ultra-Low Leakage Load Switch, SOT23-6"
-				(at 0 0 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "ki_keywords" "high-side power distribution switch"
-				(at 0 0 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "ki_fp_filters" "SOT?23*"
-				(at 0 0 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(symbol "TPS22917DBV_0_1"
-				(rectangle
-					(start -7.62 5.08)
-					(end 7.62 -5.08)
-					(stroke
-						(width 0.254)
-						(type default)
-					)
-					(fill
-						(type background)
-					)
-				)
-			)
-			(symbol "TPS22917DBV_1_1"
-				(pin power_in line
-					(at -10.16 2.54 0)
-					(length 2.54)
-					(name "VIN"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "1"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin power_in line
-					(at 0 -7.62 90)
-					(length 2.54)
-					(name "GND"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "2"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin input line
-					(at -10.16 -2.54 0)
-					(length 2.54)
-					(name "ON"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "3"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin output line
-					(at -10.16 0 0)
-					(length 2.54)
-					(name "CT"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "4"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin open_collector line
-					(at 10.16 -2.54 180)
-					(length 2.54)
-					(name "QOD"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "5"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin power_out line
-					(at 10.16 2.54 180)
-					(length 2.54)
-					(name "VOUT"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "6"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-			)
-			(embedded_fonts no)
-		)
 		(symbol "Connector:USB_C_Receptacle_USB2.0_16P"
 			(pin_names
 				(offset 1.016)
@@ -1742,6 +1382,160 @@
 			)
 			(embedded_fonts no)
 		)
+		(symbol "Diode:SM6T6V8A"
+			(pin_numbers
+				(hide yes)
+			)
+			(pin_names
+				(offset 1.016)
+				(hide yes)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(in_pos_files yes)
+			(duplicate_pin_numbers_are_jumpers no)
+			(property "Reference" "D"
+				(at 0 2.54 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "SM6T6V8A"
+				(at 0 -2.54 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" "Diode_SMD:D_SMB"
+				(at 0 -5.08 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Datasheet" "https://www.st.com/resource/en/datasheet/sm6t.pdf"
+				(at -1.27 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Description" "600W unidirectional Transil Transient Voltage Suppressor, 6.8Vrwm, DO-214AA"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "ki_keywords" "diode TVS voltage suppressor"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "ki_fp_filters" "D*SMB*"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(symbol "SM6T6V8A_0_1"
+				(polyline
+					(pts
+						(xy -0.762 1.27) (xy -1.27 1.27) (xy -1.27 -1.27)
+					)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 1.27 1.27) (xy 1.27 -1.27) (xy -1.27 0) (xy 1.27 1.27)
+					)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "SM6T6V8A_1_1"
+				(pin passive line
+					(at -3.81 0 0)
+					(length 2.54)
+					(name "A1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 3.81 0 180)
+					(length 2.54)
+					(name "A2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
 		(symbol "Interface_USB:FT232RL"
 			(exclude_from_sim no)
 			(in_bom yes)
@@ -2300,6 +2094,212 @@
 						)
 					)
 					(number "28"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
+		(symbol "Power_Management:TPS22917DBV"
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(in_pos_files yes)
+			(duplicate_pin_numbers_are_jumpers no)
+			(property "Reference" "U"
+				(at -6.35 6.35 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "TPS22917DBV"
+				(at 2.54 6.35 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" "Package_TO_SOT_SMD:SOT-23-6"
+				(at 0 12.7 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Datasheet" "http://www.ti.com/lit/ds/symlink/tps22917.pdf"
+				(at 1.27 -17.78 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Description" "1V to 5.5V, 2A, 80mΩ Ultra-Low Leakage Load Switch, SOT23-6"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "ki_keywords" "high-side power distribution switch"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "ki_fp_filters" "SOT?23*"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(symbol "TPS22917DBV_0_1"
+				(rectangle
+					(start -7.62 5.08)
+					(end 7.62 -5.08)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type background)
+					)
+				)
+			)
+			(symbol "TPS22917DBV_1_1"
+				(pin power_in line
+					(at -10.16 2.54 0)
+					(length 2.54)
+					(name "VIN"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin power_in line
+					(at 0 -7.62 90)
+					(length 2.54)
+					(name "GND"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin input line
+					(at -10.16 -2.54 0)
+					(length 2.54)
+					(name "ON"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "3"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin output line
+					(at -10.16 0 0)
+					(length 2.54)
+					(name "CT"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "4"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin open_collector line
+					(at 10.16 -2.54 180)
+					(length 2.54)
+					(name "QOD"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "5"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin power_out line
+					(at 10.16 2.54 180)
+					(length 2.54)
+					(name "VOUT"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "6"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -3143,6 +3143,17 @@
 			(embedded_fonts no)
 		)
 	)
+	(text "U10 TPS22917 load switch: whole board VBUS (C15 47u, C16, VCCB LDO inputs, ~54 uF) soft-started, CT C45 2.2n -> ~5 ms ramp, inrush ~55 mA. At plug-in USB sees only C1/C2 (~4.8 uF < 10 uF, USB 2.0)."
+		(exclude_from_sim no)
+		(at 25.4 41.91 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "308be35b-888d-46ed-87a5-cd8046430e8a")
+	)
 	(text "USB-C as device: CC1/CC2 via 5.1k to GND. ESD USBLC6-2SC6 close to the connector."
 		(exclude_from_sim no)
 		(at 25.4 34.29 0)
@@ -3188,19 +3199,19 @@
 		(uuid "d5402447-98c7-403c-b3eb-f2209ea2b39f")
 	)
 	(junction
-		(at 111.76 73.66)
+		(at 111.76 63.5)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "04cea953-276b-472f-925d-569d8420b4ea")
 	)
 	(junction
-		(at 137.16 73.66)
+		(at 137.16 63.5)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "0971d55b-50a9-4ce2-9e38-be5ea12807fc")
 	)
 	(junction
-		(at 121.92 73.66)
+		(at 121.92 63.5)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "2af73882-b7cd-415a-9486-fdb53e44f657")
@@ -3218,10 +3229,28 @@
 		(uuid "5c23f9e9-d17a-40ed-beed-221f0d630594")
 	)
 	(junction
-		(at 91.44 73.66)
+		(at 149.86 63.5)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "684f994a-b6e0-4f67-abae-3361e3e0310d")
+	)
+	(junction
+		(at 91.44 63.5)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "6d599130-bed2-46a9-ba68-0890d324d5ad")
+	)
+	(junction
+		(at 77.47 63.5)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "935f5387-83a7-4407-b291-145dcd9da446")
+	)
+	(junction
+		(at 149.86 60.96)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "9e83d6cb-fdc5-40f6-b313-fedb1b7691ec")
 	)
 	(junction
 		(at 55.88 106.68)
@@ -3236,7 +3265,7 @@
 		(uuid "de282af5-164e-4b72-85ef-68a9d57acc7c")
 	)
 	(junction
-		(at 88.9 73.66)
+		(at 88.9 63.5)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "e429eeed-2468-4aa7-9d79-68911f113283")
@@ -3248,7 +3277,7 @@
 		(uuid "f683c586-fe67-404a-9251-52674abb098b")
 	)
 	(junction
-		(at 144.78 73.66)
+		(at 144.78 63.5)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "f93e6218-21e0-43a0-9be9-bac827168801")
@@ -3262,6 +3291,10 @@
 	(no_connect
 		(at 162.56 111.76)
 		(uuid "057f3b92-ff59-43aa-86b1-b5307b28f62a")
+	)
+	(no_connect
+		(at 177.8 63.5)
+		(uuid "0ff42fb3-0aea-40e4-88ef-aadd00a903d2")
 	)
 	(no_connect
 		(at 162.56 119.38)
@@ -3327,6 +3360,16 @@
 	)
 	(wire
 		(pts
+			(xy 149.86 63.5) (xy 157.48 63.5)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "07912e86-ab5c-42bf-9c12-37cbb332bb6e")
+	)
+	(wire
+		(pts
 			(xy 30.48 127) (xy 38.1 127)
 		)
 		(stroke
@@ -3367,6 +3410,16 @@
 	)
 	(wire
 		(pts
+			(xy 77.47 63.5) (xy 88.9 63.5)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "1ae10872-ea5c-4ad0-8cce-cd03bb7142df")
+	)
+	(wire
+		(pts
 			(xy 121.92 101.6) (xy 115.57 101.6)
 		)
 		(stroke
@@ -3397,7 +3450,7 @@
 	)
 	(wire
 		(pts
-			(xy 111.76 73.66) (xy 111.76 76.2)
+			(xy 111.76 63.5) (xy 111.76 66.04)
 		)
 		(stroke
 			(width 0)
@@ -3427,6 +3480,26 @@
 	)
 	(wire
 		(pts
+			(xy 149.86 58.42) (xy 157.48 58.42)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "2f8b1368-46cb-446b-8564-e13f5b9b71ca")
+	)
+	(wire
+		(pts
+			(xy 58.42 63.5) (xy 58.42 86.36)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "2fa84a9f-897c-4de5-b956-fb92de31dbac")
+	)
+	(wire
+		(pts
 			(xy 168.91 81.28) (xy 168.91 82.55)
 		)
 		(stroke
@@ -3447,17 +3520,7 @@
 	)
 	(wire
 		(pts
-			(xy 59.69 86.36) (xy 59.69 73.66)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "45e2eecc-dc9b-4b68-a224-aba91205b3b0")
-	)
-	(wire
-		(pts
-			(xy 59.69 73.66) (xy 76.2 73.66)
+			(xy 58.42 63.5) (xy 77.47 63.5)
 		)
 		(stroke
 			(width 0)
@@ -3507,6 +3570,16 @@
 	)
 	(wire
 		(pts
+			(xy 149.86 63.5) (xy 149.86 60.96)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "6de0f132-1e38-4fc8-8b20-e0168d2d89ad")
+	)
+	(wire
+		(pts
 			(xy 144.78 147.32) (xy 147.32 147.32)
 		)
 		(stroke
@@ -3514,6 +3587,16 @@
 			(type default)
 		)
 		(uuid "6dec6b23-a48b-4fda-b90f-19e394fe06bc")
+	)
+	(wire
+		(pts
+			(xy 77.47 66.04) (xy 77.47 63.5)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "71dd9016-2e7d-434f-a833-5b59da9d18d7")
 	)
 	(wire
 		(pts
@@ -3547,7 +3630,17 @@
 	)
 	(wire
 		(pts
-			(xy 91.44 73.66) (xy 97.79 73.66)
+			(xy 144.78 63.5) (xy 144.78 93.98)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "7b288b43-40a1-4444-9c56-53e00b7b10a0")
+	)
+	(wire
+		(pts
+			(xy 91.44 63.5) (xy 97.79 63.5)
 		)
 		(stroke
 			(width 0)
@@ -3577,6 +3670,16 @@
 	)
 	(wire
 		(pts
+			(xy 88.9 119.38) (xy 88.9 116.84)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "8921d4fe-52d4-49a5-86ef-c7eaf802835f")
+	)
+	(wire
+		(pts
 			(xy 195.58 106.68) (xy 195.58 110.49)
 		)
 		(stroke
@@ -3597,13 +3700,23 @@
 	)
 	(wire
 		(pts
-			(xy 88.9 104.14) (xy 88.9 73.66)
+			(xy 88.9 104.14) (xy 88.9 63.5)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
 		(uuid "8e104747-a03e-4bad-b5bf-dcf3cf3238ff")
+	)
+	(wire
+		(pts
+			(xy 149.86 60.96) (xy 149.86 58.42)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "93c8f18d-27a4-427a-9520-87c446e63a68")
 	)
 	(wire
 		(pts
@@ -3627,7 +3740,17 @@
 	)
 	(wire
 		(pts
-			(xy 121.92 73.66) (xy 121.92 76.2)
+			(xy 58.42 86.36) (xy 53.34 86.36)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "9dbf3ba5-0fef-47aa-8f2f-d39ac4750486")
+	)
+	(wire
+		(pts
+			(xy 121.92 63.5) (xy 121.92 66.04)
 		)
 		(stroke
 			(width 0)
@@ -3677,6 +3800,16 @@
 	)
 	(wire
 		(pts
+			(xy 144.78 63.5) (xy 149.86 63.5)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "b11ff858-c3fd-4b2e-8369-f9953977952b")
+	)
+	(wire
+		(pts
 			(xy 137.16 147.32) (xy 142.24 147.32)
 		)
 		(stroke
@@ -3687,13 +3820,13 @@
 	)
 	(wire
 		(pts
-			(xy 144.78 73.66) (xy 144.78 93.98)
+			(xy 177.8 58.42) (xy 187.96 58.42)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "c1c4513e-7dbc-4f1a-a3c1-38ebf34c56ff")
+		(uuid "ba4e6fa3-e59c-4c0f-9be1-03c0f4109534")
 	)
 	(wire
 		(pts
@@ -3727,7 +3860,7 @@
 	)
 	(wire
 		(pts
-			(xy 137.16 73.66) (xy 144.78 73.66)
+			(xy 137.16 63.5) (xy 144.78 63.5)
 		)
 		(stroke
 			(width 0)
@@ -3747,7 +3880,7 @@
 	)
 	(wire
 		(pts
-			(xy 88.9 73.66) (xy 91.44 73.66)
+			(xy 88.9 63.5) (xy 91.44 63.5)
 		)
 		(stroke
 			(width 0)
@@ -3764,16 +3897,6 @@
 			(type default)
 		)
 		(uuid "e7565e85-56ac-4271-b447-aa80558ff028")
-	)
-	(wire
-		(pts
-			(xy 53.34 86.36) (xy 59.69 86.36)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "e7dd19e2-faad-4ded-bf57-da343041b0cf")
 	)
 	(wire
 		(pts
@@ -3797,7 +3920,7 @@
 	)
 	(wire
 		(pts
-			(xy 121.92 73.66) (xy 137.16 73.66)
+			(xy 121.92 63.5) (xy 137.16 63.5)
 		)
 		(stroke
 			(width 0)
@@ -3827,7 +3950,7 @@
 	)
 	(wire
 		(pts
-			(xy 111.76 73.66) (xy 105.41 73.66)
+			(xy 111.76 63.5) (xy 105.41 63.5)
 		)
 		(stroke
 			(width 0)
@@ -3837,7 +3960,7 @@
 	)
 	(wire
 		(pts
-			(xy 111.76 73.66) (xy 121.92 73.66)
+			(xy 111.76 63.5) (xy 121.92 63.5)
 		)
 		(stroke
 			(width 0)
@@ -3845,15 +3968,15 @@
 		)
 		(uuid "ff03a0f6-e9cb-4f62-bb7e-bcefc7cec3c2")
 	)
-	(label "VBUS_USB"
-		(at 66.04 73.66 0)
+	(label "VBUS_FT"
+		(at 130.81 63.5 180)
 		(effects
 			(font
 				(size 1.27 1.27)
 			)
-			(justify left bottom)
+			(justify right bottom)
 		)
-		(uuid "c62e4f14-4004-48e1-a3c7-63f07a383ccb")
+		(uuid "3930e632-926b-4715-82fd-0b5002b261c3")
 	)
 	(label "USB_DP"
 		(at 63.5 109.22 0)
@@ -3885,6 +4008,16 @@
 		)
 		(uuid "ab5cb725-f746-462c-be33-66688b36b8f7")
 	)
+	(label "VBUS_USB"
+		(at 66.04 63.5 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "c62e4f14-4004-48e1-a3c7-63f07a383ccb")
+	)
 	(label "USB_DM"
 		(at 63.5 111.76 0)
 		(effects
@@ -3894,6 +4027,30 @@
 			(justify left bottom)
 		)
 		(uuid "f4b123e5-9606-4f0d-a7a4-93b028587c50")
+	)
+	(global_label "VBUS"
+		(shape output)
+		(at 187.96 58.42 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "08919cad-57f9-4a37-99fe-0cf99da59ed0")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 194.7325 58.42 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
 	)
 	(global_label "RXD"
 		(shape output)
@@ -4099,7 +4256,7 @@
 	)
 	(symbol
 		(lib_id "Device:FerriteBead")
-		(at 101.6 73.66 90)
+		(at 101.6 63.5 90)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -4109,7 +4266,7 @@
 		(dnp no)
 		(uuid "362c13cd-f7e6-4d2f-99a7-294bc0daa4a6")
 		(property "Reference" "FB1"
-			(at 101.6 70.485 90)
+			(at 101.6 60.325 90)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -4119,7 +4276,7 @@
 			)
 		)
 		(property "Value" "MPZ2012S601AT000"
-			(at 101.6 76.835 90)
+			(at 101.6 66.675 90)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -4129,7 +4286,7 @@
 			)
 		)
 		(property "Footprint" "Inductor_SMD:L_0805_2012Metric"
-			(at 101.6 73.66 0)
+			(at 101.6 63.5 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -4140,7 +4297,7 @@
 			)
 		)
 		(property "Datasheet" "https://www.tme.eu/pl/details/mpz2012s601at000/ferryty-koraliki/tdk/"
-			(at 101.6 73.66 0)
+			(at 101.6 63.5 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -4151,7 +4308,7 @@
 			)
 		)
 		(property "Description" "TDK MPZ2012S601AT000 ferrite bead, 0805, 600R@100MHz, 2 A, DCR 0.15R max - carries the whole-board VBUS current"
-			(at 101.6 73.66 0)
+			(at 101.6 63.5 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -4178,7 +4335,7 @@
 	)
 	(symbol
 		(lib_id "Device:C")
-		(at 121.92 80.01 0)
+		(at 121.92 69.85 0)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -4188,7 +4345,7 @@
 		(dnp no)
 		(uuid "3f2ddd9e-6404-4ba8-8af8-68db2f938abc")
 		(property "Reference" "C2"
-			(at 124.46 78.74 0)
+			(at 124.46 68.58 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -4199,7 +4356,7 @@
 			)
 		)
 		(property "Value" "100n"
-			(at 124.46 81.28 0)
+			(at 124.46 71.12 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -4210,7 +4367,7 @@
 			)
 		)
 		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
-			(at 121.92 80.01 0)
+			(at 121.92 69.85 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -4221,7 +4378,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 121.92 80.01 0)
+			(at 121.92 69.85 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -4232,7 +4389,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 121.92 80.01 0)
+			(at 121.92 69.85 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -4336,7 +4493,7 @@
 	)
 	(symbol
 		(lib_id "power:PWR_FLAG")
-		(at 137.16 73.66 0)
+		(at 137.16 63.5 0)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -4346,7 +4503,7 @@
 		(dnp no)
 		(uuid "4bac4a79-3109-4805-a668-442a469eeab5")
 		(property "Reference" "#FLG012"
-			(at 137.16 79.66 0)
+			(at 137.16 69.5 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -4357,7 +4514,7 @@
 			)
 		)
 		(property "Value" "PWR_FLAG"
-			(at 137.16 68.58 0)
+			(at 137.16 58.42 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -4367,7 +4524,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 137.16 73.66 0)
+			(at 137.16 63.5 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -4378,7 +4535,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 137.16 73.66 0)
+			(at 137.16 63.5 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -4389,7 +4546,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 137.16 73.66 0)
+			(at 137.16 63.5 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -4500,7 +4657,7 @@
 		(dnp no)
 		(uuid "60b00139-cdd9-4bd1-bbca-20984ab88178")
 		(property "Reference" "U2"
-			(at 144.74 116.88 0)
+			(at 150.368 93.472 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -4511,7 +4668,7 @@
 			)
 		)
 		(property "Value" "FT232RNL"
-			(at 144.74 121.88 0)
+			(at 150.368 96.012 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -4719,8 +4876,99 @@
 		)
 	)
 	(symbol
+		(lib_id "Power_Management:TPS22917DBV")
+		(at 167.64 60.96 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(uuid "6aa389de-4c8c-4bda-b613-0d9539de295c")
+		(property "Reference" "U10"
+			(at 167.64 52.07 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "TPS22917DBV"
+			(at 167.64 54.61 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Package_TO_SOT_SMD:SOT-23-6"
+			(at 167.64 60.96 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" "https://www.ti.com/lit/ds/symlink/tps22917.pdf"
+			(at 167.64 60.96 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Load switch 1-5.5 V, 2 A, 80 mOhm, adjustable slew rate (CT), QOD, reverse current blocking - VBUS soft-start"
+			(at 167.64 60.96 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "e44f9cc1-ff15-485f-8110-313fb3a06aba")
+		)
+		(pin "2"
+			(uuid "5db261a5-e43b-44a7-9a0b-26bd816aa86f")
+		)
+		(pin "3"
+			(uuid "1955354e-a68f-45e7-a1f4-5398543b54b9")
+		)
+		(pin "4"
+			(uuid "d9885932-6b76-489a-9e70-239f68ba3a3f")
+		)
+		(pin "5"
+			(uuid "6ad29860-13f2-45da-af6e-ab6ba890030b")
+		)
+		(pin "6"
+			(uuid "ddf19236-fac6-4709-8c9f-ee6a14046f48")
+		)
+		(instances
+			(project "seqgen16"
+				(path "/0a00f2ca-5a34-470b-adcd-a843d56ab15f/456d2cd9-42f1-40f6-9742-c33c73a23127"
+					(reference "U10")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "Device:C")
-		(at 111.76 80.01 0)
+		(at 111.76 69.85 0)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -4730,7 +4978,7 @@
 		(dnp no)
 		(uuid "83b45146-e468-4f2a-8400-a1112a3863a0")
 		(property "Reference" "C1"
-			(at 114.3 78.74 0)
+			(at 114.3 68.58 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -4741,7 +4989,7 @@
 			)
 		)
 		(property "Value" "4.7u"
-			(at 114.3 81.28 0)
+			(at 114.3 71.12 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -4752,7 +5000,7 @@
 			)
 		)
 		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
-			(at 111.76 80.01 0)
+			(at 111.76 69.85 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -4763,7 +5011,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 111.76 80.01 0)
+			(at 111.76 69.85 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -4774,7 +5022,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 111.76 80.01 0)
+			(at 111.76 69.85 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -4800,19 +5048,18 @@
 		)
 	)
 	(symbol
-		(lib_id "power:GND")
-		(at 88.9 116.84 0)
+		(lib_id "Device:C")
+		(at 153.67 60.96 90)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
-		(in_bom no)
-		(on_board no)
-		(in_pos_files no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
 		(dnp no)
-		(uuid "876114f3-3819-48e5-ad83-4d56a4d6bcdc")
-		(property "Reference" "#PWR008"
-			(at 88.9 122.84 0)
-			(hide yes)
+		(uuid "849b3ecb-11cc-4cbc-828c-45b587ad2841")
+		(property "Reference" "C45"
+			(at 153.67 53.34 90)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -4821,8 +5068,8 @@
 				)
 			)
 		)
-		(property "Value" "GND"
-			(at 88.9 120.34 0)
+		(property "Value" "2.2n"
+			(at 153.67 55.88 90)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -4831,8 +5078,8 @@
 				)
 			)
 		)
-		(property "Footprint" ""
-			(at 88.9 116.84 0)
+		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
+			(at 153.67 60.96 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -4843,7 +5090,87 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 88.9 116.84 0)
+			(at 153.67 60.96 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "TPS22917 CT to VIN: SR = 2300/2200 ~ 1 mV/us -> VBUS ramp ~5 ms, inrush ~55 mA into ~52 uF; >= 10 V (CT pin 7 V)"
+			(at 153.67 60.96 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "5008970c-3479-4bad-887b-6510bc3bdca6")
+		)
+		(pin "2"
+			(uuid "712808ca-7e66-4be0-99e3-eed0be32f3e4")
+		)
+		(instances
+			(project "seqgen16"
+				(path "/0a00f2ca-5a34-470b-adcd-a843d56ab15f/456d2cd9-42f1-40f6-9742-c33c73a23127"
+					(reference "C45")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:GND")
+		(at 88.9 119.38 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom no)
+		(on_board no)
+		(in_pos_files no)
+		(dnp no)
+		(uuid "876114f3-3819-48e5-ad83-4d56a4d6bcdc")
+		(property "Reference" "#PWR008"
+			(at 88.9 125.38 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "GND"
+			(at 88.9 122.88 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 88.9 119.38 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 88.9 119.38 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -4854,7 +5181,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 88.9 116.84 0)
+			(at 88.9 119.38 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -5036,7 +5363,7 @@
 	)
 	(symbol
 		(lib_id "power:PWR_FLAG")
-		(at 91.44 73.66 0)
+		(at 91.44 63.5 0)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -5046,7 +5373,7 @@
 		(dnp no)
 		(uuid "a0218dcf-154f-49a7-99e9-0cddeaba2410")
 		(property "Reference" "#FLG004"
-			(at 91.44 79.66 0)
+			(at 91.44 69.5 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -5057,7 +5384,7 @@
 			)
 		)
 		(property "Value" "PWR_FLAG"
-			(at 91.44 68.58 0)
+			(at 91.44 58.42 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -5067,7 +5394,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 91.44 73.66 0)
+			(at 91.44 63.5 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -5078,7 +5405,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 91.44 73.66 0)
+			(at 91.44 63.5 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -5089,7 +5416,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 91.44 73.66 0)
+			(at 91.44 63.5 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -5260,6 +5587,83 @@
 			(project "seqgen16"
 				(path "/0a00f2ca-5a34-470b-adcd-a843d56ab15f/456d2cd9-42f1-40f6-9742-c33c73a23127"
 					(reference "#PWR013")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:GND")
+		(at 77.47 73.66 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom no)
+		(on_board no)
+		(in_pos_files no)
+		(dnp no)
+		(uuid "adf68781-7d06-433a-ac0d-3d3530dbfb46")
+		(property "Reference" "#PWR0753"
+			(at 77.47 80.01 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "GND"
+			(at 77.47 77.16 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 77.47 73.66 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 77.47 73.66 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" ""
+			(at 77.47 73.66 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "991b50e5-f1fa-4419-80d7-7677ba832d88")
+		)
+		(instances
+			(project "seqgen16"
+				(path "/0a00f2ca-5a34-470b-adcd-a843d56ab15f/456d2cd9-42f1-40f6-9742-c33c73a23127"
+					(reference "#PWR0753")
 					(unit 1)
 				)
 			)
@@ -5640,7 +6044,7 @@
 		(dnp no)
 		(uuid "d63c6039-960f-4b71-9cf0-292fd2609172")
 		(property "Reference" "R1"
-			(at 72.39 87.122 90)
+			(at 72.39 86.868 90)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -5711,7 +6115,7 @@
 	)
 	(symbol
 		(lib_id "power:GND")
-		(at 121.92 83.82 0)
+		(at 121.92 73.66 0)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -5721,7 +6125,7 @@
 		(dnp no)
 		(uuid "de74bd7b-b1ff-46cd-8b5c-c3b8b91af35f")
 		(property "Reference" "#PWR014"
-			(at 121.92 89.82 0)
+			(at 121.92 79.66 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -5732,7 +6136,7 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 121.92 87.32 0)
+			(at 121.92 77.16 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -5742,7 +6146,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 121.92 83.82 0)
+			(at 121.92 73.66 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -5753,7 +6157,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 121.92 83.82 0)
+			(at 121.92 73.66 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -5764,7 +6168,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 121.92 83.82 0)
+			(at 121.92 73.66 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -5862,6 +6266,83 @@
 			(project "seqgen16"
 				(path "/0a00f2ca-5a34-470b-adcd-a843d56ab15f/456d2cd9-42f1-40f6-9742-c33c73a23127"
 					(reference "R3")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:GND")
+		(at 167.64 68.58 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom no)
+		(on_board no)
+		(in_pos_files no)
+		(dnp no)
+		(uuid "e3af0b5b-01e6-4ff4-b998-4318ca9e75a8")
+		(property "Reference" "#PWR0752"
+			(at 167.64 74.93 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "GND"
+			(at 167.64 72.08 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 167.64 68.58 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 167.64 68.58 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" ""
+			(at 167.64 68.58 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "be6ec0ef-d93c-44a4-a9ae-826ff7491c3f")
+		)
+		(instances
+			(project "seqgen16"
+				(path "/0a00f2ca-5a34-470b-adcd-a843d56ab15f/456d2cd9-42f1-40f6-9742-c33c73a23127"
+					(reference "#PWR0752")
 					(unit 1)
 				)
 			)
@@ -6107,6 +6588,87 @@
 		)
 	)
 	(symbol
+		(lib_id "Diode:SM6T6V8A")
+		(at 77.47 69.85 270)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(uuid "f402d5ef-599e-4b72-8e2a-26db3fa7e57c")
+		(property "Reference" "D24"
+			(at 80.01 68.58 270)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Value" "SMF5.0A"
+			(at 80.01 71.12 270)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Footprint" "Diode_SMD:D_SMF"
+			(at 77.47 69.85 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" "https://www.vishay.com/doc?85881"
+			(at 77.47 69.85 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "TVS unidirectional 200 W, VRWM 5 V, VBR 6.4 V min, VC 9.2 V - VBUS_USB hot-plug / ESD surge (cathode to VBUS_USB)"
+			(at 77.47 69.85 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "0f4e55f3-0b72-4019-a300-3afbb55dd8d0")
+		)
+		(pin "2"
+			(uuid "41f27249-fe2c-4ec7-b4b1-68232d5a703b")
+		)
+		(instances
+			(project "seqgen16"
+				(path "/0a00f2ca-5a34-470b-adcd-a843d56ab15f/456d2cd9-42f1-40f6-9742-c33c73a23127"
+					(reference "D24")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "Device:R")
 		(at 195.58 102.87 0)
 		(unit 1)
@@ -6276,7 +6838,7 @@
 		(dnp no)
 		(uuid "f6d681b5-ffd5-4f63-9a61-d98184a8383f")
 		(property "Reference" "U3"
-			(at 91.9 100.22 0)
+			(at 91.948 116.078 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -6359,7 +6921,7 @@
 	)
 	(symbol
 		(lib_id "power:GND")
-		(at 111.76 83.82 0)
+		(at 111.76 73.66 0)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -6369,7 +6931,7 @@
 		(dnp no)
 		(uuid "ff81084f-b0b9-49b9-9eef-f4b1231c5828")
 		(property "Reference" "#PWR007"
-			(at 111.76 89.82 0)
+			(at 111.76 79.66 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -6380,7 +6942,7 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 111.76 87.32 0)
+			(at 111.76 77.16 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -6390,7 +6952,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 111.76 83.82 0)
+			(at 111.76 73.66 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -6401,7 +6963,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 111.76 83.82 0)
+			(at 111.76 73.66 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -6412,7 +6974,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 111.76 83.82 0)
+			(at 111.76 73.66 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -6429,558 +6991,6 @@
 			(project "seqgen16"
 				(path "/0a00f2ca-5a34-470b-adcd-a843d56ab15f/456d2cd9-42f1-40f6-9742-c33c73a23127"
 					(reference "#PWR007")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(wire
-		(pts
-			(xy 144.78 73.66) (xy 149.86 73.66)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "b11ff858-c3fd-4b2e-8369-f9953977952b")
-	)
-	(wire
-		(pts
-			(xy 149.86 73.66) (xy 149.86 63.5)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "5251662e-ca2c-4b6a-9e50-75effb3960fc")
-	)
-	(wire
-		(pts
-			(xy 149.86 63.5) (xy 149.86 60.96)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "6de0f132-1e38-4fc8-8b20-e0168d2d89ad")
-	)
-	(wire
-		(pts
-			(xy 149.86 60.96) (xy 149.86 58.42)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "93c8f18d-27a4-427a-9520-87c446e63a68")
-	)
-	(wire
-		(pts
-			(xy 149.86 58.42) (xy 157.48 58.42)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "2f8b1368-46cb-446b-8564-e13f5b9b71ca")
-	)
-	(wire
-		(pts
-			(xy 149.86 63.5) (xy 157.48 63.5)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "07912e86-ab5c-42bf-9c12-37cbb332bb6e")
-	)
-	(wire
-		(pts
-			(xy 177.8 58.42) (xy 187.96 58.42)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "ba4e6fa3-e59c-4c0f-9be1-03c0f4109534")
-	)
-	(junction
-		(at 149.86 63.5)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "684f994a-b6e0-4f67-abae-3361e3e0310d")
-	)
-	(junction
-		(at 149.86 60.96)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "9e83d6cb-fdc5-40f6-b313-fedb1b7691ec")
-	)
-	(no_connect
-		(at 177.8 63.5)
-		(uuid "0ff42fb3-0aea-40e4-88ef-aadd00a903d2")
-	)
-	(symbol
-		(lib_id "Power_Management:TPS22917DBV")
-		(at 167.64 60.96 0)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(uuid "6aa389de-4c8c-4bda-b613-0d9539de295c")
-		(property "Reference" "U10"
-			(at 167.64 52.07 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "TPS22917DBV"
-			(at 167.64 54.61 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "Package_TO_SOT_SMD:SOT-23-6"
-			(at 167.64 60.96 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" "https://www.ti.com/lit/ds/symlink/tps22917.pdf"
-			(at 167.64 60.96 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" "Load switch 1-5.5 V, 2 A, 80 mOhm, adjustable slew rate (CT), QOD, reverse current blocking - VBUS soft-start"
-			(at 167.64 60.96 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "1"
-			(uuid "e44f9cc1-ff15-485f-8110-313fb3a06aba")
-		)
-		(pin "2"
-			(uuid "5db261a5-e43b-44a7-9a0b-26bd816aa86f")
-		)
-		(pin "3"
-			(uuid "1955354e-a68f-45e7-a1f4-5398543b54b9")
-		)
-		(pin "4"
-			(uuid "d9885932-6b76-489a-9e70-239f68ba3a3f")
-		)
-		(pin "5"
-			(uuid "6ad29860-13f2-45da-af6e-ab6ba890030b")
-		)
-		(pin "6"
-			(uuid "ddf19236-fac6-4709-8c9f-ee6a14046f48")
-		)
-		(instances
-			(project "seqgen16"
-				(path "/0a00f2ca-5a34-470b-adcd-a843d56ab15f/456d2cd9-42f1-40f6-9742-c33c73a23127"
-					(reference "U10")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Device:C")
-		(at 153.67 60.96 90)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(uuid "849b3ecb-11cc-4cbc-828c-45b587ad2841")
-		(property "Reference" "C45"
-			(at 153.67 53.34 90)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "2.2n"
-			(at 153.67 55.88 90)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
-			(at 153.67 60.96 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 153.67 60.96 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" "TPS22917 CT to VIN: SR = 2300/2200 ~ 1 mV/us -> VBUS ramp ~5 ms, inrush ~55 mA into ~52 uF; >= 10 V (CT pin 7 V)"
-			(at 153.67 60.96 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "1"
-			(uuid "5008970c-3479-4bad-887b-6510bc3bdca6")
-		)
-		(pin "2"
-			(uuid "712808ca-7e66-4be0-99e3-eed0be32f3e4")
-		)
-		(instances
-			(project "seqgen16"
-				(path "/0a00f2ca-5a34-470b-adcd-a843d56ab15f/456d2cd9-42f1-40f6-9742-c33c73a23127"
-					(reference "C45")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "power:GND")
-		(at 167.64 68.58 0)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom no)
-		(on_board no)
-		(in_pos_files no)
-		(dnp no)
-		(uuid "e3af0b5b-01e6-4ff4-b998-4318ca9e75a8")
-		(property "Reference" "#PWR0752"
-			(at 167.64 74.93 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "GND"
-			(at 167.64 72.08 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" ""
-			(at 167.64 68.58 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 167.64 68.58 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" ""
-			(at 167.64 68.58 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "1"
-			(uuid "be6ec0ef-d93c-44a4-a9ae-826ff7491c3f")
-		)
-		(instances
-			(project "seqgen16"
-				(path "/0a00f2ca-5a34-470b-adcd-a843d56ab15f/456d2cd9-42f1-40f6-9742-c33c73a23127"
-					(reference "#PWR0752")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(global_label "VBUS"
-		(shape output)
-		(at 187.96 58.42 0)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "08919cad-57f9-4a37-99fe-0cf99da59ed0")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 194.7325 58.42 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-	)
-	(label "VBUS_FT"
-		(at 149.86 71.12 90)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "3930e632-926b-4715-82fd-0b5002b261c3")
-	)
-	(text "U10 TPS22917 load switch: whole board VBUS (C15 47u, C16, TXU VCCB, ~52 uF) soft-started, CT C45 2.2n -> ~5 ms ramp, inrush ~55 mA. At plug-in USB sees only C1/C2 (~4.8 uF < 10 uF, USB 2.0)."
-		(exclude_from_sim no)
-		(at 25.4 41.91 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "308be35b-888d-46ed-87a5-cd8046430e8a")
-	)
-	(wire
-		(pts
-			(xy 76.2 73.66) (xy 88.9 73.66)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "1ae10872-ea5c-4ad0-8cce-cd03bb7142df")
-	)
-	(junction
-		(at 76.2 73.66)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "935f5387-83a7-4407-b291-145dcd9da446")
-	)
-	(symbol
-		(lib_id "Diode:SM6T6V8A")
-		(at 76.2 77.47 270)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(uuid "f402d5ef-599e-4b72-8e2a-26db3fa7e57c")
-		(property "Reference" "D24"
-			(at 78.74 76.2 270)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-			)
-		)
-		(property "Value" "SMF5.0A"
-			(at 78.74 78.74 270)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-			)
-		)
-		(property "Footprint" "Diode_SMD:D_SMF"
-			(at 76.2 77.47 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" "https://www.vishay.com/doc?85881"
-			(at 76.2 77.47 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" "TVS unidirectional 200 W, VRWM 5 V, VBR 6.4 V min, VC 9.2 V - VBUS_USB hot-plug / ESD surge (cathode to VBUS_USB)"
-			(at 76.2 77.47 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "1"
-			(uuid "0f4e55f3-0b72-4019-a300-3afbb55dd8d0")
-		)
-		(pin "2"
-			(uuid "41f27249-fe2c-4ec7-b4b1-68232d5a703b")
-		)
-		(instances
-			(project "seqgen16"
-				(path "/0a00f2ca-5a34-470b-adcd-a843d56ab15f/456d2cd9-42f1-40f6-9742-c33c73a23127"
-					(reference "D24")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "power:GND")
-		(at 76.2 81.28 0)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom no)
-		(on_board no)
-		(in_pos_files no)
-		(dnp no)
-		(uuid "adf68781-7d06-433a-ac0d-3d3530dbfb46")
-		(property "Reference" "#PWR0753"
-			(at 76.2 87.63 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "GND"
-			(at 76.2 84.78 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" ""
-			(at 76.2 81.28 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 76.2 81.28 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" ""
-			(at 76.2 81.28 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "1"
-			(uuid "991b50e5-f1fa-4419-80d7-7677ba832d88")
-		)
-		(instances
-			(project "seqgen16"
-				(path "/0a00f2ca-5a34-470b-adcd-a843d56ab15f/456d2cd9-42f1-40f6-9742-c33c73a23127"
-					(reference "#PWR0753")
 					(unit 1)
 				)
 			)

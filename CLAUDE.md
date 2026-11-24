@@ -42,15 +42,25 @@ Szczegóły techniczne użytkowe są w `README.md`, protokół w `PROTOCOL.md`.
   0805 2 A: strona złącza = sieć `VBUS_USB` (TVS D24 SMF5.0A, symbol Diode:SM6T6V8A, pin 1 = katoda, D_SMF),
   za koralikiem `VBUS_FT` (FT232 C1/C2, ~4,8 µF – limit USB 10 µF),
   dalej klucz U10 TPS22917DBV (ON = VIN, CT C45 2,2n do VIN → narastanie ~5 ms, inrush ~55 mA, QOD NC) → `VBUS`
-  dla reszty płytki (~52 µF: C15 47u, C16, VCCB TXU)), Power (**U9 = TI TPSM828302** od 2026-11-23, zamiast
+  dla reszty płytki (~54 µF: C15 47u, C16, wejścia LDO VCCB)), Power (**U9 = TI TPSM828302** od 2026-11-23, zamiast
   EP5388QI: moduł buck 2 A z cewką, wariant TPSM828302ARDSR = QFN-FCMOD-9 3×3 mm RDS0009A – jedyny aktywny;
   karta SLVSGM1D; piny 1 VIN, 2 GND, 3 MODE, 4 FB, 5 VOS, 6 VOUT, 7 PG, 8 SW, 9 EN; VFB 0,5 V; dzielnik
   R35 1,43M / R36 255k → 3,304 V (wartości policzone, nie z karty; R36 musi być 200k–600k); MODE = GND (auto
   PSM/PWM); EN z VBUS przez R23/C17; PG i SW niepodłączone; CIN C16 4,7u, COUT C18 47u ≥ 12 µF efektywnie.
   Footprint `seqgen16:TI_RDS0009A_QFN-FCMOD-9_3x3mm` (biblioteka projektu `seqgen16.pretty` + `fp-lib-table`,
   2026-11-23): współrzędne padów wyciągnięte z wektorów rysunku TI 4228326/D (str. 38 karty, skala 25X), pady 6/8
-  wg otworu maski (SMD), pozostałe NSMD z maską +0,05 mm, pasta 6/8 −12 %. Symbol w `seqgen16.kicad_sym`.),
-  Outputs (TXU0104/TXU0102 na 5 V, 33R + TSD05C, złącza J3 2x16, J4/J5 2x2), Config (oscylator 50 MHz, LED 132/134,
+  wg otworu maski (SMD), pozostałe NSMD z maską +0,05 mm, pasta 6/8 −12 %. Symbol w `seqgen16.kicad_sym`.
+  **VCCB programowane** (2026-11-24, wszystkie grupy jednakowo): U11 TLV75801PDRV → `VCCB_A` (U4, U5), U12 → `VCCB_B`
+  (U6, U7, U8), z VBUS; VOUT = 0,55 V × (1 + Rtop/Rbot), Rtop 20k, Rbot 8,87k (1,8 V); dodatkowe rezystory do GND
+  przez piny FPGA open-drain (stan niski = aktywny): `VSEL_2V5_N` 15,4k (2,5 V, pin 62), `VSEL_3V3_N` 7,32k (3,3 V,
+  pin 64), oba → 4,0 V, `VSEL_5V_N` 2,94k (pin 65, nastawa 5,53 V → dropout ≈ VBUS − 40 mV). EN obu LDO = `VCCB_EN`
+  (R48 100k do +3V3), Q1 2N7002 zwiera EN do GND, gdy `VCCB_OFF` (pin 61) wysoki – słabe pull-upy FPGA podczas
+  konfiguracji → LDO wyłączone, wyjścia TXU w Hi-Z (Ioff). Bez klucza 5 V równolegle: TLV758P ma rozładowanie
+  wyjścia 95 Ω przy EN = 0. Moc w LDO przy 1,8 V i 20 mA/wyjście: ~0,5–0,65 W na układ (RθJA 80 °C/W, WSON).
+  Wymaga logiki w FPGA (wyjścia open-drain, domyślnie VCCB_OFF = 1) i komendy w protokole – jeszcze nie zrobione.
+  `layout_power.py` nie zawiera bloku VCCB (dodany skryptem jednorazowym) – ponowne uruchomienie usunie jego
+  połączenia.),
+  Outputs (TXU0104/TXU0102, VCCB = VCCB_A/VCCB_B 1,8–5 V, 33R + TSD05C, złącza J3 2x16, J4/J5 2x2), Config (oscylator 50 MHz, LED 132/134,
   RESET_N 121, zworki nCONFIG/BOOT_SEL, JTAG 2x5). U1 = **10M08SAE144** (decyzja użytkownika 2026-11-23; zgodne z
   `DEVICE` w `.qsf`). KiCad nie ma symbolu SA – jest w bibliotece projektu `seqgen16.kicad_sym` (kopia SC, piny
   3/4/5 = ANAIN1/REFGND/ADC_VREF; ADC nieużywany: ANAIN1, REFGND → GND, ADC_VREF NC).
@@ -75,7 +85,7 @@ Szczegóły techniczne użytkowe są w `README.md`, protokół w `PROTOCOL.md`.
   `net_compare.py` (porównanie netlist po zbiorach pinów). Procedura: netlista przed (`kicad-cli sch export netlist
   --format kicadsexpr`), narzędzie, netlista po, `net_compare.py` musi dać 0 różnic, ERC bez nowych błędów.
   Pozostałe niedoskonałości z generatora: nachodzące teksty pól (np. GND przy JP1/JP2, +3V3 przy OE buforów),
-  rozstrzelone rozmieszczenie na Power (sieć EN). ERC: 69 × pin_not_connected (nieużywane I/O U1) – oczekiwane.
+  rozstrzelone rozmieszczenie na Power (sieć EN). ERC: 64 × pin_not_connected (nieużywane I/O U1, od 2026-11-24) – oczekiwane.
   RESET_N (pin 121) obsłużony w FPGA od 2026-11-23 (`reset_ctrl.vhd`). SC (Compact) odrzucony:
   prawdopodobnie bez inicjalizacji RAM z flash. W `.gitignore`: backupy, `.lck` (zawiera nazwę komputera), `.kicad_prl`.
 - Toolchain RISC-V (RiscFree): `C:\altera_lite\25.1std\riscfree\toolchain\riscv32-unknown-elf\bin` – `fw/build.ps1` go znajduje.
