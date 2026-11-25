@@ -165,7 +165,7 @@ ewaluacyjnej). Logika: `quartus/reset_ctrl.vhd`, test: `sim/tb_reset_ctrl.vhd`.
 
 Złącze J6 (listwa 2×6, 2,54 mm, górna krawędź płytki) służy do testowania układów i portów szeregowych.
 Na tym etapie SeqGen16 pracuje jako **SPI master** (tryby 0–3, do 12,5 MHz), **I2C master** (100 kHz / 400 kHz /
-~1 MHz, START, powtórzony START, ACK/NACK, rozciąganie zegara przez slave) i **UART** (8 bitów, parzystość N/E/O,
+1 MHz; SCL: 3/5 okresu w stanie niskim, czasy zgodne z normą I2C, START, powtórzony START, ACK/NACK, rozciąganie zegara przez slave) i **UART** (8 bitów, parzystość N/E/O,
 1 lub 2 bity stopu, do 3 Mbd). Tryby slave i podsłuch magistrali są zaplanowane jako kolejne etapy.
 
 | Pin J6 | Sygnał | Pin J6 | Sygnał |

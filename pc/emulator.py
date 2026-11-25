@@ -53,7 +53,7 @@ class Emulator:
         self.sync_width_us = 1000
         self.vout_level = 0            # 0 = off, 1..5 = 1.8 / 2.5 / 3.3 / 4.0 / 5 V
         # protocol tester (J6): virtual device as in fw_sim (proto_target.py)
-        self.pt_ctrl, self.pt_div, self.pt_level = 0, 124, 0
+        self.pt_ctrl, self.pt_div, self.pt_level = 0, 99, 0
         self.pt_rx = []
         self.pt_target = ProtoTarget()
 

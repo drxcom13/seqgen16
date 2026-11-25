@@ -50,7 +50,7 @@ class FirmwareSim:
         self.bclk_half = 499           # registers 7 / 8 (reset values as in VHDL)
         self.sync_w = 1000
         self.vccb_writes = []          # register 9 (VCCB) write log
-        self.pt = dict(ctrl=0, div=124, hold=0, ovf=0)
+        self.pt = dict(ctrl=0, div=99, hold=0, ovf=0)
         self.pt_txq, self.pt_rxq = [], []
         self.pt_target = ProtoTarget()
         self.pvcc_writes = []          # proto_io PVCC write log

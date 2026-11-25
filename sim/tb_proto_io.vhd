@@ -42,6 +42,8 @@ architecture sim of tb_proto_io is
     signal sl_sda, sl_scl   : std_logic := 'Z';
     signal i2c_wr_n  : integer := 0;
     signal stretched : boolean := false;
+    signal scl_mon   : boolean := false;                  -- pomiar czasow SCL w tescie I2C
+    signal scl_lo_min, scl_hi_min : time := 1 sec;
 
     signal rx_line   : std_logic := '1';
     signal errors    : integer := 0;
@@ -103,6 +105,21 @@ begin
                 wait until falling_edge(sck_o) or cs_o = '1';
             end loop;
         end loop;
+    end process;
+
+    -- ------------------------------------------------------------------ pomiar SCL (tLOW / tHIGH)
+    p_scl_mon : process
+        variable t_edge : time := 0 ns;
+    begin
+        wait until scl_bus'event;
+        if scl_mon and t_edge > 0 ns then
+            if to_x01(scl_bus) = '1' then
+                if now - t_edge < scl_lo_min then scl_lo_min <= now - t_edge; end if;
+            else
+                if now - t_edge < scl_hi_min then scl_hi_min <= now - t_edge; end if;
+            end if;
+        end if;
+        t_edge := now;
     end process;
 
     -- ------------------------------------------------------------------ I2C slave (EEPROM 0x50)
@@ -355,8 +372,10 @@ begin
         pop_rx("SPI3 MISO 1", 16#81#);                     -- 0x81 (symetryczny bitowo)
         check("SCK spoczynek CPOL=1", to_integer(unsigned'('0' & sck_o)), 1);
 
-        -- ------------------------------------------------ 4. I2C master ~1 MHz (div 12): zapis, odczyt, zly adres
-        wr(2, 12);
+        -- ------------------------------------------------ 4. I2C master 1 MHz (div 9): zapis, odczyt, zly adres
+        -- SCL = 50 MHz / (5 * 10): stan niski 3 U = 600 ns, wysoki 2 U = 400 ns (U = 200 ns)
+        wr(2, 9);
+        scl_mon <= true;
         wr(1, 2);
         wait for 2 * TCLK;                                 -- dir_* rejestrowane (1 takt)
         check("dir_spi I2C", to_integer(unsigned'('0' & dir_spi)), 0);
@@ -396,6 +415,10 @@ begin
         wait_idle(100 us);
         pop_rx("I2C NACK (brak 0x58)", 16#100#);
         rd(5, d); check("I2C: brak bledu magistrali", to_integer(unsigned'('0' & d(22))), 0);
+        scl_mon <= false;
+        check("I2C: min tLOW >= 600 ns", boolean'pos(scl_lo_min >= 600 ns), 1);
+        check("I2C: min tHIGH >= 400 ns", boolean'pos(scl_hi_min >= 400 ns), 1);
+        report "I2C 1 MHz: min tLOW = " & time'image(scl_lo_min) & ", min tHIGH = " & time'image(scl_hi_min);
 
         -- ------------------------------------------------ 5. UART 3 Mbd, parzystosc parzysta, petla
         wru(2, unsigned'(x"F5C28F5C"));                   -- 16 * 3e6 * 2^32 / 50e6 = 4123168604

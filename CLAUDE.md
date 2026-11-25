@@ -82,6 +82,8 @@ Szczegóły techniczne użytkowe są w `README.md`, protokół w `PROTOCOL.md`.
   wirtualny układ `pc/proto_target.py` (pętle MOSI→MISO, TX→RX, EEPROM 0x50) w emulatorze i `fw_sim`.
   **M9K:** przed testerem projekt zajmował 42/42 bloki (`seq_channel` daje 2 kopie pamięci na kanał); z testerem
   RAM Nios zmniejszony do 12 KB – nadal 42/42. Kolejne etapy potrzebują wolnych M9K – sprawdzaj raport fittera.
+  I2C master (2026-11-25): bit = 5 jednostek (DIV + 1) taktów, SCL niski 3 / wysoki 2 (SCL = 50 MHz / (5(DIV+1)):
+  99 = 100 kHz, 24 = 400 kHz, 9 = 1 MHz); START/STOP: tSU;STA, tSU;STO, tBUF = 2 jednostki. Brak arbitrażu i filtra zakłóceń.
   Ograniczenia: SPI slave będzie możliwy do ~4 MHz (próbkowanie SCK zegarem 50 MHz + opóźnienie MISO).),
   Outputs (TXU0104/TXU0102, VCCB = VCCB_A/VCCB_B 1,8–5 V, 33R + TSD05C, złącza J3 2x16, J4/J5 2x2), Config (oscylator 50 MHz, LED 132/134,
   RESET_N 121, zworki nCONFIG/BOOT_SEL, JTAG 2x5). U1 = **10M08SAE144** (decyzja użytkownika 2026-11-23; zgodne z
@@ -103,7 +105,7 @@ Szczegóły techniczne użytkowe są w `README.md`, protokół w `PROTOCOL.md`.
   rogu płytki). Nowe UUID przez `Duplicate(False)` (kopia FOOTPRINT() powiela UUID biblioteki → DRC myli elementy).
   U1 obrócony o 90° (piny 37–72 do buforów). Od 2026-11-24 CH0..15 = piny 60, 59, 58, 57, 56, 55, 52, 50, 47, 46,
   45, 44, 43, 41, 39, 38 (malejąco = CH0 u góry, jak na J3) – w `.qsf`, etykietach U1 i README; obraz FPGA
-  (.sof/.pof) przebudowany 2026-11-25 z testerem i UART 110/111 (70 % LE, setup +7,3 ns; we flash płytki ewaluacyjnej jest jeszcze .pof ze starymi pinami). 2026-11-25 scalenie z drugim komputerem: PCB = lokalne rozmieszczenie i ścieżki użytkownika + footprinty testera z pozycji zdalnych + nowe J1 + strefa GND In1; zdalne ścieżki (na starym rozmieszczeniu) odrzucone. Odsprzęganie U1 na spodzie.
+  (.sof/.pof) przebudowany 2026-11-25 z testerem i UART 110/111 (70 % LE, setup +6,0 ns, I2C SCL 3:2 od 2026-11-25; we flash płytki ewaluacyjnej jest jeszcze .pof ze starymi pinami). 2026-11-25 scalenie z drugim komputerem: PCB = lokalne rozmieszczenie i ścieżki użytkownika + footprinty testera z pozycji zdalnych + nowe J1 + strefa GND In1; zdalne ścieżki (na starym rozmieszczeniu) odrzucone. Odsprzęganie U1 na spodzie.
   Reguły: klasa Default ścieżka 0,3 mm, przelotka 0,6/0,4 mm, odstęp 0,2 mm; U8 (VSSOP 0,5 mm) lokalny odstęp
   0,15 mm na footprincie – `kicad-cli pcb drc` nie wczytuje `.kicad_dru`.
   **Wzorzec układu = arkusz Config (poprawiony ręcznie przez użytkownika):** format A4, notatki u góry, bloki

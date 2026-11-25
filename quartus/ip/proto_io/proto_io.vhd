@@ -14,7 +14,8 @@
 --                         translatorow i kabla; domyslnie 1)
 --                  Kazdy zapis: silniki w stan spoczynku, kolejki TX/RX oproznione, flagi skasowane.
 --   2  DIV     RW  SPI: polowa okresu SCK w taktach - 1 (1 -> 12,5 MHz, 2 -> 8,33 MHz ...)
---                  I2C: cwierc okresu SCL w taktach - 1 (124 -> 100 kHz, 30 -> 403 kHz, 11 -> 1,04 MHz)
+--                  I2C: jednostka czasu bitu w taktach - 1, SCL = CLK / (5 * (DIV + 1)), stan niski 3/5
+--                       (99 -> 100 kHz, 24 -> 400 kHz, 9 -> 1 MHz)
 --                  UART: przyrost akumulatora fazy = round(16 * baud * 2^32 / CLK_HZ)
 --   3  TXD     W   wpis do kolejki TX (512 slow, 10 bit):
 --                  SPI:  [7:0] bajt, [8] = ostatni bajt transakcji (po nim CS = 1)
@@ -84,7 +85,7 @@ architecture rtl of proto_io is
     signal parity   : std_logic_vector(1 downto 0) := "00";
     signal stop2    : std_logic := '0';
     signal sdel     : unsigned(2 downto 0) := to_unsigned(1, 3);
-    signal div      : unsigned(31 downto 0) := to_unsigned(124, 32);
+    signal div      : unsigned(31 downto 0) := to_unsigned(99, 32);
     signal clr      : std_logic := '0';               -- impuls: zapis CTRL
     signal hold     : std_logic := '0';
     signal go       : std_logic;                      -- kolejka TX niepusta i brak HOLD
@@ -137,7 +138,9 @@ architecture rtl of proto_io is
     type i2c_st_t is (I_IDLE, I_LOAD, I_START, I_STOP, I_BIT, I_NEXT);
     signal i2c_st   : i2c_st_t := I_IDLE;
     signal i2c_q    : unsigned(1 downto 0) := (others => '0');     -- cwiartka bitu
-    signal i2c_cnt  : unsigned(15 downto 0) := (others => '0');
+    signal i2c_cnt  : unsigned(16 downto 0) := (others => '0');
+    signal i2c_u1   : unsigned(16 downto 0);                       -- 1 jednostka czasu bitu - 1
+    signal i2c_u2   : unsigned(16 downto 0);                       -- 2 jednostki - 1
     signal i2c_to   : unsigned(20 downto 0) := (others => '0');    -- timeout rozciagania SCL
     signal i2c_op   : std_logic_vector(1 downto 0) := "00";
     signal i2c_sh   : std_logic_vector(8 downto 0) := (others => '0');  -- 8 bitow + ACK
@@ -206,7 +209,7 @@ begin
                 parity <= "00";
                 stop2  <= '0';
                 sdel   <= to_unsigned(1, 3);
-                div    <= to_unsigned(124, 32);
+                div    <= to_unsigned(99, 32);
                 hold   <= '0';
                 clr    <= '1';
             elsif avs_write = '1' then
@@ -479,8 +482,12 @@ begin
     spi_busy <= '0' when spi_st = S_IDLE and spi_cs = '1' and spi_stb = "0000000000" else '1';
 
     -- =================================================================== I2C master
-    -- Bit = 4 cwiartki: koniec Q0 - ustaw SDA (SCL = 0), koniec Q1 - zwolnij SCL (czekaj az SCL = 1,
-    -- rozciaganie zegara), koniec Q2 - probkowanie SDA, koniec Q3 - SCL = 0. SCL: 50 % stanu wysokiego.
+    -- Jednostka czasu U = (DIV + 1) taktow. Bit = 5 U: Q0 (1 U) - na koncu ustaw SDA (SCL = 0),
+    -- Q1 (2 U) - na koncu zwolnij SCL (czekaj az SCL = 1: rozciaganie zegara), Q2 (1 U) - na koncu
+    -- probkowanie SDA, Q3 (1 U) - na koncu SCL = 0. SCL: 3 U niski / 2 U wysoki (tLOW >= 1,3 us przy
+    -- 400 kHz). START: tSU;STA = 2 U, tHD;STA = 1 U. STOP: tSU;STO = 2 U, tBUF = 2 U.
+    i2c_u1 <= '0' & div(15 downto 0);
+    i2c_u2 <= div(15 downto 0) & '1';
     p_i2c : process (clk)
     begin
         if rising_edge(clk) then
@@ -502,7 +509,7 @@ begin
                         i2c_pop <= '1';
                         i2c_op  <= tx_q(9 downto 8);
                         i2c_q   <= (others => '0');
-                        i2c_cnt <= div(15 downto 0);
+                        i2c_cnt <= i2c_u1;
                         i2c_to  <= (others => '0');
                         if tx_q(9 downto 8) = "11" then
                             if tx_q(0) = '1' then
@@ -524,15 +531,16 @@ begin
                             i2c_st  <= I_BIT;
                         end if;
                     when I_START =>
-                        -- Q0: SDA zwolnione, Q1: SCL zwolnione (czekaj), Q2: SDA = 0, Q3: SCL = 0
+                        -- Q0: SDA zwolnione, Q1 (2 U): SCL zwolnione (czekaj), Q2 (2 U): SDA = 0, Q3: SCL = 0
                         if i2c_cnt = 0 then
-                            i2c_cnt <= div(15 downto 0);
+                            i2c_cnt <= i2c_u1;
                             case i2c_q is
-                                when "00" => i2c_sda <= '0'; i2c_q <= "01";
+                                when "00" => i2c_sda <= '0'; i2c_q <= "01"; i2c_cnt <= i2c_u2;   -- tLOW = 3 U
                                 when "01" =>
                                     i2c_scl <= '0';
                                     if scl_s = '1' then
-                                        i2c_q <= "10";
+                                        i2c_q   <= "10";
+                                        i2c_cnt <= i2c_u2;                     -- tSU;STA
                                     else
                                         i2c_cnt <= (others => '0');
                                         i2c_to  <= i2c_to + 1;
@@ -550,18 +558,21 @@ begin
                             i2c_cnt <= i2c_cnt - 1;
                         end if;
                     when I_STOP =>
-                        -- Q0: SCL = 0, SDA = 0, Q1: zwolnij SCL (czekaj), Q2: zwolnij SDA, Q3: czas wolnej magistrali
+                        -- Q0: SCL = 0, SDA = 0, Q1 (2 U): zwolnij SCL (czekaj), Q2 (2 U): zwolnij SDA,
+                        -- Q3 (2 U): czas wolnej magistrali
                         if i2c_cnt = 0 then
-                            i2c_cnt <= div(15 downto 0);
+                            i2c_cnt <= i2c_u1;
                             case i2c_q is
                                 when "00" =>
                                     i2c_scl <= '1';
                                     i2c_sda <= '1';
                                     i2c_q <= "01";
+                                    i2c_cnt <= i2c_u2;                         -- tLOW = 3 U
                                 when "01" =>
                                     i2c_scl <= '0';
                                     if scl_s = '1' then
-                                        i2c_q <= "10";
+                                        i2c_q   <= "10";
+                                        i2c_cnt <= i2c_u2;                     -- tSU;STO
                                     else
                                         i2c_cnt <= (others => '0');
                                         i2c_to  <= i2c_to + 1;
@@ -571,7 +582,7 @@ begin
                                             i2c_st  <= I_NEXT;
                                         end if;
                                     end if;
-                                when "10" => i2c_sda <= '0'; i2c_q <= "11";
+                                when "10" => i2c_sda <= '0'; i2c_q <= "11"; i2c_cnt <= i2c_u2;   -- tBUF
                                 when others =>
                                     i2c_st  <= I_NEXT;
                             end case;
@@ -580,12 +591,13 @@ begin
                         end if;
                     when I_BIT =>
                         if i2c_cnt = 0 then
-                            i2c_cnt <= div(15 downto 0);
+                            i2c_cnt <= i2c_u1;
                             case i2c_q is
                                 when "00" =>
                                     i2c_scl <= '1';
                                     i2c_sda <= not i2c_sh(8);
                                     i2c_q   <= "01";
+                                    i2c_cnt <= i2c_u2;                         -- Q1 = 2 U: tLOW = 3 U
                                 when "10" =>
                                     i2c_rd <= i2c_rd(7 downto 0) & sda_s;
                                     i2c_q  <= "11";

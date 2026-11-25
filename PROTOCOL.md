@@ -67,7 +67,7 @@ Tryby slave i podsłuch magistrali są przewidziane w kolejnych etapach (kody 4�
 | `[11:9]` | SPI: opóźnienie próbkowania MISO w taktach 20 ns (0…7, domyślnie 1) – kompensuje translatory i kabel |
 
 `div`: SPI – połowa okresu SCK w taktach − 1 (SCK = 50 MHz / (2·(div+1)), maks. 12,5 MHz przy div = 1);
-I2C – ćwierć okresu SCL w taktach − 1 (100 kHz: 124, 400 kHz: 31, ~1 MHz: 12); UART – przyrost akumulatora
+I2C – jednostka czasu bitu w taktach − 1, SCL = 50 MHz / (5 × (DIV + 1)), stan niski 3/5 okresu (100 kHz: 99, 400 kHz: 24, 1 MHz: 9); UART – przyrost akumulatora
 fazy = round(16 · baud · 2³² / 50 MHz) (maks. 3,125 Mbd, błąd prędkości < 0,01 %).
 
 Wpisy TX (`entry`):

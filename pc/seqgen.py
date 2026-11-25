@@ -74,13 +74,14 @@ def spi_div(hz: float):
 
 
 def i2c_div(hz: float):
-    """-> (DIV register, real SCL frequency): SCL = CLK / (4 * (div + 1)), never above hz."""
+    """-> (DIV register, real SCL frequency): SCL = CLK / (5 * (div + 1)), never above hz.
+    One bit = 5 time units of (div + 1) clocks: SCL low 3 units, high 2 (tLOW 1.5 us at 400 kHz)."""
     if not 0 < hz <= I2C_MAX_HZ:
         raise ValueError(f"I2C clock must be > 0 and <= {I2C_MAX_HZ // 1000} kHz")
-    div = max(3, math.ceil(CLK_HZ / (4 * hz)) - 1)
+    div = max(3, math.ceil(CLK_HZ / (5 * hz)) - 1)
     if div > 0xFFFF:
-        raise ValueError("I2C clock too low (min ~191 Hz)")
-    return div, CLK_HZ / (4 * (div + 1))
+        raise ValueError("I2C clock too low (min ~153 Hz)")
+    return div, CLK_HZ / (5 * (div + 1))
 
 
 def uart_inc(baud: float):

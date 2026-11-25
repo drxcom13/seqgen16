@@ -225,8 +225,9 @@ class TestModel(unittest.TestCase):
     def test_pt_helpers(self):
         self.assertEqual(spi_div(12.5e6), (1, 12.5e6))
         self.assertEqual(spi_div(10e6)[0], 2)                         # never faster than asked: 8.33 MHz
-        self.assertEqual(i2c_div(100e3), (124, 100e3))
-        self.assertEqual(i2c_div(1e6)[0], 12)
+        self.assertEqual(i2c_div(100e3), (99, 100e3))
+        self.assertEqual(i2c_div(400e3), (24, 400e3))                 # tLOW = 3 * 25 * 20 ns = 1.5 us
+        self.assertEqual(i2c_div(1e6), (9, 1e6))
         self.assertEqual(uart_inc(3e6)[0], 4123168604)
         self.assertEqual(uart_inc(115200)[0], 158329674)
         self.assertEqual(pt_ctrl(PT_I2C), 2 | 1 << 9)

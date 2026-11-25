@@ -60,7 +60,7 @@ class TestFirmwareRobustness(unittest.TestCase):
         self.dev.pt_set_level(5.0)
         self.assertEqual(self.sim.pvcc_writes, [0, 0x1, 0x9])
         self.dev.i2c_configure(100e3)
-        self.assertEqual((self.sim.pt["ctrl"], self.sim.pt["div"]), (2 | 1 << 9, 124))
+        self.assertEqual((self.sim.pt["ctrl"], self.sim.pt["div"]), (2 | 1 << 9, 99))
         self.dev.i2c_transfer(0x50, b"\x00\x5A")
         self.assertEqual(self.sim.pt["hold"], 0)                     # HOLD released after loading the queue
 
