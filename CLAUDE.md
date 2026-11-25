@@ -171,6 +171,30 @@ cd pc ; python -m unittest test_seqgen test_firmware -v   # 40 testów; test_fir
 - Testy GUI były robione skryptami spoza repo (sterowanie `App` + zrzut ekranu przez System.Drawing). Zrzuty do
   README: `docs/gui_main.png`, `docs/gui_editor.png`.
 
+## Notatka dla drugiej sesji (drugi komputer) – 2026-11-25
+
+Użytkownik pracuje na dwóch komputerach z osobnymi sesjami Claude Code. Na początku pracy zrób `git pull`.
+Ta sesja (commity `f1194c3`, `d505bc1`, `096c387`) dodała:
+
+- **Tester protokołów SPI / I2C / UART na złączu J6** – szczegóły wyżej (sekcja sprzętu) i w README / PROTOCOL.md.
+  Etap 1 (tryby master) gotowy; etap 2 (slave) i 3 (podsłuch) do zrobienia. Nic nie sprawdzone na sprzęcie.
+- **Nowy arkusz `pcb/seqgen16/tester.kicad_sch`** (strona 7) + etykiety PT_* / PVCC_* / PSEL_* na U1F/U1G w
+  `fpga.kicad_sch` (piny 77–98; ich flagi No Connect usunięte).
+- **PCB:** 62 nowe footprinty testera dodane przez `place_parts.py` (bez `--move`): J6/JP3 na górnej krawędzi (front),
+  reszta na spodzie (x 28–68 mm, y 7–27 mm). Ścieżek do testera brak. **Nie uruchamiaj `place_parts.py --move`** –
+  przesunąłby elementy rozmieszczone ręcznie.
+- **RAM Nios 12 KB** (było 16 KB) – M9K 42/42. Każdy nowy bufor w FPGA wymaga zwolnienia pamięci.
+- Firmware 2.3 (komendy 0x40–0x45), 52 testy PC, 3 testbenche VHDL (`sim/run_sim.ps1`).
+
+Uwagi do pracy równoległej:
+- **U10 (TPS22917DBV), pin QOD:** biblioteki KiCad na obu komputerach się różnią (QOD w y = 0 albo −2,54) –
+  „Update symbols from library” przestawia symbol i flagę No Connect. Netlista ta sama; nie commituj tej zmiany
+  bez potrzeby albo ujednolić wersję KiCada.
+- `kicad-cli` i KiCad zmieniają `seqgen16.kicad_pro` (net_colors, step, same_local_global_power) – cofaj, jeśli
+  to jedyna zmiana.
+- Autor commitów: na drugim komputerze `git config user.email` jest inny niż na tym – jeśli to niezamierzone,
+  ustawić ten sam adres.
+
 ## Stan na koniec ostatniej sesji
 
 Kompilacja FPGA z testerem (2026-11-25): 69 % LE, **M9K 42/42 (100 %)**, setup +7,747 ns, hold +0,286 ns.
