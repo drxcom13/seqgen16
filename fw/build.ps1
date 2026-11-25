@@ -31,7 +31,7 @@ New-Item -ItemType Directory -Force build | Out-Null
 if ($LASTEXITCODE) { throw "Kompilacja nieudana" }
 & $size build\fw.elf
 & $objcopy -O binary build\fw.elf build\fw.bin
-python mkhex.py build\fw.bin ..\quartus\onchip_ram.hex 16384
+python mkhex.py build\fw.bin ..\quartus\onchip_ram.hex 12288
 
 if ($UpdateSof) {
     Push-Location ..\quartus

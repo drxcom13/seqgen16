@@ -1,10 +1,10 @@
-/* link.ld - caly program w 16 KB on-chip RAM */
+/* link.ld - caly program w 12 KB on-chip RAM (12 blokow M9K; 16 KB nie miesci sie z testerem protokolow) */
 OUTPUT_ARCH("riscv")
 ENTRY(_start)
 
 MEMORY
 {
-    ram (rwx) : ORIGIN = 0x00000000, LENGTH = 16K
+    ram (rwx) : ORIGIN = 0x00000000, LENGTH = 12K
 }
 
 SECTIONS

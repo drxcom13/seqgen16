@@ -80,9 +80,8 @@ Szczegóły techniczne użytkowe są w `README.md`, protokół w `PROTOCOL.md`.
   licznik µs w PINS [31:8] (Nios V/c nie ma timera). Firmware 2.3: komendy 0x40–0x45 (PT_*). PC: `SeqGen.spi_*`,
   `i2c_*`, `uart_*`, okno `pc/proto_gui.py` („Serial tester (J6)…”), CLI `spi`/`i2c`/`i2c-scan`/`uart`/`pins`/`pt-level`,
   wirtualny układ `pc/proto_target.py` (pętle MOSI→MISO, TX→RX, EEPROM 0x50) w emulatorze i `fw_sim`.
-  **M9K:** przed testerem projekt zajmował 42/42 bloki – `seq_channel` dawał 2 kopie pamięci na kanał; atrybut
-  `ramstyle "M9K, no_rw_check"` w `seq_channel.vhd` (2026-11-25). Kolejne etapy (slave, podsłuch z buforem) potrzebują
-  wolnych M9K – sprawdzaj raport fittera.
+  **M9K:** przed testerem projekt zajmował 42/42 bloki (`seq_channel` daje 2 kopie pamięci na kanał); z testerem
+  RAM Nios zmniejszony do 12 KB – nadal 42/42. Kolejne etapy potrzebują wolnych M9K – sprawdzaj raport fittera.
   Ograniczenia: SPI slave będzie możliwy do ~4 MHz (próbkowanie SCK zegarem 50 MHz + opóźnienie MISO).),
   Outputs (TXU0104/TXU0102, VCCB = VCCB_A/VCCB_B 1,8–5 V, 33R + TSD05C, złącza J3 2x16, J4/J5 2x2), Config (oscylator 50 MHz, LED 132/134,
   RESET_N 121, zworki nCONFIG/BOOT_SEL, JTAG 2x5). U1 = **10M08SAE144** (decyzja użytkownika 2026-11-23; zgodne z
@@ -174,9 +173,11 @@ cd pc ; python -m unittest test_seqgen test_firmware -v   # 40 testów; test_fir
 
 ## Stan na koniec ostatniej sesji
 
-**Kompilacja FPGA z testerem NIE jest jeszcze potwierdzona** (2026-11-25): pierwsze próby kończyły się brakiem
-bloków M9K (wymagane 52 z 42). Ostatnia zmiana: pamięć `seq_channel` jako wzorzec true dual port (shared variable) –
-wynik kompilacji do sprawdzenia. Jeśli nadal brak M9K: zmniejszyć RAM Nios 16 → 12 KB (firmware ~4 KB kodu + 2,3 KB danych).
+Kompilacja FPGA z testerem (2026-11-25): 69 % LE, **M9K 42/42 (100 %)**, setup +7,747 ns, hold +0,286 ns.
+Żeby się zmieścić: RAM Nios 16 → **12 KB** (`create_system.tcl`, `link.ld`, `hw.h`, `mkhex`, `fw_sim.py`); firmware
+6,3 KB + stos. Próby `ramstyle`/shared variable w `seq_channel` nie pomogły (shared variable = pamięć w logice,
+44 tys. LE) – `seq_channel.vhd` bez zmian. Brak wolnych M9K: podsłuch z buforem / slave wymagają zwolnienia pamięci
+(np. RAM Nios 8 KB albo krótsze kolejki).
 Zrobione i zweryfikowane: firmware 2.3, 52 testy PC,
 symulacja VHDL (3 testbenche, w tym `tb_proto_io`: SPI tryb 0/3 z opóźnieniem MISO 30 ns, I2C z EEPROM i rozciąganiem
 SCL, UART 3 Mbd / 115200, HOLD, PVCC) TEST PASSED, czysty klon z GitHuba buduje się i przechodzi testy.

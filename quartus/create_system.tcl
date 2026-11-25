@@ -2,7 +2,7 @@
 #   qsys-script --script=create_system.tcl     (uruchamiac w katalogu quartus/)
 #
 # Mapa adresow (musi zgadzac sie z fw/hw.h):
-#   0x0000_0000  ram          16 KB  on-chip RAM (kod + dane, init z onchip_ram.hex)
+#   0x0000_0000  ram          12 KB  on-chip RAM (kod + dane, init z onchip_ram.hex)
 #   0x0001_0000  cpu.dm_agent        debug (tylko wariant niosv_m)
 #   0x0002_0000  cpu.timer_sw_agent  mtime (tylko wariant niosv_m)
 #   0x0002_1000  uart                RS-232 115200 8N1
@@ -40,7 +40,7 @@ set_instance_parameter_value cpu enableAvalonInterface 1
 
 # ---------------------------------------------------------------- RAM
 add_instance ram altera_avalon_onchip_memory2
-set_instance_parameter_value ram memorySize            16384
+set_instance_parameter_value ram memorySize            12288
 set_instance_parameter_value ram dataWidth             32
 set_instance_parameter_value ram initMemContent        true
 set_instance_parameter_value ram useNonDefaultInitFile true

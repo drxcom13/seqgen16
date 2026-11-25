@@ -73,11 +73,11 @@ channel*) nie są ze sobą zsynchronizowane; START przesuwa też jednorazowo (< 
 
 | Zasób | Użycie |
 |---|---|
-| Logic elements | 4 603 / 8 064 (57 %) |
-| Pamięć | 165 888 / 387 072 bit (43 %) – 16 × M9K na sekwencje + 16 KB RAM Nios |
-| Timing @ 50 MHz | setup slack +6,375 ns, hold +0,300 ns (Slow 1200 mV, 85 °C) |
+| Logic elements | 5 604 / 8 064 (69 %) |
+| Pamięć | 142 848 / 387 072 bit, **M9K 42 / 42 (100 %)** – pamięci 16 kanałów, 12 KB RAM Nios, kolejki testera |
+| Timing @ 50 MHz | setup slack +7,747 ns, hold +0,286 ns (Slow 1200 mV, 85 °C) |
 
-Wyniki dla pinów własnej płytki (10M08SAE144C8G, kolejność CH0–15 = piny 60…38, 2026-11-25) według raportów
+Wyniki dla pinów własnej płytki (10M08SAE144C8G, kolejność CH0–15 = piny 60…38, z testerem protokołów, 2026-11-25) według raportów
 Fitter i Timing Analyzer (`quartus/output_files/seqgen16.fit.summary`, `seqgen16.sta.summary` – powstają przy
 kompilacji, nie ma ich w repozytorium).
 Wszystkie 18 wyjść (CH0-15, BASE_CLK, SYNC) ma
@@ -292,7 +292,7 @@ Testy: `cd pc ; python -m unittest test_seqgen test_firmware -v` (`test_firmware
 ## Stan weryfikacji
 
 - ✅ Pełna kompilacja Quartus (synteza, fitter, timing, .sof/.pof) dla VHDL + Nios V/c.
-- ✅ Firmware 2.2: zbudowany toolchainem RiscFree (GCC 13.2, RV32I) – 2,7 KB kodu + 2,3 KB danych w 16 KB RAM, wpisany do `seqgen16.sof/.pof`.
+- ✅ Firmware 2.3: zbudowany toolchainem RiscFree (GCC 13.2, RV32I) – 4,0 KB kodu + 2,3 KB danych w 12 KB RAM, wpisany do `seqgen16.sof/.pof`.
 - ✅ Firmware wykonany w symulatorze zestawu instrukcji RV32I (`pc/fw_sim.py`) z modelami UART i rejestrów generatora: 18 testów (`pc/test_firmware.py`) przez prawdziwą bibliotekę PC – protokół, konfiguracja rejestrów, zapis/odczyt 1024 kroków, pętle, błędne CRC, śmieci na linii, nieznane komendy. Obsługa jednego odebranego bajtu to ~115 instrukcji, czyli kilkukrotny zapas względem 86,8 µs na bajt przy 115200 bd.
 - ✅ Aplikacja PC: 40 testów (biblioteka na emulatorze + te same scenariusze na firmware, m.in. krok 1 µs, eksport/import)
   + automatyczny test GUI (rysowanie, zaznaczanie, generator, undo, włączanie kanałów w tabeli, pola czasu µs/ms/s,

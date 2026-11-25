@@ -12,7 +12,7 @@ from emulator import _Ch, ID, CLK_HZ
 from proto_target import ProtoTarget
 from seqgen import NCH, MAXLEN
 
-RAM_SIZE = 0x4000
+RAM_SIZE = 0x3000
 UART_BASE = 0x21000
 SG_BASE = 0x40000
 PT_BASE = 0x30000

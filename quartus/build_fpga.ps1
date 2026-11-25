@@ -18,7 +18,7 @@ if ((Get-Location).Path.Length -gt 120) {
 
 if (-not (Test-Path onchip_ram.hex)) {
     Write-Warning "Brak onchip_ram.hex - zbuduj firmware (..\fw\build.ps1). Tworze pusty plik."
-    python ..\fw\mkhex.py NUL onchip_ram.hex 16384 2>$null
+    python ..\fw\mkhex.py NUL onchip_ram.hex 12288 2>$null
 }
 
 & "$qb\sopc_builder\bin\qsys-script.exe" --script=create_system.tcl --cmd="set CPU $Cpu"

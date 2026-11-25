@@ -50,9 +50,7 @@ end entity;
 architecture rtl of seq_channel is
 
     type mem_t is array (0 to 2**AW - 1) of std_logic;
-    -- wzorzec Quartusa "true dual port": zmienna wspoldzielona + 2 procesy -> 1 blok M9K na kanal
-    -- (z sygnalem Quartus tworzyl 2 kopie pamieci, 32 M9K na 16 kanalow)
-    shared variable mem : mem_t;
+    signal mem : mem_t;
 
     signal q          : std_logic;
     signal run_r      : std_logic := '0';
@@ -70,7 +68,7 @@ begin
     begin
         if rising_edge(clk) then
             if bus_we = '1' then
-                mem(to_integer(unsigned(bus_addr))) := bus_wdata;
+                mem(to_integer(unsigned(bus_addr))) <= bus_wdata;
             end if;
             bus_rdata <= mem(to_integer(unsigned(bus_addr)));
         end if;

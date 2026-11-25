@@ -1,13 +1,13 @@
 """bin -> Intel HEX dla altera_avalon_onchip_memory2 (32 bit, adres = numer slowa).
 
-Uzycie: python mkhex.py fw.bin onchip_ram.hex [rozmiar_bajtow=16384]
+Uzycie: python mkhex.py fw.bin onchip_ram.hex [rozmiar_bajtow=12288]
 """
 import sys
 
 
 def main():
     src, dst = sys.argv[1], sys.argv[2]
-    size = int(sys.argv[3]) if len(sys.argv) > 3 else 16384
+    size = int(sys.argv[3]) if len(sys.argv) > 3 else 12288
     data = open(src, "rb").read()
     if len(data) > size:
         sys.exit(f"Program ({len(data)} B) nie miesci sie w RAM ({size} B)")

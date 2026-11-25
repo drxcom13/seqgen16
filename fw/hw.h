@@ -4,7 +4,7 @@
 #include <stdint.h>
 
 #define RAM_BASE      0x00000000u
-#define RAM_SIZE      0x4000u
+#define RAM_SIZE      0x3000u
 #define UART_BASE     0x00021000u
 #define PROTO_BASE    0x00030000u
 #define SEQGEN_BASE   0x00040000u
