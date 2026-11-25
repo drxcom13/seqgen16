@@ -52,6 +52,18 @@ class TestFirmwareRobustness(unittest.TestCase):
         self.dev.set_output_voltage(0.0)                             # same level -> no write (no 2.5 ms gap)
         self.assertEqual(len(self.sim.vccb_writes), n)
 
+    def test_proto_registers_written(self):
+        self.dev.ping()
+        self.assertEqual(self.sim.pvcc_writes, [0])                  # boot: J6 off
+        self.dev.pt_set_level(1.8)
+        self.dev.pt_set_level(1.8)                                   # same level -> no write
+        self.dev.pt_set_level(5.0)
+        self.assertEqual(self.sim.pvcc_writes, [0, 0x1, 0x9])
+        self.dev.i2c_configure(100e3)
+        self.assertEqual((self.sim.pt["ctrl"], self.sim.pt["div"]), (2 | 1 << 9, 124))
+        self.dev.i2c_transfer(0x50, b"\x00\x5A")
+        self.assertEqual(self.sim.pt["hold"], 0)                     # HOLD released after loading the queue
+
     def test_bad_crc_reply(self):
         f = bytearray(build_frame(0x01))
         f[-1] ^= 0x55
@@ -72,7 +84,7 @@ class TestFirmwareRobustness(unittest.TestCase):
     def test_oversize_length(self):
         frames = self.raw(b"\xA5\x5A\x20" + struct.pack("<H", 5000))
         self.assertEqual(frames[0][1][0], 2)               # BAD_LEN, parser resynchronised
-        self.assertEqual(self.dev.ping()["fw"], "2.2")
+        self.assertEqual(self.dev.ping()["fw"], "2.3")
 
     def test_full_upload_speed(self):
         self.dev.write_steps(0, [i & 1 for i in range(1024)])

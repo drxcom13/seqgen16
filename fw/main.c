@@ -10,7 +10,7 @@
 #include "hw.h"
 
 #define FW_MAJOR 2
-#define FW_MINOR 2
+#define FW_MINOR 3
 
 #define SYNC0 0xA5
 #define SYNC1 0x5A
@@ -20,6 +20,8 @@ enum { CMD_PING = 0x01, CMD_SET_CFG = 0x10, CMD_GET_CFG = 0x11,
        CMD_SET_AUX = 0x12, CMD_GET_AUX = 0x13, CMD_SET_VOUT = 0x14, CMD_GET_VOUT = 0x15,
        CMD_WRITE = 0x20, CMD_READ = 0x21,
        CMD_START = 0x30, CMD_STOP = 0x31, CMD_STATUS = 0x32,
+       CMD_PT_CONFIG = 0x40, CMD_PT_GET_CONFIG = 0x41, CMD_PT_LEVEL = 0x42, CMD_PT_XFER = 0x43,
+       CMD_PT_READ = 0x44, CMD_PT_PINS = 0x45,
        CMD_ERROR = 0x7F };
 
 enum { ST_OK = 0, ST_BAD_CMD = 1, ST_BAD_LEN = 2, ST_BAD_ARG = 3, ST_BAD_CRC = 4 };
@@ -35,6 +37,12 @@ static uint32_t aux_sync_width_us = 1000u;    /* SYNC: szerokosc [us], 0 = dopok
 /* poziom wyjsc: 0 = wylaczone (Hi-Z), 1..5 = 1,8 / 2,5 / 3,3 / 4,0 / 5 V -> bity rejestru VCCB */
 static const uint8_t vout_bits[6] = { 0x0, 0x1, 0x3, 0x5, 0x7, 0x9 };
 static uint8_t vout_level = 0;
+
+/* tester protokolow (J6): kopie rejestrow i poziom PVCC (te same kody co VOUT) */
+static uint16_t pt_ctrl = 0;
+static uint32_t pt_div = 124u;
+static uint8_t  pt_level = 0;
+
 
 static void aux_apply(void)
 {
@@ -59,6 +67,28 @@ static uint16_t get16(const uint8_t *p) { return (uint16_t)(p[0] | (p[1] << 8));
 static uint32_t get32(const uint8_t *p) { return p[0] | (p[1] << 8) | ((uint32_t)p[2] << 16) | ((uint32_t)p[3] << 24); }
 static void put16(uint8_t *p, uint16_t v) { p[0] = (uint8_t)v; p[1] = (uint8_t)(v >> 8); }
 static void put32(uint8_t *p, uint32_t v) { put16(p, (uint16_t)v); put16(p + 2, (uint16_t)(v >> 16)); }
+
+#define PT_BUSY_TIMEOUT_US 1000000u                 /* transakcja dluzsza niz 1 s -> przerwana */
+enum { PTF_RXOVF = 1, PTF_BUSERR = 2, PTF_TIMEOUT = 4 };
+
+static uint32_t pt_us(void) { return PT_PINS >> 8; }
+static uint32_t pt_elapsed(uint32_t t0) { return (pt_us() - t0) & 0xFFFFFFu; }
+
+/* przenosi wpisy z kolejki RX do out[] (u16 LE), zwraca nowa liczbe wpisow */
+static uint16_t pt_drain(uint8_t *out, uint16_t n, uint16_t max, uint8_t *flags)
+{
+    uint32_t st = PT_STATUS;
+    uint32_t k = PT_ST_RXCNT(st);
+    if (st & PT_ST_RXOVF) *flags |= PTF_RXOVF;
+    if (st & PT_ST_BUSERR) *flags |= PTF_BUSERR;
+    while (k--) {
+        uint32_t v = PT_RXD;
+        if (!(v & 0x80000000u)) break;
+        if (n < max) { put16(out + 2u * n, (uint16_t)(v & 0x1FFu)); n++; }
+        else *flags |= PTF_RXOVF;
+    }
+    return n;
+}
 
 
 /* ------------------------------------------------------------------ UART */
@@ -187,6 +217,95 @@ static void handle(uint8_t cmd, const uint8_t *p, uint16_t len)
         reply(cmd, ST_OK, 1);
         return;
 
+    case CMD_PT_CONFIG: { /* ctrl u16 (rejestr CTRL), div u32 */
+        if (len != 6) break;
+        uint16_t ctrl = get16(p);
+        uint32_t dv   = get32(p + 2);
+        if ((ctrl & 7u) > 3u || (ctrl >> 12) || dv == 0) { reply(cmd, ST_BAD_ARG, 0); return; }
+        pt_ctrl = ctrl;
+        pt_div  = dv;
+        PT_DIV  = dv;
+        PT_CTRL = ctrl;                             /* kasuje kolejki i flagi */
+        reply(cmd, ST_OK, 0);
+        return;
+    }
+
+    case CMD_PT_GET_CONFIG:
+        if (len != 0) break;
+        put16(d + 0, pt_ctrl);
+        put32(d + 2, pt_div);
+        d[6] = pt_level;
+        reply(cmd, ST_OK, 7);
+        return;
+
+    case CMD_PT_LEVEL:    /* level u8 jak SET_VOUT */
+        if (len != 1) break;
+        if (p[0] > 5u) { reply(cmd, ST_BAD_ARG, 0); return; }
+        if (p[0] != pt_level) {
+            pt_level = p[0];
+            PT_PVCC = vout_bits[pt_level];
+        }
+        reply(cmd, ST_OK, 0);
+        return;
+
+    case CMD_PT_XFER: {   /* flags u8, wait_ms u16, count u16, entry[count] u16 -> flags u8, count u16, entry[] u16 */
+        if (len < 5) break;
+        uint8_t  fl  = p[0];
+        uint16_t wms = get16(p + 1);
+        uint16_t cnt = get16(p + 3);
+        if (len != (uint16_t)(5u + 2u * cnt)) break;
+        if (cnt > PT_FIFO || wms > 5000u || (pt_ctrl & 7u) == 0) { reply(cmd, ST_BAD_ARG, 0); return; }
+        uint8_t  rf = 0;
+        uint16_t n = 0;
+        uint8_t *out = d + 3;
+        if (fl & 1u) {                              /* odrzuc stare dane z RX */
+            uint8_t dummy = 0;
+            (void)pt_drain(out, 0, 0, &dummy);
+        }
+        uint32_t t0 = pt_us();
+        PT_STATUS = 1u;                             /* HOLD: cala transakcja w kolejce, potem start */
+        for (uint16_t i = 0; i < cnt; i++) {
+            while (PT_STATUS & PT_ST_TXFULL) {
+                PT_STATUS = 0u;
+                n = pt_drain(out, n, PT_FIFO, &rf);
+                if (pt_elapsed(t0) > PT_BUSY_TIMEOUT_US) { rf |= PTF_TIMEOUT; break; }
+            }
+            PT_TXD = get16(p + 5 + 2u * i);
+        }
+        PT_STATUS = 0u;
+        while (PT_STATUS & PT_ST_BUSY) {
+            n = pt_drain(out, n, PT_FIFO, &rf);
+            if (pt_elapsed(t0) > PT_BUSY_TIMEOUT_US) { rf |= PTF_TIMEOUT; break; }
+        }
+        t0 = pt_us();
+        while (pt_elapsed(t0) < (uint32_t)wms * 1000u)
+            n = pt_drain(out, n, PT_FIFO, &rf);
+        n = pt_drain(out, n, PT_FIFO, &rf);
+        if (rf & PTF_TIMEOUT) PT_CTRL = pt_ctrl;    /* przerwanie: kolejki skasowane, linie w spoczynku */
+        d[0] = rf;
+        put16(d + 1, n);
+        reply(cmd, ST_OK, (uint16_t)(3u + 2u * n));
+        return;
+    }
+
+    case CMD_PT_READ: {   /* max u16 -> flags u8, count u16, entry[] u16 (np. odbior UART) */
+        if (len != 2) break;
+        uint16_t mx = get16(p);
+        if (mx > PT_FIFO) mx = PT_FIFO;
+        uint8_t rf = 0;
+        uint16_t n = pt_drain(d + 3, 0, mx, &rf);
+        d[0] = rf;
+        put16(d + 1, n);
+        reply(cmd, ST_OK, (uint16_t)(3u + 2u * n));
+        return;
+    }
+
+    case CMD_PT_PINS:
+        if (len != 0) break;
+        d[0] = (uint8_t)PT_PINS;
+        reply(cmd, ST_OK, 1);
+        return;
+
     case CMD_WRITE: {     /* ch u8, offset u16, count u16, data[count] */
         if (len < 5) break;
         uint8_t  ch  = p[0];
@@ -271,6 +390,9 @@ int main(void)
     }
     SG_STOP = 0xFFFFu;
     SG_VCCB = 0;                                  /* wyjscia wylaczone do komendy SET_VOUT */
+    PT_PVCC = 0;                                  /* J6 wylaczone do komendy PT_LEVEL */
+    PT_DIV  = pt_div;
+    PT_CTRL = 0;
     aux_apply();
     UART_STATUS = 0;
 

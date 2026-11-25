@@ -1,5 +1,6 @@
 """fw_sim.py - runs the REAL compiled firmware (fw/build/fw.bin) on a small RV32I
-instruction-set simulator, with models of the UART and seq_gen16 registers.
+instruction-set simulator, with models of the UART, seq_gen16 and proto_io registers
+(proto_io: functional model - TX entries are processed at once by proto_target.ProtoTarget).
 
 Used as a transport for SeqGen, so the PC library talks to the actual firmware binary:
     dev = SeqGen(FirmwareSim("../fw/build/fw.bin"))
@@ -8,11 +9,15 @@ import os
 import time
 
 from emulator import _Ch, ID, CLK_HZ
+from proto_target import ProtoTarget
 from seqgen import NCH, MAXLEN
 
 RAM_SIZE = 0x4000
 UART_BASE = 0x21000
 SG_BASE = 0x40000
+PT_BASE = 0x30000
+PT_ID = 0x50544F31
+PT_FIFO = 512
 SG_END = SG_BASE + 0x20000
 
 DEFAULT_BIN = os.path.join(os.path.dirname(__file__), "..", "fw", "build", "fw.bin")
@@ -45,6 +50,10 @@ class FirmwareSim:
         self.bclk_half = 499           # registers 7 / 8 (reset values as in VHDL)
         self.sync_w = 1000
         self.vccb_writes = []          # register 9 (VCCB) write log
+        self.pt = dict(ctrl=0, div=124, hold=0, ovf=0)
+        self.pt_txq, self.pt_rxq = [], []
+        self.pt_target = ProtoTarget()
+        self.pvcc_writes = []          # proto_io PVCC write log
         self.run(200_000)              # boot: crt0 + init loop until first idle poll
 
     # ------------------------------------------------------------------ transport
@@ -74,6 +83,22 @@ class FirmwareSim:
                 self.idle_polls += 1
                 return (1 << 6) | (1 << 5)
             return 0
+        if PT_BASE <= a < PT_BASE + 0x20:
+            w = (a - PT_BASE) >> 2
+            if w == 0:
+                return PT_ID
+            if w == 1:
+                return self.pt["ctrl"]
+            if w == 2:
+                return self.pt["div"]
+            if w == 4:
+                return (1 << 31) | self.pt_rxq.pop(0) if self.pt_rxq else 0
+            if w == 5:
+                return (len(self.pt_txq) | (len(self.pt_rxq) << 10) | ((1 if self.pt_txq else 0) << 20)
+                        | (self.pt["ovf"] << 21) | ((len(self.pt_txq) >= PT_FIFO) << 23) | (self.pt["hold"] << 24))
+            if w == 7:
+                return (((self.icount // 10) & 0xFFFFFF) << 8) | 0xFF       # ~10 instructions per us
+            return 0
         if SG_BASE <= a < SG_END:
             w = (a - SG_BASE) >> 2
             now = self.clock()
@@ -101,7 +126,39 @@ class FirmwareSim:
             return 0
         raise CpuError(f"load from unmapped address 0x{a:08X} at pc=0x{self.pc:X}")
 
+    def _pt_run(self):
+        if self.pt["hold"]:
+            return
+        mode = self.pt["ctrl"] & 7
+        for e in self.pt_txq:
+            r = self.pt_target.entry(mode, e)
+            if r is not None:
+                if len(self.pt_rxq) < PT_FIFO:
+                    self.pt_rxq.append(r)
+                else:
+                    self.pt["ovf"] = 1
+        self.pt_txq.clear()
+
     def _store32_io(self, a, v):
+        if PT_BASE <= a < PT_BASE + 0x20:
+            w = (a - PT_BASE) >> 2
+            if w == 1:
+                self.pt.update(ctrl=v & 0xFFF, ovf=0)
+                self.pt_txq.clear()
+                self.pt_rxq.clear()
+                self.pt_target.reset()
+            elif w == 2:
+                self.pt["div"] = v
+            elif w == 3:
+                if len(self.pt_txq) < PT_FIFO:
+                    self.pt_txq.append(v & 0x3FF)
+                self._pt_run()
+            elif w == 5:
+                self.pt["hold"] = v & 1
+                self._pt_run()
+            elif w == 6:
+                self.pvcc_writes.append(v & 0xF)
+            return
         if UART_BASE <= a < UART_BASE + 0x20:
             if a - UART_BASE == 0x04:
                 self.tx.append(v & 0xFF)

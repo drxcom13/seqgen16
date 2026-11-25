@@ -26,6 +26,6 @@ $env:SALT_LICENSE_SERVER = $License
 $env:LM_LICENSE_FILE = $License
 $out = vsim -c -do run_sim.do 2>&1 | ForEach-Object { "$_" }
 $out | Select-String "\*\* (Error|Warning)|TEST PASSED|TEST FAILED" | ForEach-Object { $_.Line }
-# dwa testbenche: tb_seq_gen16 i tb_reset_ctrl - oba musza przejsc
+# trzy testbenche: tb_seq_gen16, tb_reset_ctrl i tb_proto_io - wszystkie musza przejsc
 $passed = @($out | Select-String "TEST PASSED").Count
-if ($passed -ge 2 -and -not ($out -match "TEST FAILED")) { exit 0 } else { exit 1 }
+if ($passed -ge 3 -and -not ($out -match "TEST FAILED")) { exit 0 } else { exit 1 }

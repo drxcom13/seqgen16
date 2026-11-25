@@ -9,7 +9,9 @@ import time
 
 from seqgen import (FrameParser, build_frame, NCH, MAXLEN,
                     CMD_PING, CMD_SET_CFG, CMD_GET_CFG, CMD_SET_AUX, CMD_GET_AUX, CMD_WRITE, CMD_READ,
-                    CMD_START, CMD_STOP, CMD_STATUS, CMD_SET_VOUT, CMD_GET_VOUT)
+                    CMD_START, CMD_STOP, CMD_STATUS, CMD_SET_VOUT, CMD_GET_VOUT,
+                    CMD_PT_CONFIG, CMD_PT_GET_CONFIG, CMD_PT_LEVEL, CMD_PT_XFER, CMD_PT_READ, CMD_PT_PINS)
+from proto_target import ProtoTarget
 
 CLK_HZ = 50_000_000
 PERIOD_MAX = (1 << 20) - 1      # PERIOD register: microseconds - 1
@@ -50,6 +52,10 @@ class Emulator:
         self.clock_period_us = 1000
         self.sync_width_us = 1000
         self.vout_level = 0            # 0 = off, 1..5 = 1.8 / 2.5 / 3.3 / 4.0 / 5 V
+        # protocol tester (J6): virtual device as in fw_sim (proto_target.py)
+        self.pt_ctrl, self.pt_div, self.pt_level = 0, 124, 0
+        self.pt_rx = []
+        self.pt_target = ProtoTarget()
 
     # --- transport interface (like serial.Serial)
     def write(self, data: bytes):
@@ -77,7 +83,7 @@ class Emulator:
         if cmd == CMD_PING:
             if p:
                 return self._reply(cmd, 2)
-            return self._reply(cmd, 0, struct.pack("<IBBBHII", ID, 2, 2, NCH, MAXLEN, CLK_HZ, PERIOD_MAX))
+            return self._reply(cmd, 0, struct.pack("<IBBBHII", ID, 2, 3, NCH, MAXLEN, CLK_HZ, PERIOD_MAX))
         if cmd == CMD_SET_CFG:
             if len(p) != 11:
                 return self._reply(cmd, 2)
@@ -158,4 +164,62 @@ class Emulator:
                 outs |= o << i
                 idx.append(k)
             return self._reply(cmd, 0, struct.pack("<HHH16H", run, done, outs, *idx))
+        if cmd in (CMD_PT_CONFIG, CMD_PT_GET_CONFIG, CMD_PT_LEVEL, CMD_PT_XFER, CMD_PT_READ, CMD_PT_PINS):
+            return self._pt(cmd, p)
         return self._reply(cmd, 1)
+
+    def _pt_entries(self, n):
+        out, self.pt_rx = self.pt_rx[:n], self.pt_rx[n:]
+        return out
+
+    def _pt(self, cmd, p):
+        if cmd == CMD_PT_CONFIG:
+            if len(p) != 6:
+                return self._reply(cmd, 2)
+            ctrl, div = struct.unpack("<HI", p)
+            if ctrl & 7 > 3 or ctrl >> 12 or div == 0:
+                return self._reply(cmd, 3)
+            self.pt_ctrl, self.pt_div = ctrl, div
+            self.pt_rx = []
+            self.pt_target.reset()
+            return self._reply(cmd, 0)
+        if cmd == CMD_PT_GET_CONFIG:
+            if p:
+                return self._reply(cmd, 2)
+            return self._reply(cmd, 0, struct.pack("<HIB", self.pt_ctrl, self.pt_div, self.pt_level))
+        if cmd == CMD_PT_LEVEL:
+            if len(p) != 1:
+                return self._reply(cmd, 2)
+            if p[0] > 5:
+                return self._reply(cmd, 3)
+            self.pt_level = p[0]
+            return self._reply(cmd, 0)
+        if cmd == CMD_PT_XFER:
+            if len(p) < 5:
+                return self._reply(cmd, 2)
+            flags, wms, cnt = struct.unpack_from("<BHH", p)
+            if len(p) != 5 + 2 * cnt:
+                return self._reply(cmd, 2)
+            if cnt > 512 or wms > 5000 or self.pt_ctrl & 7 == 0:
+                return self._reply(cmd, 3)
+            if flags & 1:
+                self.pt_rx = []
+            ovf = 0
+            for e in struct.unpack_from(f"<{cnt}H", p, 5):
+                r = self.pt_target.entry(self.pt_ctrl & 7, e & 0x3FF)
+                if r is not None:
+                    if len(self.pt_rx) < 512:
+                        self.pt_rx.append(r)
+                    else:
+                        ovf = 1
+            out = self._pt_entries(512)
+            return self._reply(cmd, 0, struct.pack(f"<BH{len(out)}H", ovf, len(out), *out))
+        if cmd == CMD_PT_READ:
+            if len(p) != 2:
+                return self._reply(cmd, 2)
+            (mx,) = struct.unpack("<H", p)
+            out = self._pt_entries(min(mx, 512))
+            return self._reply(cmd, 0, struct.pack(f"<BH{len(out)}H", 0, len(out), *out))
+        if p:
+            return self._reply(cmd, 2)
+        return self._reply(cmd, 0, bytes([0xFF]))                  # PT_PINS

@@ -8,7 +8,8 @@ from unittest.mock import Mock
 import patterns
 from emulator import Emulator
 from seqgen import (SeqGen, Project, ChannelConfig, DeviceError, FrameParser, fmt_time, split_time, format_levels,
-                    build_frame, crc16, parse_levels, CMD_SET_CFG, CMD_SET_VOUT)
+                    build_frame, crc16, parse_levels, CMD_SET_CFG, CMD_SET_VOUT,
+                    spi_div, i2c_div, uart_inc, pt_ctrl, parse_bytes, format_bytes, PT_I2C, I2C_START, I2C_STOP)
 
 
 class FakeClock:
@@ -63,7 +64,7 @@ class TestDevice(unittest.TestCase):
     def test_ping(self):
         info = self.dev.ping()
         self.assertEqual(info["id"], 0x53513136)
-        self.assertEqual((info["nch"], info["maxlen"], info["fw"]), (16, 1024, "2.2"))
+        self.assertEqual((info["nch"], info["maxlen"], info["fw"]), (16, 1024, "2.3"))
         self.assertGreaterEqual(info["period_max_us"], 1_000_000)
 
     def test_write_read_1024(self):
@@ -179,7 +180,64 @@ class TestDevice(unittest.TestCase):
         self.assertEqual(self.dev.read_steps(15, 1024), prj.channels[15].steps)
 
 
+    # --- protocol tester (J6): virtual device = MOSI->MISO and TX->RX loops, EEPROM at I2C 0x50
+    def test_pt_level_and_config(self):
+        self.dev.pt_set_level(3.3)
+        real = self.dev.spi_configure(10e6, mode=3)
+        self.assertAlmostEqual(real, 50e6 / 6)
+        cfg = self.dev.pt_get_config()
+        self.assertEqual((cfg["mode"], cfg["ctrl"] >> 3 & 3, cfg["div"], cfg["level"]), (1, 3, 2, 3.3))
+        with self.assertRaises(ValueError):
+            self.dev.pt_set_level(3.0)
+        self.dev.pt_configure(0, 1)                                  # mode off: transfers refused
+        with self.assertRaises(DeviceError):
+            self.dev.pt_xfer([0x55])
+        self.assertEqual(len(self.dev.pt_pins()), 8)
+
+    def test_pt_spi_loopback(self):
+        self.dev.spi_configure(1e6)
+        self.assertEqual(self.dev.spi_transfer(b"\x9f\x00\x55"), b"\x9f\x00\x55")
+        data = bytes(i & 0xFF for i in range(700))                   # 2 transfers, CS low between them
+        self.assertEqual(self.dev.spi_transfer(data), data)
+
+    def test_pt_i2c_eeprom(self):
+        self.dev.i2c_configure(400e3)
+        r = self.dev.i2c_transfer(0x50, b"\x10\x01\x02\x03")
+        self.assertEqual((r["ack"], r["data_acks"]), (True, [True] * 4))   # pointer + 3 data bytes
+        r = self.dev.i2c_transfer(0x50, b"\x10", read=3)
+        self.assertEqual((r["ack"], r["data"]), (True, b"\x01\x02\x03"))
+        r = self.dev.i2c_transfer(0x50, read=2)                      # continues from the pointer
+        self.assertEqual(r["data"], b"\x00\x00")
+        self.assertFalse(self.dev.i2c_transfer(0x51, b"\x00")["ack"])
+        self.assertEqual(self.dev.i2c_scan(), [0x50])
+        flags, rx = self.dev.pt_xfer([I2C_START, 0xA0, 0x20, I2C_STOP])
+        self.assertEqual((flags, rx), (0, [0, 0]))
+
+    def test_pt_uart_loopback(self):
+        real = self.dev.uart_configure(115200, "E", 2)
+        self.assertAlmostEqual(real, 115200, delta=2)
+        self.assertEqual(self.dev.uart_send(b"hello\r\n", wait_ms=0), (b"hello\r\n", 0))
+        self.assertEqual(self.dev.uart_receive(), (b"", 0))          # everything was returned by the transfer
+        self.assertEqual(self.dev.uart_send(b"", wait_ms=1), (b"", 0))   # receive only
+
+
 class TestModel(unittest.TestCase):
+    def test_pt_helpers(self):
+        self.assertEqual(spi_div(12.5e6), (1, 12.5e6))
+        self.assertEqual(spi_div(10e6)[0], 2)                         # never faster than asked: 8.33 MHz
+        self.assertEqual(i2c_div(100e3), (124, 100e3))
+        self.assertEqual(i2c_div(1e6)[0], 12)
+        self.assertEqual(uart_inc(3e6)[0], 4123168604)
+        self.assertEqual(uart_inc(115200)[0], 158329674)
+        self.assertEqual(pt_ctrl(PT_I2C), 2 | 1 << 9)
+        self.assertEqual(pt_ctrl(1, cpol=1, cpha=1, lsb=True, sample_delay=3), 1 | 8 | 16 | 32 | 3 << 9)
+        self.assertEqual(parse_bytes("9F 00 0x12, ab"), b"\x9f\x00\x12\xab")
+        self.assertEqual(parse_bytes('"AT\\r\\n"'), b"AT\r\n")
+        self.assertEqual(format_bytes(b"\x01\xab"), "01 AB")
+        for bad in (lambda: spi_div(20e6), lambda: i2c_div(2e6), lambda: uart_inc(4e6), lambda: parse_bytes("zz")):
+            with self.assertRaises(ValueError):
+                bad()
+
     def test_validation(self):
         for bad in (dict(period_ms=0.0005), dict(period_ms=0), dict(period_ms=1001), dict(period_ms=1.0005),
                     dict(steps=[]), dict(steps=[0] * 1025), dict(loops=70000)):

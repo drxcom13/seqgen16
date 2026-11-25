@@ -132,6 +132,40 @@ for i, r in enumerate(("R32", "R33", "R34", "R37")):
 put("X1", 40.5, 61.0)
 put("C44", 40.5, 56.0)
 
+# --- protocol tester (2026-11-25): J6 / JP3 on the top edge (front), SMD parts on the bottom side between
+# J6 and the FPGA (banks 5/6 face the top edge). Keep x < 68.5 on the bottom: TVS vias of J3 at x = 69.25.
+put("J6", 43.65, 5.4, 90)                       # odd pins (PVCC, SCK, MOSI, CS, SDA, TX) y = 5.4, even y = 2.86
+put("JP3", 63.0, 3.5, 90)
+for i, (d, r) in enumerate(zip(("D25", "D26", "D27", "D28", "D29", "D30", "D31", "D32"),
+                               ("R63", "R64", "R65", "R66", "R67", "R68", "R69", "R70"))):
+    put(d, 40.5 + 2.4 * i, 9.3, 90, "B")        # TVS row next to J6
+    put(r, 40.5 + 2.4 * i, 12.8, 90, "B")       # 33R series row
+for i, (u, r) in enumerate(zip(("U14", "U15", "U16", "U17", "U18", "U19"), ("R57", "R58", "R59", "R60", "R61", "R62"))):
+    x = 41.5 + 4.0 * i
+    put(u, x, 21.5, 90, "B")                    # SN74LVC1T45 (rotated: SOT-23-6 courtyard 4.1 mm wide)
+    put(r, x, 17.0, 90, "B")                    # 100k idle level
+    put(f"C{52 + 2 * i}", x - 1.0, 25.5, 90, "B")
+    put(f"C{53 + 2 * i}", x + 1.0, 25.5, 90, "B")
+# I2C (left): U20 input translator, Q3 / Q4 open-drain drivers, pull-ups, gate pull-downs
+put("U20", 33.5, 21.5, 0, "B")
+put("C64", 32.5, 25.5, 90, "B")
+put("C65", 34.5, 25.5, 90, "B")
+put("Q3", 30.0, 15.0, 0, "B")
+put("Q4", 36.0, 15.0, 0, "B")
+put("R73", 30.0, 10.5, 90, "B")
+put("R74", 36.0, 10.5, 90, "B")
+put("R71", 30.0, 18.8, 0, "B")
+put("R72", 36.0, 18.8, 0, "B")
+# PVCC LDO (right): U13, divider R50..R54, enable Q2 / R55 / R56
+put("U13", 63.5, 9.3, 0, "B")
+put("C50", 60.8, 9.3, 90, "B")
+put("C51", 66.2, 9.3, 90, "B")
+for i, r in enumerate(("R50", "R51", "R52", "R53", "R54")):
+    put(r, 59.5 + 2.0 * i, 12.8, 90, "B")
+put("R55", 65.5, 16.5, 90, "B")
+put("R56", 67.5, 16.5, 90, "B")
+put("Q2", 65.5, 20.5, 0, "B")
+
 
 # ---------------------------------------------------------------- netlist
 TOK = re.compile(r'\(|\)|"(?:[^"\\]|\\.)*"|[^\s()]+')

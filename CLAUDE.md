@@ -30,7 +30,7 @@ Szczegóły techniczne użytkowe są w `README.md`, protokół w `PROTOCOL.md`.
 | BASE_CLK nadaje **tylko gdy pracuje kanał**; przy START wyjścia BASE_CLK/SYNC schodzą na 1 takt do 0 | Błąd wykryty symulacją: gdy BASE_CLK był w stanie 1 w chwili START, nie było zbocza narastającego. |
 | Rejestry PERIOD/LAST/CFG **tylko do zapisu**, firmware trzyma kopie (`shadow`) | Oszczędność ~200+ LE na multiplekserze odczytu. |
 | `FAST_OUTPUT_REGISTER` na wszystkich wyjściach kanałów/BASE_CLK/SYNC | Minimalny rozrzut zboczy między pinami; każde wyjście musi pochodzić wprost z rejestru (nie psuj tego). |
-| Protokół binarny `A5 5A | CMD | LEN | payload | CRC16-CCITT-FALSE` | Odporny na śmieci na linii; opis w `PROTOCOL.md`. Wersja firmware 2.2. |
+| Protokół binarny `A5 5A | CMD | LEN | payload | CRC16-CCITT-FALSE` | Odporny na śmieci na linii; opis w `PROTOCOL.md`. Wersja firmware 2.3. |
 
 ## Środowisko (ten komputer użytkownika)
 
@@ -64,7 +64,26 @@ Szczegóły techniczne użytkowe są w `README.md`, protokół w `PROTOCOL.md`.
   PC: `SeqGen.set_output_voltage()`, `Project.output_voltage` (domyślnie 3,3 V, wysyłane w `upload_project`),
   GUI panel „Output level”, CLI `vout`. Na sprzęcie jeszcze nie sprawdzone (płytka nie istnieje).
   `layout_power.py` nie zawiera bloku VCCB (dodany skryptem jednorazowym) – ponowne uruchomienie usunie jego
-  połączenia.),
+  połączenia.
+  **Tester protokołów (2026-11-25, etap 1 = tryby master):** arkusz `tester.kicad_sch` („Protocol tester”, strona 7,
+  utworzony skryptem jednorazowym – brak skryptu layout). J6 2x6 (1 PVCC, 2/4/8 GND, 3 SCK, 5 MOSI, 6 MISO, 7 CS,
+  9 SDA, 10 SCL, 11 TX, 12 RX), PVCC z U13 TLV75801P (dzielnik jak VCCB: R50–R54, EN: R55, Q2 + R56, piny 92/93/96/97
+  `PVCC_OFF`/`PSEL_*_N`), U14–U19 SN74LVC1T45 (A = FPGA +3V3, B = PVCC; DIR: `PT_DIR_SPI` dla SCK/MOSI/CS, `PT_DIR_MISO`,
+  `PT_DIR_TX`, RX na stałe B→A), I2C: Q3/Q4 2N7002 open-drain (bramki 2,2k do GND – słaby pull-up FPGA przy konfiguracji
+  nie może ich otworzyć) + U20 SN74LVC2T45 (DIR = GND) jako wejście; zwykłe translatory I2C (TXS0102, PCA9306, LSF)
+  odrzucone – wymagają VCCA < VCCB, a PVCC może być 1,8 V. JP3 = pull-upy 2,2k do PVCC. 33R + TSD05C na każdej linii,
+  100k do poziomu spoczynkowego. Piny FPGA (banki 5/6): 80 SCK, 81 MOSI, 84 CS, 85 MISO, 86 DIR_SPI, 87 DIR_MISO,
+  77 TX, 79 DIR_TX, 98 RX, 88/89 SDA_IN/SCL_IN, 90/91 SDA_DRV/SCL_DRV. PCB: J6 i JP3 na górnej krawędzi (front),
+  SMD testera na spodzie między J6 a U1 (x 28–68 mm, nie dalej niż 68,5 – przelotki J3 przy x 69,25); użytkownik wybrał
+  „upchnij na 80x80” zamiast powiększenia płytki. FPGA: `quartus/ip/proto_io` (Avalon 0x0003_0000, kolejki TX 512×10 /
+  RX 512×9 w `pt_ram.vhd` – osobna encja, bo wnioskowanie w procesie dawało rejestry zamiast M9K), HOLD (zapis adres 5),
+  licznik µs w PINS [31:8] (Nios V/c nie ma timera). Firmware 2.3: komendy 0x40–0x45 (PT_*). PC: `SeqGen.spi_*`,
+  `i2c_*`, `uart_*`, okno `pc/proto_gui.py` („Serial tester (J6)…”), CLI `spi`/`i2c`/`i2c-scan`/`uart`/`pins`/`pt-level`,
+  wirtualny układ `pc/proto_target.py` (pętle MOSI→MISO, TX→RX, EEPROM 0x50) w emulatorze i `fw_sim`.
+  **M9K:** przed testerem projekt zajmował 42/42 bloki – `seq_channel` dawał 2 kopie pamięci na kanał; atrybut
+  `ramstyle "M9K, no_rw_check"` w `seq_channel.vhd` (2026-11-25). Kolejne etapy (slave, podsłuch z buforem) potrzebują
+  wolnych M9K – sprawdzaj raport fittera.
+  Ograniczenia: SPI slave będzie możliwy do ~4 MHz (próbkowanie SCK zegarem 50 MHz + opóźnienie MISO).),
   Outputs (TXU0104/TXU0102, VCCB = VCCB_A/VCCB_B 1,8–5 V, 33R + TSD05C, złącza J3 2x16, J4/J5 2x2), Config (oscylator 50 MHz, LED 132/134,
   RESET_N 121, zworki nCONFIG/BOOT_SEL, JTAG 2x5). U1 = **10M08SAE144** (decyzja użytkownika 2026-11-23; zgodne z
   `DEVICE` w `.qsf`). KiCad nie ma symbolu SA – jest w bibliotece projektu `seqgen16.kicad_sym` (kopia SC, piny
@@ -155,8 +174,13 @@ cd pc ; python -m unittest test_seqgen test_firmware -v   # 40 testów; test_fir
 
 ## Stan na koniec ostatniej sesji
 
-Zrobione i zweryfikowane: kompilacja FPGA (57 % LE, timing +6,375 ns, nowe piny CH, przebudowa 2026-11-25), firmware 2.2, 42 testy, symulacja VHDL
-TEST PASSED, czysty klon z GitHuba buduje się i przechodzi testy, README ze schematem blokowym i zrzutami.
+**Kompilacja FPGA z testerem NIE jest jeszcze potwierdzona** (2026-11-25): pierwsze próby kończyły się brakiem
+bloków M9K (wymagane 52 z 42). Ostatnia zmiana: pamięć `seq_channel` jako wzorzec true dual port (shared variable) –
+wynik kompilacji do sprawdzenia. Jeśli nadal brak M9K: zmniejszyć RAM Nios 16 → 12 KB (firmware ~4 KB kodu + 2,3 KB danych).
+Zrobione i zweryfikowane: firmware 2.3, 52 testy PC,
+symulacja VHDL (3 testbenche, w tym `tb_proto_io`: SPI tryb 0/3 z opóźnieniem MISO 30 ns, I2C z EEPROM i rozciąganiem
+SCL, UART 3 Mbd / 115200, HOLD, PVCC) TEST PASSED, czysty klon z GitHuba buduje się i przechodzi testy.
+Tester protokołów: etap 1 (master) gotowy, niesprawdzony na sprzęcie; etapy 2 (slave) i 3 (podsłuch) do zrobienia.
 
 **Otwarte / do zrobienia:**
 0. **2026-11-22: do flash płytki ewaluacyjnej wgrany `.pof` z pinoutem WŁASNEJ płytki** (commit 20b6f6f) –

@@ -6,6 +6,7 @@ or the in-memory emulator (emulator.py) for working without hardware.
 from __future__ import annotations
 
 import json
+import math
 import struct
 import time
 from dataclasses import dataclass, field, asdict
@@ -18,6 +19,8 @@ CMD_SET_AUX, CMD_GET_AUX = 0x12, 0x13
 CMD_SET_VOUT, CMD_GET_VOUT = 0x14, 0x15
 CMD_WRITE, CMD_READ = 0x20, 0x21
 CMD_START, CMD_STOP, CMD_STATUS = 0x30, 0x31, 0x32
+CMD_PT_CONFIG, CMD_PT_GET_CONFIG, CMD_PT_LEVEL = 0x40, 0x41, 0x42
+CMD_PT_XFER, CMD_PT_READ, CMD_PT_PINS = 0x43, 0x44, 0x45
 
 STATUS_TEXT = {0: "OK", 1: "unknown command", 2: "bad length", 3: "bad argument", 4: "CRC error"}
 
@@ -43,6 +46,78 @@ def vout_code(volts: float) -> int:
 
 def vout_text(volts: float) -> str:
     return "off" if volts == 0 else f"{volts:.1f} V"
+
+
+# --------------------------------------------------------------------------- protocol tester (J6)
+CLK_HZ = 50_000_000
+PT_OFF, PT_SPI, PT_I2C, PT_UART = 0, 1, 2, 3
+PT_MODES = {PT_OFF: "off", PT_SPI: "SPI master", PT_I2C: "I2C master", PT_UART: "UART"}
+PT_FIFO = 512                      # entries per transfer (hardware queue depth)
+SPI_LAST = 0x100                   # TX entry flag: last byte, CS goes high after it
+I2C_START, I2C_STOP = 0x301, 0x302
+I2C_RD_ACK, I2C_RD_NACK = 0x100, 0x200
+PTF_RXOVF, PTF_BUSERR, PTF_TIMEOUT = 1, 2, 4
+PT_PIN_NAMES = ("SCK", "MOSI", "CS", "MISO", "TX", "RX", "SDA", "SCL")
+SPI_MAX_HZ = CLK_HZ // 4           # 12.5 MHz (half period = 2 clocks)
+I2C_MAX_HZ = 1_000_000
+UART_MAX_BAUD = CLK_HZ // 16       # 3.125 Mbaud (16x oversampling)
+
+
+def spi_div(hz: float):
+    """-> (DIV register, real SCK frequency): SCK = CLK / (2 * (div + 1)), never above hz."""
+    if not 0 < hz <= SPI_MAX_HZ:
+        raise ValueError(f"SPI clock must be > 0 and <= {SPI_MAX_HZ / 1e6:g} MHz")
+    div = max(1, math.ceil(CLK_HZ / (2 * hz)) - 1)
+    if div > 0xFFFF:
+        raise ValueError("SPI clock too low (min ~382 Hz)")
+    return div, CLK_HZ / (2 * (div + 1))
+
+
+def i2c_div(hz: float):
+    """-> (DIV register, real SCL frequency): SCL = CLK / (4 * (div + 1)), never above hz."""
+    if not 0 < hz <= I2C_MAX_HZ:
+        raise ValueError(f"I2C clock must be > 0 and <= {I2C_MAX_HZ // 1000} kHz")
+    div = max(3, math.ceil(CLK_HZ / (4 * hz)) - 1)
+    if div > 0xFFFF:
+        raise ValueError("I2C clock too low (min ~191 Hz)")
+    return div, CLK_HZ / (4 * (div + 1))
+
+
+def uart_inc(baud: float):
+    """-> (DIV register = phase increment, real baud rate): 16 x baud from a 32-bit accumulator."""
+    if not 300 <= baud <= UART_MAX_BAUD:
+        raise ValueError(f"UART baud rate must be 300 .. {UART_MAX_BAUD}")
+    inc = round(16 * baud * (1 << 32) / CLK_HZ)
+    return inc, inc * CLK_HZ / (16 * (1 << 32))
+
+
+def pt_ctrl(mode: int, cpol=0, cpha=0, lsb=False, parity=0, stop2=False, sample_delay=1) -> int:
+    """CTRL register of proto_io (parity: 0 none, 1 even, 2 odd)."""
+    if mode not in PT_MODES or parity not in (0, 1, 2) or not 0 <= sample_delay <= 7:
+        raise ValueError("bad protocol tester setting")
+    return (mode | (cpol & 1) << 3 | (cpha & 1) << 4 | bool(lsb) << 5 | parity << 6 | bool(stop2) << 8
+            | sample_delay << 9)
+
+
+def parse_bytes(text: str) -> bytes:
+    """Bytes from text: hex ('9F 00 0x12', '9f0012') or a quoted string with escapes ("AT\\r\\n")."""
+    t = text.strip()
+    if len(t) >= 2 and t[0] == t[-1] and t[0] in "'\"":
+        return t[1:-1].encode("latin-1").decode("unicode_escape").encode("latin-1")
+    out = bytearray()
+    for tok in t.replace(",", " ").replace(";", " ").split():
+        tok = tok[2:] if tok.lower().startswith("0x") else tok
+        if len(tok) % 2:
+            tok = "0" + tok
+        try:
+            out += bytes.fromhex(tok)
+        except ValueError:
+            raise ValueError(f"not a hex byte: {tok!r}") from None
+    return bytes(out)
+
+
+def format_bytes(data: bytes) -> str:
+    return " ".join(f"{b:02X}" for b in data)
 
 
 def fmt_time(ms: float) -> str:
@@ -324,6 +399,134 @@ class SeqGen:
         r = self.transact(CMD_STATUS)
         vals = struct.unpack("<HHH16H", r)
         return dict(running=vals[0], done=vals[1], outputs=vals[2], index=list(vals[3:]))
+
+    # --- protocol tester (J6)
+    def pt_configure(self, mode: int, div: int, **opts):
+        """Raw configuration: mode PT_*, DIV register (see spi_div / i2c_div / uart_inc), pt_ctrl() options.
+        Clears the queues of the tester."""
+        self.transact(CMD_PT_CONFIG, struct.pack("<HI", pt_ctrl(mode, **opts), div))
+
+    def pt_get_config(self) -> dict:
+        ctrl, div, level = struct.unpack("<HIB", self.transact(CMD_PT_GET_CONFIG))
+        return dict(mode=ctrl & 7, ctrl=ctrl, div=div, level=VOUT_LEVELS[level])
+
+    def pt_set_level(self, volts: float):
+        """Logic level of J6 (PVCC): 0 (off, all J6 lines high impedance), 1.8, 2.5, 3.3, 4.0 or 5.0 V."""
+        self.transact(CMD_PT_LEVEL, bytes([vout_code(volts)]))
+
+    def pt_xfer(self, entries, wait_ms: int = 0, clear: bool = True):
+        """Send TX entries (<= 512) and collect RX entries; returns (flags, entries).
+        wait_ms: keep receiving after the transmission (UART answers)."""
+        entries = list(entries)
+        if len(entries) > PT_FIFO or not 0 <= wait_ms <= 5000:
+            raise ValueError("at most 512 entries and 0..5000 ms wait per transfer")
+        old = self.timeout
+        self.timeout = max(old, 2.5 + wait_ms / 1000)
+        try:
+            r = self.transact(CMD_PT_XFER, struct.pack(f"<BHH{len(entries)}H", 1 if clear else 0, wait_ms,
+                                                       len(entries), *entries))
+        finally:
+            self.timeout = old
+        flags, n = struct.unpack_from("<BH", r)
+        out = list(struct.unpack_from(f"<{n}H", r, 3))
+        if flags & PTF_TIMEOUT:
+            raise DeviceError("protocol tester: transfer timeout (SCL held low by a device?)")
+        if flags & PTF_BUSERR:
+            raise DeviceError("protocol tester: I2C bus error (SCL held low > 21 ms)")
+        return flags, out
+
+    def pt_read(self, max_entries: int = PT_FIFO):
+        """Entries received so far (e.g. UART data arriving without a transfer)."""
+        r = self.transact(CMD_PT_READ, struct.pack("<H", max_entries))
+        flags, n = struct.unpack_from("<BH", r)
+        return flags, list(struct.unpack_from(f"<{n}H", r, 3))
+
+    def pt_pins(self) -> dict:
+        (v,) = self.transact(CMD_PT_PINS)
+        return {name: v >> i & 1 for i, name in enumerate(PT_PIN_NAMES)}
+
+    def spi_configure(self, hz: float, mode: int = 0, lsb_first: bool = False, sample_delay: int = 1) -> float:
+        """SPI master, mode 0..3; returns the real SCK frequency."""
+        div, real = spi_div(hz)
+        self.pt_configure(PT_SPI, div, cpol=mode >> 1 & 1, cpha=mode & 1, lsb=lsb_first, sample_delay=sample_delay)
+        return real
+
+    def spi_transfer(self, data: bytes) -> bytes:
+        """One CS-low transaction (full duplex); returns the bytes read on MISO.
+        Longer than 512 bytes: several transfers, CS stays low between them."""
+        data = bytes(data)
+        out = bytearray()
+        for i in range(0, len(data), PT_FIFO):
+            ent = list(data[i:i + PT_FIFO])
+            if i + PT_FIFO >= len(data):
+                ent[-1] |= SPI_LAST
+            _, rx = self.pt_xfer(ent)
+            out += bytes(e & 0xFF for e in rx)
+        return bytes(out)
+
+    def i2c_configure(self, hz: float = 100_000) -> float:
+        """I2C master; returns the real SCL frequency."""
+        div, real = i2c_div(hz)
+        self.pt_configure(PT_I2C, div)
+        return real
+
+    def i2c_transfer(self, addr: int, write: bytes = b"", read: int = 0) -> dict:
+        """START, addr+W, write bytes, [repeated START, addr+R, read bytes (last one NACK)], STOP.
+        Without write bytes and with read > 0 only the read part is sent.
+        -> dict(ack: address acknowledged, data_acks: [bool per written byte], data: bytes read)."""
+        if not 0 <= addr <= 0x7F:
+            raise ValueError("I2C address must be 0x00..0x7F")
+        write = bytes(write)
+        ent = []
+        nw = 0
+        if write or not read:
+            ent += [I2C_START, addr << 1] + list(write)
+            nw = 1 + len(write)
+        if read:
+            ent += [I2C_START, addr << 1 | 1] + [I2C_RD_ACK] * (read - 1) + [I2C_RD_NACK]
+        ent.append(I2C_STOP)
+        if len(ent) > PT_FIFO:
+            raise ValueError("I2C transfer too long (max ~500 bytes)")
+        _, rx = self.pt_xfer(ent)
+        acks = [not e >> 8 & 1 for e in rx[:nw]]
+        res = dict(ack=bool(acks and acks[0]), data_acks=acks[1:], data=b"")
+        if read:
+            ra = len(rx) > nw and not rx[nw] >> 8 & 1
+            res["ack"] = ra if not nw else res["ack"] and ra
+            res["data"] = bytes(e & 0xFF for e in rx[nw + 1:nw + 1 + read])
+        return res
+
+    def i2c_scan(self, first: int = 0x08, last: int = 0x77):
+        """Addresses that acknowledge (START, addr+W, STOP for every address)."""
+        ent = []
+        for a in range(first, last + 1):
+            ent += [I2C_START, a << 1, I2C_STOP]
+        _, rx = self.pt_xfer(ent)
+        return [a for a, e in zip(range(first, last + 1), rx) if not e >> 8 & 1]
+
+    def uart_configure(self, baud: float = 115200, parity: str = "N", stop_bits: int = 1) -> float:
+        """UART 8 data bits, parity N/E/O, 1 or 2 stop bits; returns the real baud rate."""
+        par = {"N": 0, "E": 1, "O": 2}[parity.upper()]
+        inc, real = uart_inc(baud)
+        self.pt_configure(PT_UART, inc, parity=par, stop2=stop_bits == 2)
+        return real
+
+    def uart_send(self, data: bytes, wait_ms: int = 50):
+        """Send bytes on TX, receive on RX during the transmission + wait_ms.
+        -> (received bytes, number of bytes with a framing / parity error)."""
+        data = bytes(data)
+        out, err = bytearray(), 0
+        chunks = [data[i:i + PT_FIFO] for i in range(0, len(data), PT_FIFO)] or [b""]
+        for k, part in enumerate(chunks):
+            _, rx = self.pt_xfer(list(part), wait_ms if k == len(chunks) - 1 else 0, clear=False)
+            out += bytes(e & 0xFF for e in rx)
+            err += sum(1 for e in rx if e >> 8 & 1)
+        return bytes(out), err
+
+    def uart_receive(self):
+        """Bytes received on RX since the last call -> (bytes, number with errors)."""
+        _, rx = self.pt_read()
+        return bytes(e & 0xFF for e in rx), sum(1 for e in rx if e >> 8 & 1)
 
     # --- high level
     def upload_channel(self, c: ChannelConfig, verify: bool = True):

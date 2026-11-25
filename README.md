@@ -161,6 +161,60 @@ Wejście jest synchronizowane, a reset trwa jeszcze 2,6 ms po zwolnieniu przycis
 filtrowane). Pin ma włączony wewnętrzny pull-up, więc niepodłączony nie blokuje pracy (np. na płytce
 ewaluacyjnej). Logika: `quartus/reset_ctrl.vhd`, test: `sim/tb_reset_ctrl.vhd`.
 
+### Tester protokołów – złącze J6 (SPI / I2C / UART TTL)
+
+Złącze J6 (listwa 2×6, 2,54 mm, górna krawędź płytki) służy do testowania układów i portów szeregowych.
+Na tym etapie SeqGen16 pracuje jako **SPI master** (tryby 0–3, do 12,5 MHz), **I2C master** (100 kHz / 400 kHz /
+~1 MHz, START, powtórzony START, ACK/NACK, rozciąganie zegara przez slave) i **UART** (8 bitów, parzystość N/E/O,
+1 lub 2 bity stopu, do 3 Mbd). Tryby slave i podsłuch magistrali są zaplanowane jako kolejne etapy.
+
+| Pin J6 | Sygnał | Pin J6 | Sygnał |
+|---|---|---|---|
+| 1 | PVCC (wyjście napięcia logiki) | 2 | GND |
+| 3 | SCK | 4 | GND |
+| 5 | MOSI | 6 | MISO |
+| 7 | CS | 8 | GND |
+| 9 | SDA | 10 | SCL |
+| 11 | TX (wyjście UART) | 12 | RX (wejście UART) |
+
+- **Poziom logiki J6 (PVCC):** osobny stabilizator U13 (TLV75801P, taki sam dzielnik jak VCCB): wyłączone,
+  1,8 / 2,5 / 3,3 / 4,0 / ~5 V, ustawiany z PC niezależnie od poziomu wyjść CH. Po włączeniu zasilania i podczas
+  konfiguracji FPGA PVCC jest wyłączone, a translatory nie sterują linii J6. Pin 1 nie powinien być łączony
+  z zasilaniem układu, który ma własne zasilanie (przy wyłączeniu LDO rozładowuje wyjście przez 95 Ω).
+- **Translatory:** SN74LVC1T45 na SCK, MOSI, CS, MISO, TX, RX (kierunek ustawia FPGA zależnie od trybu);
+  I2C: tranzystory 2N7002 ściągają SDA/SCL do zera, stan linii czyta SN74LVC2T45 – działa przy każdym PVCC.
+  Zworka **JP3** dołącza rezystory podciągające 2,2 kΩ SDA/SCL do PVCC (zdjąć przy magistrali z własnymi pull-upami).
+  Na każdej linii rezystor 33 Ω i dioda TVS. Linie wejściowe mają 100 kΩ do poziomu spoczynkowego.
+- **Próbkowanie MISO** można opóźnić o 0–7 taktów po 20 ns (domyślnie 1), co kompensuje translatory i kabel przy
+  wysokich częstotliwościach SCK.
+
+| Sygnał FPGA | Pin | Sieć | Sygnał FPGA | Pin | Sieć |
+|---|---|---|---|---|---|
+| pt_sck | 80 | PT_SCK | pt_rx | 98 | PT_RX |
+| pt_mosi | 81 | PT_MOSI | pt_sda_in / pt_scl_in | 88 / 89 | PT_SDA_IN / PT_SCL_IN |
+| pt_cs | 84 | PT_CS | pt_sda_drv / pt_scl_drv | 90 / 91 | PT_SDA_DRV / PT_SCL_DRV |
+| pt_miso | 85 | PT_MISO | pvcc_off | 92 | PVCC_OFF |
+| pt_dir_spi / pt_dir_miso | 86 / 87 | PT_DIR_SPI / PT_DIR_MISO | psel_2v5_n / psel_3v3_n / psel_5v_n | 93 / 96 / 97 | PSEL_* |
+| pt_tx / pt_dir_tx | 77 / 79 | PT_TX / PT_DIR_TX | | | |
+
+Banki 5 i 6 (VCCIO = 3,3 V). Na płytce ewaluacyjnej te piny prowadzą do innych układów – przed wgraniem obrazu
+z testerem na płytkę ewaluacyjną należy sprawdzić, co jest do nich podłączone.
+
+Obsługa: okno **Serial tester (J6)…** w GUI (wysyłanie w HEX lub jako tekst, log odebranych danych, skan I2C,
+ciągły odbiór UART) albo CLI:
+
+```powershell
+python pc\seqgen_cli.py -p COM5 spi "9F 00 00 00" --hz 1e6 --mode 0 --level 3.3   # odczyt JEDEC ID pamięci SPI
+python pc\seqgen_cli.py -p COM5 i2c-scan --level 3.3
+python pc\seqgen_cli.py -p COM5 i2c 0x50 --write "00 10" --read 4                 # zapis wskaźnika, odczyt 4 bajtów
+python pc\seqgen_cli.py -p COM5 uart '"AT\r\n"' --baud 115200 --wait 200           # wysłanie i odbiór odpowiedzi
+python pc\seqgen_cli.py -p COM5 pins                                               # stan linii J6
+```
+
+W bibliotece: `SeqGen.spi_transfer()`, `i2c_transfer()`, `i2c_scan()`, `uart_send()`, `uart_receive()`
+(protokół: komendy 0x40–0x45 w `PROTOCOL.md`). Emulator (`EMU`) symuluje mostek MOSI→MISO i TX→RX oraz pamięć
+EEPROM I2C pod adresem 0x50.
+
 **Płytka MAX 10 10M08 Evaluation Kit:** poprzednie przypisanie (UART na Arduino D0/D1, CH0–11 na Arduino D2–D13,
 CH12–15 / BASE_CLK / SYNC na J8) jest w historii git – `git show 22c6dcf:quartus/seqgen16.qsf` i
 `git show 22c6dcf:README.md`.
@@ -229,6 +283,9 @@ python pc\seqgen_cli.py -p COM5 stop all
 python pc\seqgen_cli.py -p COM5 vout 3.3                  # poziom wyjść: off, 1.8, 2.5, 3.3, 4.0, 5.0 (bez wartości = odczyt)
 python pc\seqgen_cli.py show examples\demo_16ch.json       # podgląd sekwencji jako 0/1
 ```
+
+Tester protokołów (J6): komendy `pt-level`, `spi`, `i2c`, `i2c-scan`, `uart`, `pins` – przykłady w sekcji
+*Tester protokołów* wyżej i w `python pc\seqgen_cli.py -h`.
 
 Testy: `cd pc ; python -m unittest test_seqgen test_firmware -v` (`test_firmware` uruchamia zbudowany `fw/build/fw.bin`).
 

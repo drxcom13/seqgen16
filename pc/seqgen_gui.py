@@ -376,6 +376,7 @@ class App(tk.Tk):
         self.clipboard_steps = None
         self.project_path = None
         self._loading = False
+        self.proto_win = None
         self._build()
         self._load_aux()
         self.select_channel(0)
@@ -412,6 +413,7 @@ class App(tk.Tk):
         for txt, cmd in (("Save As…", lambda: self._save(True)), ("Save", self._save),
                          ("Open…", self._open), ("New", self._new)):
             ttk.Button(top, text=txt, command=cmd).pack(side="right", padx=2)
+        ttk.Button(top, text="Serial tester (J6)…", command=self._proto_window).pack(side="right", padx=(2, 16))
 
         body = ttk.PanedWindow(self, orient="horizontal")
         body.pack(fill="both", expand=True, padx=6)
@@ -1053,6 +1055,13 @@ class App(tk.Tk):
                     self.editor.playhead = ph
                     self.editor.redraw()
         self.after(300, self._poll_status)
+
+    def _proto_window(self):
+        from proto_gui import ProtoWindow
+        if self.proto_win is None:
+            self.proto_win = ProtoWindow(self)
+        self.proto_win.deiconify()
+        self.proto_win.lift()
 
     def _quit(self):
         if self.dev:

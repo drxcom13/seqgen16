@@ -3,9 +3,13 @@ if {[file exists work]} { vdel -all -lib work }
 vlib work
 vcom -2008 ../quartus/ip/seq_gen16/seq_channel.vhd ../quartus/ip/seq_gen16/seq_gen16.vhd tb_seq_gen16.vhd
 vcom -2008 ../quartus/reset_ctrl.vhd tb_reset_ctrl.vhd
+vcom -2008 ../quartus/ip/proto_io/pt_ram.vhd ../quartus/ip/proto_io/proto_io.vhd tb_proto_io.vhd
 vsim -c -onfinish stop work.tb_seq_gen16
 run -all
 quit -sim
 vsim -c -onfinish stop work.tb_reset_ctrl
+run -all
+quit -sim
+vsim -c -onfinish stop work.tb_proto_io
 run -all
 quit -f

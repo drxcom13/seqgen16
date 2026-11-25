@@ -6,6 +6,7 @@
 #   0x0001_0000  cpu.dm_agent        debug (tylko wariant niosv_m)
 #   0x0002_0000  cpu.timer_sw_agent  mtime (tylko wariant niosv_m)
 #   0x0002_1000  uart                RS-232 115200 8N1
+#   0x0003_0000  proto        32 B   tester protokolow SPI / I2C / UART (J6)
 #   0x0004_0000  seqgen       128 KB generator 16 kanalow
 package require -exact qsys 16.0
 
@@ -58,14 +59,18 @@ set_instance_parameter_value uart useCtsRts  false
 # ---------------------------------------------------------------- generator
 add_instance seqgen seq_gen16
 
+# ---------------------------------------------------------------- tester protokolow
+add_instance proto proto_io
+
 # ---------------------------------------------------------------- polaczenia
-foreach {c r} {cpu.clk cpu.reset ram.clk1 ram.reset1 uart.clk uart.reset seqgen.clock seqgen.reset} {
+foreach {c r} {cpu.clk cpu.reset ram.clk1 ram.reset1 uart.clk uart.reset seqgen.clock seqgen.reset proto.clock proto.reset} {
     add_connection clk_0.clk       $c
     add_connection clk_0.clk_reset $r
 }
 add_connection cpu.data_manager ram.s1
 add_connection cpu.data_manager uart.s1
 add_connection cpu.data_manager seqgen.s0
+add_connection cpu.data_manager proto.s0
 add_connection cpu.instruction_manager ram.s1
 
 if {[string equal $CPU niosv_m]} {
@@ -83,11 +88,13 @@ set_connection_parameter_value cpu.data_manager/ram.s1               baseAddress
 set_connection_parameter_value cpu.instruction_manager/ram.s1        baseAddress 0x00000000
 set_connection_parameter_value cpu.data_manager/uart.s1              baseAddress 0x00021000
 set_connection_parameter_value cpu.data_manager/seqgen.s0            baseAddress 0x00040000
+set_connection_parameter_value cpu.data_manager/proto.s0             baseAddress 0x00030000
 
 # ---------------------------------------------------------------- eksporty
 set_interface_property clk    EXPORT_OF clk_0.clk_in
 set_interface_property reset  EXPORT_OF clk_0.clk_in_reset
 set_interface_property uart   EXPORT_OF uart.external_connection
 set_interface_property seqgen EXPORT_OF seqgen.out
+set_interface_property proto  EXPORT_OF proto.pins
 
 save_system nios_sys.qsys
