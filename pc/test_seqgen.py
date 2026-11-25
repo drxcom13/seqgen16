@@ -3,6 +3,7 @@ import os
 import struct
 import tempfile
 import unittest
+from unittest.mock import Mock
 
 import patterns
 from emulator import Emulator
@@ -141,6 +142,21 @@ class TestDevice(unittest.TestCase):
         st = self.dev.status()
         self.assertEqual(st["running"], 0)
         self.assertEqual(st["outputs"] >> 1 & 1, 1)             # stopped -> idle level 1
+
+    def test_invalid_project_sends_no_commands(self):
+        p = Project()
+        p.channels[0].enabled = p.channels[1].enabled = True
+        transport = Mock()
+        dev = SeqGen(transport)
+        for obj, field, invalid in ((p.channels[1], "steps", []), (p.channels[1], "loops", 1.5),
+                                    (p, "output_voltage", 3.0), (p, "clock_period_ms", 0.003)):
+            with self.subTest(field=field):
+                original = getattr(obj, field)
+                setattr(obj, field, invalid)
+                with self.assertRaises(ValueError):
+                    dev.upload_project(p)
+                transport.write.assert_not_called()
+                setattr(obj, field, original)
 
     def test_project_upload_and_json(self):
         prj = Project()

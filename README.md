@@ -58,7 +58,11 @@ krok albo wrócić do poziomu idle.
   (domyślnie 1 ms) albo – przy szerokości 0 – stan wysoki, dopóki pracuje dowolny kanał.
 
 Kanały, BASE_CLK i SYNC mają identyczne opóźnienie potokowe, a ich ostatnie rejestry są w komórkach I/O
-(FAST_OUTPUT_REGISTER), więc zbocza wypadają w tym samym takcie 50 MHz (rozrzut między pinami to pojedyncze ns).
+(FAST_OUTPUT_REGISTER), więc zbocza są generowane w tym samym takcie zegara 50 MHz.
+Rozrzut na złączach za buforami TXU wymaga pomiaru na prototypie. Aby go zmierzyć,
+ustaw pierwszy krok wszystkich badanych kanałów na 1 po stanie spoczynkowym 0 i uruchom je jedną maską START.
+Zmierz względem SYNC czas przejścia każdego wyjścia przez 50% jego amplitudy, także dla BASE_CLK.
+Zapisz różnicę między najwcześniejszym i najpóźniejszym zboczem, napięcie VCCB i obciążenie wyjść.
 
 **Start synchroniczny:** *Start enabled (synchronous)* wysyła jedną komendę START z maską wszystkich włączonych
 kanałów, czyli jeden zapis do rejestru – wszystkie kanały z maski ruszają w tym samym takcie zegara. START restartuje
@@ -69,11 +73,14 @@ channel*) nie są ze sobą zsynchronizowane; START przesuwa też jednorazowo (< 
 
 | Zasób | Użycie |
 |---|---|
-| Logic elements | 4 547 / 8 064 (56 %) |
+| Logic elements | 4 603 / 8 064 (57 %) |
 | Pamięć | 165 888 / 387 072 bit (43 %) – 16 × M9K na sekwencje + 16 KB RAM Nios |
-| Timing @ 50 MHz | setup slack +7,7 ns, hold +0,29 ns (Slow 85 °C) |
+| Timing @ 50 MHz | setup slack +6,375 ns, hold +0,300 ns (Slow 1200 mV, 85 °C) |
 
-Wyniki dla pinów własnej płytki (10M08SAE144C8G, 2026-11-22). Wszystkie 18 wyjść (CH0–15, BASE_CLK, SYNC) ma
+Wyniki dla pinów własnej płytki (10M08SAE144C8G, kolejność CH0–15 = piny 60…38, 2026-11-25) według raportów
+Fitter i Timing Analyzer (`quartus/output_files/seqgen16.fit.summary`, `seqgen16.sta.summary` – powstają przy
+kompilacji, nie ma ich w repozytorium).
+Wszystkie 18 wyjść (CH0-15, BASE_CLK, SYNC) ma
 ostatni rejestr w komórce I/O (`FAST_OUTPUT_REGISTER`).
 
 Wariant z Nios V/m (debuger JTAG, `build_fpga.ps1 -Cpu niosv_m`) też jest dostępny – zajmuje ok. 1,5–2 tys. LE więcej.
@@ -122,6 +129,12 @@ CLAUDE.md      notatki dla asystenta AI (Claude Code) – stan projektu, decyzje
    Późniejsze zmiany samego firmware bez ponownej kompilacji FPGA: `.\fw\build.ps1 -UpdateSof`.
 
 ## Podłączenie
+
+Własna płytka jest projektowana dla JLCPCB, 4 warstwy, FR-4 Tg135, 1,6 mm, miedź 1 oz.
+Przelotki przelotowe mają otwór 0,30 mm. Domyślna średnica pada wynosi 0,45 mm,
+a w miejscach o ograniczonej przestrzeni można wybrać 0,40 mm.
+Footprint J1 w bibliotece projektu ma cztery zewnętrzne pola GND skrócone od strony
+kołków pozycjonujących o 0,08 mm. Otwory i rozstaw styków odpowiadają footprintowi GCT USB4105.
 
 Przypisanie pinów dla **własnej płytki** (`pcb/seqgen16`). Nazwy w kolumnie „Sieć” to etykiety globalne na
 schemacie (`fpga.kicad_sch`); przy zmianie pinów aktualizuj schemat i `quartus/seqgen16.qsf` razem.

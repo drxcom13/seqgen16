@@ -138,7 +138,7 @@ class ChannelConfig:
         return len(self.steps) * self.period_ms
 
     def validate(self):
-        if not 0 <= self.ch < NCH:
+        if not isinstance(self.ch, int) or not 0 <= self.ch < NCH:
             raise ValueError(f"channel {self.ch}: number out of range 0..{NCH - 1}")
         if not PERIOD_MIN_MS <= self.period_ms <= PERIOD_MAX_MS:
             raise ValueError(f"channel {self.ch}: step {fmt_time(self.period_ms)} out of range 1 us .. 1 s")
@@ -146,7 +146,7 @@ class ChannelConfig:
             raise ValueError(f"channel {self.ch}: step must be a multiple of 1 us")
         if not 1 <= len(self.steps) <= MAXLEN:
             raise ValueError(f"channel {self.ch}: {len(self.steps)} steps, allowed 1..{MAXLEN}")
-        if not 0 <= self.loops <= 0xFFFF:
+        if not isinstance(self.loops, int) or not 0 <= self.loops <= 0xFFFF:
             raise ValueError(f"channel {self.ch}: repeat count out of range 0..65535")
 
     def resize(self, n: int, fill: int | None = None):
@@ -337,11 +337,15 @@ class SeqGen:
     def upload_project(self, prj: Project, verify: bool = True, progress=None) -> int:
         """Upload BASE_CLK/SYNC settings, the output level and all enabled channels;
         returns the mask of uploaded channels."""
-        self.set_aux(*prj.validate_aux())
+        aux = prj.validate_aux()
         prj.validate_vout()
+        enabled = [c for c in prj.channels if c.enabled]
+        for c in enabled:
+            c.validate()
+
+        self.set_aux(*aux)
         self.set_output_voltage(prj.output_voltage)
         mask = 0
-        enabled = [c for c in prj.channels if c.enabled]
         for k, c in enumerate(enabled):
             self.upload_channel(c, verify)
             mask |= 1 << c.ch

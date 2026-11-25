@@ -98,7 +98,10 @@ Szczegóły techniczne użytkowe są w `README.md`, protokół w `PROTOCOL.md`.
   `net_compare.py` (porównanie netlist po zbiorach pinów). Procedura: netlista przed (`kicad-cli sch export netlist
   --format kicadsexpr`), narzędzie, netlista po, `net_compare.py` musi dać 0 różnic, ERC bez nowych błędów.
   Pozostałe niedoskonałości z generatora: nachodzące teksty pól (np. GND przy JP1/JP2, +3V3 przy OE buforów),
-  rozstrzelone rozmieszczenie na Power (sieć EN). ERC: 64 × pin_not_connected (nieużywane I/O U1, od 2026-11-24) – oczekiwane.
+  rozstrzelone rozmieszczenie na Power (sieć EN). ERC (2026-11-25): 0 błędów; 64 wolne piny U1 oznaczone No Connect. Ostrzeżenia `lib_symbol_issues`
+  zależą od konfiguracji bibliotek na danym komputerze (kicad-cli bez skonfigurowanych bibliotek zgłasza ich ~260).
+  Różne wersje biblioteki KiCad na komputerach: TPS22917DBV ma pin QOD w (10,16; 0) albo (10,16; −2,54) – przy
+  „Update symbols from library” U10 i flaga No Connect przeskakują; netlista bez zmian.
   RESET_N (pin 121) obsłużony w FPGA od 2026-11-23 (`reset_ctrl.vhd`). SC (Compact) odrzucony:
   prawdopodobnie bez inicjalizacji RAM z flash. W `.gitignore`: backupy, `.lck` (zawiera nazwę komputera), `.kicad_prl`.
 - Toolchain RISC-V (RiscFree): `C:\altera_lite\25.1std\riscfree\toolchain\riscv32-unknown-elf\bin` – `fw/build.ps1` go znajduje.
@@ -152,7 +155,7 @@ cd pc ; python -m unittest test_seqgen test_firmware -v   # 40 testów; test_fir
 
 ## Stan na koniec ostatniej sesji
 
-Zrobione i zweryfikowane: kompilacja FPGA (57 % LE, timing +6,4 ns, nowe piny CH, 2026-11-24), firmware 2.2, 40 testów, symulacja VHDL
+Zrobione i zweryfikowane: kompilacja FPGA (57 % LE, timing +6,375 ns, nowe piny CH, przebudowa 2026-11-25), firmware 2.2, 42 testy, symulacja VHDL
 TEST PASSED, czysty klon z GitHuba buduje się i przechodzi testy, README ze schematem blokowym i zrzutami.
 
 **Otwarte / do zrobienia:**

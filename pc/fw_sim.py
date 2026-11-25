@@ -31,7 +31,8 @@ class FirmwareSim:
     def __init__(self, bin_path=DEFAULT_BIN, clock=time.monotonic):
         self.clock = clock
         self.mem = bytearray(RAM_SIZE)
-        img = open(bin_path, "rb").read()
+        with open(bin_path, "rb") as firmware:
+            img = firmware.read()
         self.mem[:len(img)] = img
         self.x = [0] * 32
         self.pc = 0

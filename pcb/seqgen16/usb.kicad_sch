@@ -2272,7 +2272,7 @@
 					)
 				)
 				(pin open_collector line
-					(at 10.16 0 180)
+					(at 10.16 -2.54 180)
 					(length 2.54)
 					(name "QOD"
 						(effects
@@ -3293,7 +3293,7 @@
 		(uuid "057f3b92-ff59-43aa-86b1-b5307b28f62a")
 	)
 	(no_connect
-		(at 177.8 60.96)
+		(at 177.8 63.5)
 		(uuid "0ff42fb3-0aea-40e4-88ef-aadd00a903d2")
 	)
 	(no_connect
@@ -5701,7 +5701,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Connector_USB:USB_C_Receptacle_GCT_USB4105-xx-A_16P_TopMnt_Horizontal"
+		(property "Footprint" "seqgen16:USB4105_16P_NPTH_Clearance"
 			(at 38.1 101.6 0)
 			(hide yes)
 			(show_name no)

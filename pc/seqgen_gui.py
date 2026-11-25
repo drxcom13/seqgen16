@@ -10,6 +10,7 @@ Waveform editor (selected channel):
 Overview (bottom): all 16 channels on a common time axis - click a lane to edit it.
 """
 import queue
+from copy import deepcopy
 import threading
 import tkinter as tk
 from tkinter import ttk, filedialog, messagebox
@@ -990,11 +991,11 @@ class App(tk.Tk):
                                foreground="green")
         self._msg(f"Connected: {info}")
 
-    def _run_bg(self, fn, done_msg):
+    def _run_bg(self, fn, done_msg, *, apply_fields=True):
         if not self.dev:
             messagebox.showwarning("Not connected", "Connect to the device first")
             return
-        if not self._apply() or not self._apply_aux():
+        if apply_fields and (not self._apply() or not self._apply_aux()):
             return
 
         def work():
@@ -1010,14 +1011,17 @@ class App(tk.Tk):
         self._ui(lambda: (self.prog.configure(maximum=n, value=k), self._msg(f"  CH{ch} uploaded and verified")))
 
     def _upload(self, only_current=False):
+        if not self._apply() or not self._apply_aux():
+            return
+        project = deepcopy(self.prj)
         if only_current:
-            c = self.chan
-            aux = self.prj.validate_aux()
-            volts = self.prj.output_voltage
-            self._run_bg(lambda: (self.dev.set_aux(*aux), self.dev.set_output_voltage(volts), self.dev.upload_channel(c)),
-                         f"CH{c.ch} uploaded")
+            channel = project.channels[self.cur]
+            project.channels = [channel]
+            channel.enabled = True
+            self._run_bg(lambda: self.dev.upload_project(project), f"CH{channel.ch} uploaded", apply_fields=False)
         else:
-            self._run_bg(lambda: self.dev.upload_project(self.prj, progress=self._progress), "Project uploaded")
+            self._run_bg(lambda: self.dev.upload_project(project, progress=self._progress), "Project uploaded",
+                         apply_fields=False)
 
     def _start(self):
         mask = sum(1 << c.ch for c in self.prj.channels if c.enabled)

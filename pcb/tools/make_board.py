@@ -9,6 +9,7 @@ Left edge: J1 USB-C. Other blocks: rectangles + text on Dwgs.User (placement pro
 After "Update PCB from Schematic" (option: re-link footprints by reference) J1/J3/J4/J5 keep their places.
 """
 import sys
+from pathlib import Path
 
 import pcbnew
 
@@ -56,14 +57,16 @@ def load_fp(lib, name):
     """Footprint from the KiCad library (loaded before the board is opened - pcbnew.FootprintLoad
     fails after LoadBoard of a board that already holds footprints)."""
     if (lib, name) not in _LIBS:
-        _LIBS[(lib, name)] = pcbnew.FootprintLoad(f"{FP}\\{lib}.pretty", name)
+        directory = (Path(__file__).resolve().parents[1] / "seqgen16" / "seqgen16.pretty"
+                     if lib == "seqgen16" else Path(FP) / f"{lib}.pretty")
+        _LIBS[(lib, name)] = pcbnew.FootprintLoad(str(directory), name)
     return pcbnew.FOOTPRINT(_LIBS[(lib, name)])
 
 
 FOOTPRINTS = [("MountingHole", "MountingHole_3.2mm_M3"),
               ("Connector_PinHeader_2.54mm", "PinHeader_2x16_P2.54mm_Horizontal"),
               ("Connector_PinHeader_2.54mm", "PinHeader_2x02_P2.54mm_Horizontal"),
-              ("Connector_USB", "USB_C_Receptacle_GCT_USB4105-xx-A_16P_TopMnt_Horizontal")]
+              ("seqgen16", "USB4105_16P_NPTH_Clearance")]
 
 
 def footprint(board, lib, name, ref, value, x, y, angle=0.0, board_only=False):
@@ -129,7 +132,7 @@ def main(path):
     footprint(board, "Connector_PinHeader_2.54mm", "PinHeader_2x02_P2.54mm_Horizontal", "J5", "SYNC",
               xp, ya + 65.0)
     # --- left edge: USB-C (footprint "PCB Edge" line at local y = +3.675, opening turned to the left)
-    footprint(board, "Connector_USB", "USB_C_Receptacle_GCT_USB4105-xx-A_16P_TopMnt_Horizontal", "J1",
+    footprint(board, "seqgen16", "USB4105_16P_NPTH_Clearance", "J1",
               "USB_C_Receptacle_USB2.0_16P", xa + 3.675, ya + 20.0, angle=-90)
 
     # --- placement proposal (Dwgs.User)
