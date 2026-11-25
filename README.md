@@ -143,8 +143,8 @@ schemacie (`fpga.kicad_sch`); przy zmianie pinów aktualizuj schemat i `quartus/
 |---|---|---|
 | clk_50 | 27 (CLK0p) | oscylator 50 MHz |
 | reset_n (przycisk RESET, aktywny 0) | 121 (DEV_CLRn jako zwykłe wejście) | RESET_N |
-| uart_txd (→ RX mostka USB) | 70 | TXD |
-| uart_rxd (← TX mostka USB) | 69 | RXD |
+| uart_txd (→ RX mostka USB) | 111 | TXD |
+| uart_rxd (← TX mostka USB) | 110 | RXD |
 | ch_out[0..7] | 60, 59, 58, 57, 56, 55, 52, 50 | CH0…CH7 |
 | ch_out[8..15] | 47, 46, 45, 44, 43, 41, 39, 38 | CH8…CH15 |
 | sync_out (SYNC) | 28 (CLK1n) | SYNC |

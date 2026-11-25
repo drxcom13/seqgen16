@@ -52,7 +52,7 @@ def build(path):
     b.power("GND", P("D24", "2"))
     b.wire(P("U3", "5"), (88.9, RAIL))
     b.place("#FLG004", 91.44, RAIL, 0, {"Value": (91.44, RAIL - 5.08, None)})
-    b.place("FB1", 101.6, RAIL, 90)                                          # TDK MPZ2012S601AT000 (0805, 2 A)
+    b.place("FB1", 101.6, RAIL, 90)                                          # Wurth 74279221601 (1206, 2.5 A)
     b.place("C1", 116.84, RAIL + 3.81)
     b.place("C2", 127.0, RAIL + 3.81)
     b.place("#FLG012", 137.16, RAIL, 0, {"Value": (137.16, RAIL - 5.08, None)})

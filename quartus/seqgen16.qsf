@@ -39,9 +39,9 @@ set_location_assignment PIN_135 -to led_n[2]
 set_location_assignment PIN_140 -to led_n[3]
 set_location_assignment PIN_141 -to led_n[4]
 
-# UART (nazwy od strony FPGA): TXD -> RX mostka USB, RXD <- TX mostka USB (bank 4)
-set_location_assignment PIN_70  -to uart_txd
-set_location_assignment PIN_69  -to uart_rxd
+# UART (nazwy od strony FPGA): TXD -> RX mostka USB, RXD <- TX mostka USB (bank 7)
+set_location_assignment PIN_111 -to uart_txd
+set_location_assignment PIN_110 -to uart_rxd
 
 # Kanaly 0..15 (bank 3), kolejnosc pinow malejaca = CH0 u gory J3 na plytce seqgen16
 set_location_assignment PIN_60  -to ch_out[0]

@@ -2104,7 +2104,7 @@
 			)
 			(embedded_fonts no)
 		)
-	(symbol "Power_Management:TPS22917DBV"
+		(symbol "Power_Management:TPS22917DBV"
 			(exclude_from_sim no)
 			(in_bom yes)
 			(on_board yes)
@@ -4275,7 +4275,7 @@
 				)
 			)
 		)
-		(property "Value" "MPZ2012S601AT000"
+		(property "Value" "74279221601"
 			(at 101.6 66.675 90)
 			(show_name no)
 			(do_not_autoplace no)
@@ -4285,7 +4285,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Inductor_SMD:L_0805_2012Metric"
+		(property "Footprint" "Inductor_SMD:L_1206_3216Metric"
 			(at 101.6 63.5 0)
 			(hide yes)
 			(show_name no)
@@ -4296,7 +4296,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "https://www.tme.eu/pl/details/mpz2012s601at000/ferryty-koraliki/tdk/"
+		(property "Datasheet" "https://www.we-online.com/components/products/datasheet/74279221601.pdf"
 			(at 101.6 63.5 0)
 			(hide yes)
 			(show_name no)
@@ -4307,7 +4307,7 @@
 				)
 			)
 		)
-		(property "Description" "TDK MPZ2012S601AT000 ferrite bead, 0805, 600R@100MHz, 2 A, DCR 0.15R max - carries the whole-board VBUS current"
+		(property "Description" "Wurth 74279221601 ferrite bead, 1206, 600R@100MHz, 2.5 A, DCR 50 mR - carries the whole-board VBUS current"
 			(at 101.6 63.5 0)
 			(hide yes)
 			(show_name no)
@@ -4999,7 +4999,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
+		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric"
 			(at 111.76 69.85 0)
 			(hide yes)
 			(show_name no)

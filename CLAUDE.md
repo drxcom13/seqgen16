@@ -38,8 +38,8 @@ Szczegóły techniczne użytkowe są w `README.md`, protokół w `PROTOCOL.md`.
   (2026-11-21/22 instalacje się zmieniały: chwilowo był tylko 24.1std w `C:\intelFPGA_lite`, potem odinstalowany.
   Zanim zbudujesz, sprawdź, czy `quartus_sh.exe` istnieje; inną instalację podaj przez `-Quartus`.)
 - KiCad 10 (`C:\Program Files\KiCad\10.0\bin\kicad-cli.exe` – eksport netlisty do weryfikacji). Projekt własnej
-  płytki `pcb/seqgen16`: arkusze FPGA, USB (FT232RNL, USB-C; od 2026-11-24 cała płytka za FB1 = TDK MPZ2012S601AT000
-  0805 2 A: strona złącza = sieć `VBUS_USB` (TVS D24 SMF5.0A, symbol Diode:SM6T6V8A, pin 1 = katoda, D_SMF),
+  płytki `pcb/seqgen16`: arkusze FPGA, USB (FT232RNL, USB-C; od 2026-11-24 cała płytka za FB1 = Würth 74279221601 (1206, 600 Ω, 2,5 A; od 2026-11-25, wcześniej TDK MPZ2012S601AT000)
+  : strona złącza = sieć `VBUS_USB` (TVS D24 SMF5.0A, symbol Diode:SM6T6V8A, pin 1 = katoda, D_SMF),
   za koralikiem `VBUS_FT` (FT232 C1/C2, ~4,8 µF – limit USB 10 µF),
   dalej klucz U10 TPS22917DBV (ON = VIN, CT C45 2,2n do VIN → narastanie ~5 ms, inrush ~55 mA, QOD NC) → `VBUS`
   dla reszty płytki (~54 µF: C15 47u, C16, wejścia LDO VCCB)), Power (**U9 = TI TPSM828302** od 2026-11-23, zamiast
@@ -87,11 +87,14 @@ Szczegóły techniczne użytkowe są w `README.md`, protokół w `PROTOCOL.md`.
   RESET_N 121, zworki nCONFIG/BOOT_SEL, JTAG 2x5). U1 = **10M08SAE144** (decyzja użytkownika 2026-11-23; zgodne z
   `DEVICE` w `.qsf`). KiCad nie ma symbolu SA – jest w bibliotece projektu `seqgen16.kicad_sym` (kopia SC, piny
   3/4/5 = ANAIN1/REFGND/ADC_VREF; ADC nieużywany: ANAIN1, REFGND → GND, ADC_VREF NC).
-  **Piny `.qsf` = etykiety globalne na U1 w `fpga.kicad_sch`** (TXD 70, RXD 69, CH0..15, SYNC 28, BASE_CLK 29) –
+  **Piny `.qsf` = etykiety globalne na U1 w `fpga.kicad_sch`** (TXD 111, RXD 110 – od 2026-11-24, wcześniej 70/69; CH0..15, SYNC 28, BASE_CLK 29) –
   zmieniaj oba miejsca razem. Przypisanie dla płytki ewaluacyjnej: `git show 22c6dcf:quartus/seqgen16.qsf`.
   Arkusze były generowane skryptami Pythona (poza repo) – same etykiety na końcach pinów, bez przewodów.
   **Styl schematów (wymóg użytkownika 2026-11-23): bliskie elementy łączyć przewodami, etykiet używać oszczędnie**
   (etykieta globalna tam, gdzie sieć schodzi na inny arkusz; lokalna tylko do odległego bloku na tym samym arkuszu).
+  **Etykieta lokalna leży na przewodzie na całej długości tekstu** (wymóg 2026-11-25): etykieta na wolnym końcu przewodu,
+  tekst biegnie wzdłuż przewodu w stronę pinu. Poprawia to `pcb/tools/label_wires.py` (po nim net_compare + ERC;
+  skrypty `layout_*.py` tej reguły nie stosują – po ich uruchomieniu puścić label_wires).
   **Wszystkie opisy na schematach i PCB (notatki, tytuły arkuszy, teksty na płytce) po angielsku** (wymóg 2026-11-23).
   PCB: `pcb/tools/make_board.py` (80x80 mm, 4 warstwy, 4x M3, wyśrodkowana na A4; wyjścia J3/J4/J5 prawa krawędź,
   USB-C lewa; strefy rozmieszczenia na Dwgs.User). Działa tylko na płytce bez innych footprintów.
@@ -100,7 +103,7 @@ Szczegóły techniczne użytkowe są w `README.md`, protokół w `PROTOCOL.md`.
   rogu płytki). Nowe UUID przez `Duplicate(False)` (kopia FOOTPRINT() powiela UUID biblioteki → DRC myli elementy).
   U1 obrócony o 90° (piny 37–72 do buforów). Od 2026-11-24 CH0..15 = piny 60, 59, 58, 57, 56, 55, 52, 50, 47, 46,
   45, 44, 43, 41, 39, 38 (malejąco = CH0 u góry, jak na J3) – w `.qsf`, etykietach U1 i README; obraz FPGA
-  (.sof/.pof) przebudowany 2026-11-24 (we flash płytki ewaluacyjnej jest jeszcze .pof ze starymi pinami). Odsprzęganie U1 na spodzie.
+  (.sof/.pof) przebudowany 2026-11-25 z testerem i UART 110/111 (70 % LE, setup +7,3 ns; we flash płytki ewaluacyjnej jest jeszcze .pof ze starymi pinami). 2026-11-25 scalenie z drugim komputerem: PCB = lokalne rozmieszczenie i ścieżki użytkownika + footprinty testera z pozycji zdalnych + nowe J1 + strefa GND In1; zdalne ścieżki (na starym rozmieszczeniu) odrzucone. Odsprzęganie U1 na spodzie.
   Reguły: klasa Default ścieżka 0,3 mm, przelotka 0,6/0,4 mm, odstęp 0,2 mm; U8 (VSSOP 0,5 mm) lokalny odstęp
   0,15 mm na footprincie – `kicad-cli pcb drc` nie wczytuje `.kicad_dru`.
   **Wzorzec układu = arkusz Config (poprawiony ręcznie przez użytkownika):** format A4, notatki u góry, bloki
