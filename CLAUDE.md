@@ -103,7 +103,7 @@ Szczegóły techniczne użytkowe są w `README.md`, protokół w `PROTOCOL.md`.
   `pcb/tools/place_parts.py` (2026-11-24, Python KiCada): footprinty z netlisty (kicadsexpr) na płytkę z sieciami,
   ścieżką symbolu (pod „Update PCB from Schematic”) i polami; rozmieszczenie w tabeli `PLACE` (mm od lewego górnego
   rogu płytki). Nowe UUID przez `Duplicate(False)` (kopia FOOTPRINT() powiela UUID biblioteki → DRC myli elementy).
-  U1 obrócony o 90° (piny 37–72 do buforów). Od 2026-11-24 CH0..15 = piny 60, 59, 58, 57, 56, 55, 52, 50, 47, 46,
+  U1 obrócony o 90° (piny 37–72 do buforów). Od 2026-11-24 CH0..15 = piny 60, 59, 58, 57, 56, 55, 54 (CH6, od 2026-11-25; wcześniej 52), 50, 47, 46,
   45, 44, 43, 41, 39, 38 (malejąco = CH0 u góry, jak na J3) – w `.qsf`, etykietach U1 i README; obraz FPGA
   (.sof/.pof) przebudowany 2026-11-25 z testerem i UART 110/111 (70 % LE, setup +6,0 ns, I2C SCL 3:2 od 2026-11-25; we flash płytki ewaluacyjnej jest jeszcze .pof ze starymi pinami). 2026-11-25 scalenie z drugim komputerem: PCB = lokalne rozmieszczenie i ścieżki użytkownika + footprinty testera z pozycji zdalnych + nowe J1 + strefa GND In1; zdalne ścieżki (na starym rozmieszczeniu) odrzucone. Odsprzęganie U1 na spodzie.
   Reguły: klasa Default ścieżka 0,3 mm, przelotka 0,6/0,4 mm, odstęp 0,2 mm; U8 (VSSOP 0,5 mm) lokalny odstęp

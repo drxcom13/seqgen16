@@ -3211,6 +3211,12 @@
 		(uuid "0971d55b-50a9-4ce2-9e38-be5ea12807fc")
 	)
 	(junction
+		(at 88.9 63.5)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "1a6db271-45ed-4d87-a0d6-ca2f68d49964")
+	)
+	(junction
 		(at 121.92 63.5)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -3263,12 +3269,6 @@
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "de282af5-164e-4b72-85ef-68a9d57acc7c")
-	)
-	(junction
-		(at 88.9 63.5)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "e429eeed-2468-4aa7-9d79-68911f113283")
 	)
 	(junction
 		(at 142.24 147.32)
@@ -3520,6 +3520,16 @@
 	)
 	(wire
 		(pts
+			(xy 88.9 63.5) (xy 91.44 63.5)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "4522c868-b6d7-4ecf-813b-3ef536ac022c")
+	)
+	(wire
+		(pts
 			(xy 58.42 63.5) (xy 77.47 63.5)
 		)
 		(stroke
@@ -3670,16 +3680,6 @@
 	)
 	(wire
 		(pts
-			(xy 88.9 119.38) (xy 88.9 116.84)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "8921d4fe-52d4-49a5-86ef-c7eaf802835f")
-	)
-	(wire
-		(pts
 			(xy 195.58 106.68) (xy 195.58 110.49)
 		)
 		(stroke
@@ -3700,13 +3700,13 @@
 	)
 	(wire
 		(pts
-			(xy 88.9 104.14) (xy 88.9 63.5)
+			(xy 88.9 116.84) (xy 88.9 124.46)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "8e104747-a03e-4bad-b5bf-dcf3cf3238ff")
+		(uuid "90a2c367-121f-4650-b798-ba8b0a3df3d1")
 	)
 	(wire
 		(pts
@@ -3880,13 +3880,13 @@
 	)
 	(wire
 		(pts
-			(xy 88.9 63.5) (xy 91.44 63.5)
+			(xy 88.9 63.5) (xy 88.9 104.14)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "e309d8bc-f7eb-4915-8033-bee6505e1a34")
+		(uuid "e6119932-ed58-42fa-895f-6edcca776f42")
 	)
 	(wire
 		(pts
@@ -5127,8 +5127,105 @@
 		)
 	)
 	(symbol
+		(lib_id "Power_Protection:USBLC6-2SC6")
+		(at 88.9 109.22 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "8661df6e-ed28-436e-b90d-a79727aad07a")
+		(property "Reference" "U21"
+			(at 90.5511 101.6 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "USBLC6-2SC6"
+			(at 90.5511 104.14 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Package_TO_SOT_SMD:SOT-23-6"
+			(at 90.17 115.57 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+					(italic yes)
+				)
+				(justify left)
+			)
+		)
+		(property "Datasheet" "https://www.st.com/resource/en/datasheet/usblc6-2.pdf"
+			(at 90.17 117.475 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Description" "Very low capacitance ESD protection diode, 2 data-line, SOT-23-6"
+			(at 88.9 109.22 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "6"
+			(uuid "69136cae-7ce0-4834-9421-aad8c6eb7179")
+		)
+		(pin "5"
+			(uuid "3d5cf426-2ddd-4bf5-a3ee-71c1128c4ab3")
+		)
+		(pin "2"
+			(uuid "2183d1d2-e972-4879-91c7-100d90cc0b6d")
+		)
+		(pin "1"
+			(uuid "25872274-426d-4e88-a3e6-7d94f18b4df8")
+		)
+		(pin "4"
+			(uuid "31b42628-f7b1-4388-8699-36684b8f43aa")
+		)
+		(pin "3"
+			(uuid "637356bf-88eb-4527-ae4a-f217a7d63e97")
+		)
+		(instances
+			(project "seqgen16"
+				(path "/0a00f2ca-5a34-470b-adcd-a843d56ab15f/456d2cd9-42f1-40f6-9742-c33c73a23127"
+					(reference "U21")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "power:GND")
-		(at 88.9 119.38 0)
+		(at 88.9 124.46 0)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -5138,7 +5235,7 @@
 		(dnp no)
 		(uuid "876114f3-3819-48e5-ad83-4d56a4d6bcdc")
 		(property "Reference" "#PWR008"
-			(at 88.9 125.38 0)
+			(at 88.9 130.46 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -5149,7 +5246,7 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 88.9 122.88 0)
+			(at 88.9 127.96 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -5159,7 +5256,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 88.9 119.38 0)
+			(at 88.9 124.46 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -5170,7 +5267,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 88.9 119.38 0)
+			(at 88.9 124.46 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -5181,7 +5278,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 88.9 119.38 0)
+			(at 88.9 124.46 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -6821,99 +6918,6 @@
 			(project "seqgen16"
 				(path "/0a00f2ca-5a34-470b-adcd-a843d56ab15f/456d2cd9-42f1-40f6-9742-c33c73a23127"
 					(reference "#PWR010")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Power_Protection:USBLC6-2SC6")
-		(at 88.9 109.22 0)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(uuid "f6d681b5-ffd5-4f63-9a61-d98184a8383f")
-		(property "Reference" "U3"
-			(at 91.948 116.078 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "USBLC6-2SC6"
-			(at 91.9 119.22 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "Package_TO_SOT_SMD:SOT-23-6"
-			(at 88.9 109.22 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" "https://www.st.com/resource/en/datasheet/usblc6-2.pdf"
-			(at 88.9 109.22 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" "ESD protection USB 2.0"
-			(at 88.9 109.22 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "1"
-			(uuid "a9fd1130-d2cc-4f5f-8eb8-26493aef9bdc")
-		)
-		(pin "2"
-			(uuid "ce6306b8-c8de-4bb2-9849-1a3444024273")
-		)
-		(pin "3"
-			(uuid "acd5d7f4-1e9c-4f86-91e1-f79feda4c4b4")
-		)
-		(pin "4"
-			(uuid "351e34b6-7929-41f8-ac97-9afa65c02221")
-		)
-		(pin "5"
-			(uuid "3f779540-b8f6-4606-81e4-e80df07c0095")
-		)
-		(pin "6"
-			(uuid "3b33ffe5-30fd-4c40-9538-6e35d61ca9bc")
-		)
-		(instances
-			(project "seqgen16"
-				(path "/0a00f2ca-5a34-470b-adcd-a843d56ab15f/456d2cd9-42f1-40f6-9742-c33c73a23127"
-					(reference "U3")
 					(unit 1)
 				)
 			)

@@ -1761,7 +1761,7 @@
 		(at 50.8 166.37)
 		(diameter 0)
 		(color 0 0 0 0)
-		(uuid "b44f10e8-7f0f-4413-bdaf-d53a1e2f6a03")
+		(uuid "8f504acb-605f-49e1-b5d7-d3bc7c6eebab")
 	)
 	(junction
 		(at 85.09 171.45)
@@ -2161,7 +2161,7 @@
 	)
 	(wire
 		(pts
-			(xy 41.91 163.83) (xy 68.58 163.83)
+			(xy 36.83 163.83) (xy 68.58 163.83)
 		)
 		(stroke
 			(width 0)
@@ -2505,7 +2505,7 @@
 	)
 	(global_label "TDO"
 		(shape input)
-		(at 41.91 163.83 180)
+		(at 36.83 163.83 180)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -2515,7 +2515,7 @@
 		)
 		(uuid "447631c7-4ca6-4544-8596-48ef77965b42")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 41.91 163.83 0)
+			(at 36.83 163.83 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)

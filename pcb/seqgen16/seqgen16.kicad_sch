@@ -147,6 +147,53 @@
 		)
 	)
 	(sheet
+		(at 25.4 139.7)
+		(size 45.72 25.4)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+			(color 0 0 0 1)
+		)
+		(fill
+			(color 255 96 96 1)
+		)
+		(uuid "6e8f36c4-b0b0-434f-977a-79834ce37dc6")
+		(property "Sheetname" "Protocol tester"
+			(at 25.4 138.9884 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "tester.kicad_sch"
+			(at 25.4 165.6846 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "seqgen16"
+				(path "/0a00f2ca-5a34-470b-adcd-a843d56ab15f"
+					(page "7")
+				)
+			)
+		)
+	)
+	(sheet
 		(at 185.42 76.2)
 		(size 55.88 48.26)
 		(exclude_from_sim no)
@@ -236,53 +283,6 @@
 			(project "seqgen16"
 				(path "/0a00f2ca-5a34-470b-adcd-a843d56ab15f"
 					(page "5")
-				)
-			)
-		)
-	)
-	(sheet
-		(at 25.4 139.7)
-		(size 45.72 25.4)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(stroke
-			(width 0.1524)
-			(type solid)
-			(color 0 0 0 1)
-		)
-		(fill
-			(color 255 96 96 1)
-		)
-		(uuid "6e8f36c4-b0b0-434f-977a-79834ce37dc6")
-		(property "Sheetname" "Protocol tester"
-			(at 25.4 138.9884 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left bottom)
-			)
-		)
-		(property "Sheetfile" "tester.kicad_sch"
-			(at 25.4 165.6846 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left top)
-			)
-		)
-		(instances
-			(project "seqgen16"
-				(path "/0a00f2ca-5a34-470b-adcd-a843d56ab15f"
-					(page "7")
 				)
 			)
 		)
